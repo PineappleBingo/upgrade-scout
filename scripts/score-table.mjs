@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // score-table — 합계·등급·판정은 스크립트가 계산한다(LLM이 합계를 쓰지 않는다).
 //   node score-table.mjs <items.json|ledger.json> [--weights 40,30,30] [--format json|md|html] [--top 20] [--mode synergy|jev]
-// 입력: { items: [{ id, label, source?, fit, cost, risk, grade?, caps?, blind?: {fit,cost,risk}, jev?: {...}, j?: {J1..J12} }] }
+// 입력: { items: [{ id, label, source?, fit, cost, risk, lang?, grade?, caps?, blind?: {fit,cost,risk}, jev?: {...}, j?: {J1..J12} }] }
 //   fit·cost·risk는 0–10(높을수록 좋음: cost 10 = 가장 싸다, risk 10 = 가장 안전). J1–J12는 0–2.
 import fs from 'node:fs';
 import { parseArgs, isMain, emit, fail, EXIT, mdTable, helpRequested } from './lib/cli.mjs';
 
 const HELP = `score-table.mjs <items.json> [--weights 40,30,30] [--mode synergy|jev] [--format json|md|html] [--top N]
-synergy: 0.4·적합 + 0.3·비용 + 0.3·리스크(0–10). 상한: 강제 제약 위반 → 3, 주장만 있는 근거 → 6.
+synergy: (0.4·적합 + 0.3·비용 + 0.3·리스크) × 언어 계수(lang, 기본 1). 상한: 강제 제약 위반 → 3, 주장만 있는 근거 → 6.
 jev: J1–J12(각 0–2) 가중 합 0–100. 관문: J1=0 → reject, J3=0 → code. ≥70 high · 50–69 mid · <50 low.`;
 
 export const J_CRITERIA = [
@@ -33,6 +33,11 @@ export function synergy(item, weights = [40, 30, 30]) {
   }
   let total = +(wf * item.fit + wc * item.cost + wr * item.risk).toFixed(2);
   const caps = [];
+  // 언어 계수: 근거가 다른 언어에서 잰 수치일 때만(언어별 감사가 있을 때). 곱한 뒤 상한을 건다.
+  if (item.lang !== undefined && item.lang !== null) {
+    if (typeof item.lang !== 'number' || !(item.lang > 0 && item.lang <= 1)) throw new Error(`${item.id}: lang(언어 계수)은 0 초과 1 이하 숫자여야 합니다 (받은 값 ${item.lang})`);
+    if (item.lang < 1) { total = +(total * item.lang).toFixed(2); caps.push(`언어 계수 ×${item.lang}`); }
+  }
   if ((item.caps || []).includes('hard-constraint')) { total = Math.min(total, 3); caps.push('강제 제약 위반 → 3'); }
   if ((item.caps || []).includes('claims-only') || item.grade === 'C') { total = Math.min(total, 6); caps.push('주장만 있는 근거 → 6'); }
   let blindDiff = null;

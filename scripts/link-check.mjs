@@ -54,6 +54,8 @@ export function classifyHttp(status, url = '') {
   let host = '';
   try { host = new URL(url).hostname; } catch { /* 호스트를 모르면 일반 규칙 */ }
   if (status >= 200 && status < 400) return LOGIN_WALL.test(host) ? 'unverified' : 'ok';
+  // 405: GET·HEAD를 안 받는 API 엔드포인트(예: POST 전용 /v1/systemone) — 주소는 있다.
+  if (status === 405) return 'ok';
   if (status === 404 || status === 410) return 'missing';
   if (status === 401 || status === 403 || status === 429 || status === 999) return 'unverified';
   return 'unknown';
@@ -137,7 +139,8 @@ export async function checkOne(url, { profile = false, lsRemoteImpl = lsRemote }
   }
   const r = await httpRequest(url, { timeoutMs: 20000 });
   const status = r.status ? classifyHttp(r.status, url) : 'unknown';
-  const note = status === 'unverified' && r.status < 400 ? '로그인 벽 — 200이어도 게시물 존재를 보장하지 않음' : undefined;
+  const note = status === 'unverified' && r.status < 400 ? '로그인 벽 — 200이어도 게시물 존재를 보장하지 않음'
+    : r.status === 405 ? '다른 메서드만 받는 엔드포인트 — 주소는 있음' : undefined;
   return { url, kind: 'web', status, http: r.status, error: r.error, ...(note ? { note } : {}) };
 }
 

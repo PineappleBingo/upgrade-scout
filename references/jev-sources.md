@@ -7,7 +7,7 @@
 - 모델 `jev-1.13.0` — `jev-latest`·`jev-preview` 모두 같은 버전. 임계값을 보정했다면 버전을 고정한다.
 - 입력 $0.042/100만 토큰 · 출력 무료 · 1200 rpm · 250,000 tok/s(“동적으로 바뀜”) · 64k total · 32k state + 가장 긴 질문
 - SDK: JS `@typesafe-ai/sdk` 0.6.0 · Python `typesafe-sdk` 0.7.1
-- 언어: English first; CJK handled but not equally well — 한국어 공개 평가 없음
+- 언어: English first; CJK handled but not equally well. 한국어 공개 감사 1건 — jujumilk3/jev-calibration-audit: 같은 문항에서 정확도 −6.5pp, ECE 0.076 vs 0.075(보정은 그대로), 지시문 언어는 무관하고 state 언어만 영향(저자 자체 수치, 2026-09-26 확인). 영상 대본 같은 도메인 평가는 없음
 - MCP: official none · 에이전트 스킬: typesafe@typesafe-ai (marketplace typesafe-ai = typesafe-ai/skills)
 - 셀프호스팅 Laya가 같은 `POST /v1/systemone` 프로토콜을 제공한다(성능 수치는 자체 주장).
 
@@ -38,7 +38,12 @@ sources-watch가 매 실행 이 값들과 대조해 경보를 낸다(`docs-model
 | `awesomejev-com` | B | page-hash | daily (별 수) | 디렉터리 — 피드 없음, 페이지 해시만 | https://awesomejev.com |
 | `gh-topic-jev` | B | page-hash | auto | GitHub topic — 클라우드 세션에서는 403이 정상(확인 불가로 기록) | https://github.com/topics/jev |
 | `hackernoon-101` | C | html-numbered-list | static snapshot (2026-09-21) | 사례 101 — 갱신되지 않음. 링크 가용성은 link-check로 전수 확인 | https://hackernoon.com/101-real-world-examples-of-how-to-use-jev |
-| `use-cases-walid` | C | markdown-links | static snapshot | X 데모 74개 스냅샷 | https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/README.md |
+| `robustness-yifan` | B | tsv | snapshot 갱신(09-24 기준 119건) | 독립 강건성 감사 — 보정·선택지 순서·주입·입력 언어. `references/jev-lens.md` §7 표와 언어 계수의 근거 | https://raw.githubusercontent.com/Yifan-Lan/awesome-jev-robustness/main/data/entries.tsv |
+| `abdelstark-resources` | B | catalog-json | auto(last_updated · 커밋 09-26) | 분류별 기계 판독 목록 228(categories[].resources[]를 펼침) | https://raw.githubusercontent.com/AbdelStark/awesome-typesafe-jev/main/resources.json |
+| `anilmatcha-readme` | B | markdown-links | manual(커밋 09-23) | 교차 확인용 목록(링크 220) | https://raw.githubusercontent.com/Anil-matcha/awesome-jev-by-typesafe/main/README.md |
+| `use-cases-walid` | C | csv | 행마다 snapshot 열 · 커밋 09-21 | 리포 37 — CSV라 diff가 정확 | https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/repos.csv |
+| `use-cases-walid-more` | C | csv | 같음 | 추가 리포 111(한 줄 설명) | https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/more-repos.csv |
+| `use-cases-walid-demos` | C | csv | 같음 | X 데모 74 — 게시물은 로그인 벽이라 존재는 미확인 | https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/demos.csv |
 
 ## 소스 — 플러그인 생태계 (`--registry plugins`)
 
@@ -59,16 +64,16 @@ sources-watch가 매 실행 이 값들과 대조해 경보를 낸다(`docs-model
 
 - `unavailable`(403·429·5xx·타임아웃) = **확인 불가**. “변화 없음”으로 쓰지 않는다. 이전 스냅샷은 그대로 둔다.
 - `parse-suspect` = 목록 파서가 0건. 페이지 구조가 바뀌었을 수 있으니 사람에게 알린다.
-- `baseline` = 첫 실행. 새 항목으로 세지 않는다. `--since YYYY-MM-DD`면 날짜(lastmod·first_seen)가 그 뒤인 것을 “최근”으로 따로 보여 준다.
+- `baseline` = 첫 실행, 또는 레지스트리에서 그 소스의 방법·URL을 바꾼 뒤(옛 스냅샷과 비교하면 거짓 diff가 난다). 새 항목으로 세지 않는다. `--since YYYY-MM-DD`면 날짜(lastmod·first_seen)가 그 뒤인 것을 “최근”으로 따로 보여 준다.
 - 스냅샷은 `--update`일 때만 쓴다. 계획 모드·no-write에서는 쓰지 않는다.
 
 ## 새 항목을 판단 지점에 연결
 
 새 카탈로그 항목은 “단서”다(HackerNoon 저자: *leads, not endorsements*). 대상의 JP와 연결할 때는 `assets/jev/registry-triage.v1.json`(Jev, 선택) 또는 키워드로 먼저 걸러 “관련 없음”을 기본값으로 두고, 증거 수준을 사람이 매긴다: code-verified · code-present · docs-only · measured · negative-result.
 
-## 인용 리포 (124곳)
+## 인용 리포 (134곳)
 
-`jev.json`의 `repos`에 모두 있다 — HackerNoon 101의 항목 101개(GitHub 91곳 전부 존재 확인, 정밀 조사 42곳) + 이번 조사의 추가 리포. 분류별 수: routing 16 · guardrail 19 · ranking 12 · agent 19 · infra 23 · eval 8 · games 5 · finance 6 · user 3 · reference 3 · official 3 · catalog 6 · alternative 1. 인용 전에는 `scripts/link-check.mjs`로 다시 확인한다.
+`jev.json`의 `repos`에 모두 있다 — HackerNoon 101의 항목 101개(GitHub 91곳 전부 존재 확인 · 09-26 라이브 재대조, 정밀 조사 42곳) + 이번 조사의 추가 리포(카탈로그 · 공식 SDK · 트레이딩 · 독립 강건성 감사 등). 분류별 수: routing 16 · guardrail 19 · ranking 12 · agent 19 · infra 23 · eval 8 · games 5 · finance 6 · user 3 · reference 3 · official 3 · catalog 9 · robustness 7 · alternative 1. 인용 전에는 `scripts/link-check.mjs`로 다시 확인한다.
 
 경고 목록(`red_flags`): typesafe-register(계정 등록 봇으로 한도 우회를 광고 — 인용·사용 금지) · jev-codex-router(보관(archived)).
 

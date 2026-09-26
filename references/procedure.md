@@ -26,10 +26,11 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 산출: T-id 표 — 행동 · 화면·라우트 · 남는 데이터 · 버려지는 데이터
 - 생략: quick(“생략”으로 표시)
 
-## 3. 가정 검증 (ASSUMED가 있을 때)
+## 3. 가정·완성품 검증 (ASSUMED가 있을 때)
 
 - 명령: `$S/feature-probe.mjs assume $T --spec assume.json` (또는 `--terms a,b`)
 - 산출: present·partial·absent + 검색 범위(패턴·파일 수). absent는 “다음 단계 메모”로
+- 완성품 추적: 사용자가 말한 산출물(“최종 프롬프트까지 만든다”)은 재료가 있다는 것으로 끝내지 않고 생성 → 저장 → 후처리 → 전달의 고리마다 `file:line`을 댄다. 한 고리라도 없으면 partial
 - 종료: “없다”마다 검색 범위가 리포트에 있다
 
 ## 4. 게이트·드리프트 인벤토리
@@ -37,6 +38,8 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 명령: `$S/judgment-points.mjs $T > jp.json` · `$S/gate-inventory.mjs $T --llm-calls jp.json` · `$S/drift-probe.mjs scan $T`
 - 드리프트 대조: 메인이 `<cli> --help`를 떠서 `$W/help/<cli>.txt`에 두고 `drift-probe compare scan.json --help-dir $W/help`, 또는 OpenAPI·문서 키 대조
 - 산출: G-id, LLM 출력별 게이트 사슬, 게이트 없는 타입 필드, 드리프트 목록
+- 옵션 분기 감사: 대상의 모드·포맷·언어·계정 옵션을 뽑고, 옵션마다 영향을 받아야 할 경로(프롬프트 변수·폴백 문구·렌더·외부 전달)를 grep해 옵션 × 경로 표를 만든다. 갈리지 않는 칸이 버그 후보다(RepoReel: 새 포맷을 넣었는데 여섯 곳이 옛 포맷에 고정)
+- 후처리 범위: 윤문·요약·번역 단계가 코드 블록·복사용 문구·고정 문구까지 고치는지 확인한다
 
 ## 5. Jev 지식 갱신
 
@@ -66,7 +69,7 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 먼저 읽기: `references/plugin-skill-scouting.md`
 - 명령: SearchPlugins·SearchSkills(세션 도구) · `claude plugin list --json --available` · `$S/plugin-scout.mjs normalize …` · 받아 둔 후보에 `scan-local`
 - 누가: 메인(검색) + plugin-skill-scout(판정)
-- 산출: 필요 N, 검색 로그(세 층), 후보 판정. 아무것도 맞지 않으면 “없음” + 직접 만드는 최소 설계
+- 산출: 필요 N(각각 대상 프로젝트용 · 내 작업 환경용 표시), 검색 로그(세 층), 후보 판정. 아무것도 맞지 않으면 “없음” + 직접 만드는 최소 설계
 
 ## 9. 집중 역량 딥다이브 (FOCUS가 있을 때)
 
@@ -83,6 +86,8 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 명령: `$S/ledger.mjs jev-requests ledger.json --questions $SKILL_DIR/assets/jev/scorer-questions.v1.json > reqs.json` → `$S/jev-client.mjs dry-run reqs.json`(요청 수·토큰·비용을 사용자에게 보여 준다) → 동의 + 키가 있으면 `run --live --max-requests … --max-input-tokens … --max-usd …` → `ledger attach-jev`
 - 키가 없으면: 열에 “—(미실행: 키 없음)”, 0이 아니다
 - 규칙: 합계를 바꾸지 않는다. 차가 크면 재확인 대기열로 한 번만
+- 후보 사전 선별(후보가 8개를 넘을 때, 선택): 같은 질문셋에 README 발췌(영어 ≤700자)를 넣어 **순서만** 정한다. 탈락 후보도 표에 남기고, 리뷰를 대신하지 않는다
+- 실데이터 실측(동의 시): 렌즈의 질문셋 초안을 대상의 실제 데이터 20–100건으로 dry-run → 비용을 보여 주고 → 키·동의가 있으면 `run --live --cassette $W/cassette`로 기록(다시 볼 때는 `replay`). 결과는 “실측(n)”으로 표시
 
 ## 12. 업그레이드 5가지
 
@@ -101,4 +106,5 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 명령: `$S/score-table.mjs items.json --format html` · `$S/link-check.mjs <urls.json>` · `$S/history.mjs append --record rec.json`(no-write면 부록으로만)
 - 누가: 메인(+ deep은 report-drafter)
 - 산출: Artifact, (동의 시) md 사본, ADR 초안(`assets/adr.template.md`), 실행 기록. P0 중 병렬 가능한 것 표시
+- PREVIOUS가 있으면: 그 URL을 Artifact read로 받아 그 판 위에 쓰고 같은 URL로 발행한다. 문서 안 “버전 이력”에 달라진 것만 한 항목, `$S/history.mjs diff --target <이름>`으로 지난 실행 대비
 - 종료: 대상 `git status --porcelain`이 기준선과 같다

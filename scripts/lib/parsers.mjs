@@ -83,13 +83,18 @@ export function parseMarkdownLinks(md) {
 
 export const parseLlmsTxt = parseMarkdownLinks;
 
-/** kydlikebtc/awesome-jev catalog.json → 정규화된 항목. 배열·{entries}·{items} 모두 받는다. */
+/**
+ * 기계 판독 카탈로그 → 정규화된 항목. 배열·{entries}·{items}·{projects}를 받고,
+ * {categories: [{id, resources: [...]}]}처럼 분류 안에 항목이 든 모양(AbdelStark resources.json)은 펼친다.
+ */
 export function parseCatalogJson(json) {
   const data = typeof json === 'string' ? JSON.parse(json) : json;
-  const arr = Array.isArray(data) ? data : (data.entries || data.items || data.projects || Object.values(data).find(Array.isArray) || []);
+  let arr = Array.isArray(data) ? data : (data.entries || data.items || data.projects || data.resources || Object.values(data).find(Array.isArray) || []);
+  if (arr.length && arr.every((c) => c && Array.isArray(c.resources))) arr = arr.flatMap((c) => c.resources.map((r) => ({ category: c.id || c.name || null, ...r })));
   return arr.map((e) => ({
-    id: e.slug || e.url,
-    title: e.title || e.slug || e.url,
+    id: e.slug || e.url || e.permalink || e.name,
+    title: e.title || e.name || e.slug || e.url,
+    category: e.category || null,
     url: e.url ? cleanUrl(e.url) : null,
     kind: e.kind || null,
     official: Boolean(e.official),
@@ -99,8 +104,51 @@ export function parseCatalogJson(json) {
     languages: e.languages || [],
     first_seen: e.first_seen || null,
     link_status: e.link_status || null,
-    summary: e.summary || '',
+    summary: e.summary || e.description_markdown || e.description || '',
   }));
+}
+
+/**
+ * CSV·TSV → [{ id, title, date, fields }]. 따옴표 안의 구분자·줄바꿈·"" 이스케이프를 처리한다.
+ * id 열은 idColumn(없으면 url·link·repo·id·name 순으로 처음 있는 열).
+ */
+export function parseDelimited(text, { delimiter = ',', idColumn } = {}) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let quoted = false;
+  const src = String(text).replace(/^\uFEFF/, '');
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (quoted) {
+      if (ch === '"' && src[i + 1] === '"') { cell += '"'; i++; }
+      else if (ch === '"') quoted = false;
+      else cell += ch;
+    } else if (ch === '"' && cell === '') quoted = true;
+    else if (ch === delimiter) { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && src[i + 1] === '\n') i++;
+      row.push(cell); cell = '';
+      if (row.some((c) => c !== '')) rows.push(row);
+      row = [];
+    } else cell += ch;
+  }
+  row.push(cell);
+  if (row.some((c) => c !== '')) rows.push(row);
+  if (!rows.length) return [];
+  const header = rows[0].map((h) => h.trim());
+  const col = idColumn && header.includes(idColumn) ? idColumn : ['url', 'link', 'repo', 'id', 'name'].find((h) => header.includes(h)) || header[0];
+  const pick = (f, keys) => keys.map((k) => f[k]).find((v) => v);
+  return rows.slice(1).map((r) => {
+    const fields = Object.fromEntries(header.map((h, i) => [h, (r[i] ?? '').trim()]));
+    const raw = fields[col] || '';
+    return {
+      id: /^https?:\/\//.test(raw) ? cleanUrl(raw) : raw,
+      title: pick(fields, ['title', 'name', 'repo', 'description']) || raw,
+      date: pick(fields, ['date', 'posted', 'last_push', 'first_seen', 'snapshot']) || null,
+      fields,
+    };
+  }).filter((r) => r.id);
 }
 
 /** npm registry 문서 → { latest, time } */
@@ -143,6 +191,8 @@ export const PARSERS = {
   'llms-txt': parseLlmsTxt,
   'markdown-links': parseMarkdownLinks,
   'catalog-json': parseCatalogJson,
+  csv: (t) => parseDelimited(t, { delimiter: ',' }),
+  tsv: (t) => parseDelimited(t, { delimiter: '\t' }),
   npm: parseNpm,
   pypi: parsePypi,
 };

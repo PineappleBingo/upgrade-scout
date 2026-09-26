@@ -47,6 +47,7 @@ test('sitemap, llms.txt, catalog, npm, pypi parsers', () => {
 });
 
 test('link-check classification: ls-remote, http, login walls, licenses', () => {
+  assert.equal(classifyHttp(405, 'https://api.typesafe.ai/v1/systemone'), 'ok');
   const ok = classifyLsRemote(0, 'ref: refs/heads/main\tHEAD\n' + 'a'.repeat(40) + '\tHEAD\n', '');
   assert.deepEqual(ok, { status: 'ok', defaultBranch: 'main', head: 'a'.repeat(40) });
   assert.equal(classifyLsRemote(128, '', 'remote: Repository not found.\nfatal: repository not found').status, 'missing');
@@ -64,4 +65,28 @@ test('checkAll is offline-safe and never sends requests in tests', async () => {
   const res = await checkAll(['https://github.com/a/b?ref=x', 'https://github.com/a/b', 'https://docs.test/'], { concurrency: 2 });
   assert.equal(res.summary.total, 2, 'tracking params collapse duplicates');
   assert.ok(res.rows.every((r) => r.status === 'unknown' && r.note === '오프라인'));
+});
+
+test('delimited: CSV quotes, embedded delimiters/newlines, TSV, id column choice', async () => {
+  const { parseDelimited } = await import('../lib/parsers.mjs');
+  const csv = parseDelimited(fs.readFileSync(fixture('sources', 'repos.csv'), 'utf8'));
+  assert.equal(csv.length, 2);
+  assert.equal(csv[0].id, 'https://github.com/yusukebe/hono-jev-router');
+  assert.equal(csv[0].fields.description, 'Route HTTP requests by meaning, with "quotes"');
+  assert.equal(csv[1].fields.description, 'multi\nline');
+  assert.equal(csv[1].id, cleanUrl('https://github.com/foo/bar/'));
+  assert.equal(csv[0].date, '2026-09-19');
+  const tsv = parseDelimited(fs.readFileSync(fixture('sources', 'entries.tsv'), 'utf8'), { delimiter: '\t' });
+  assert.deepEqual(tsv.map((r) => r.fields.section), ['Start here', 'Start here']);
+  assert.equal(parseDelimited('name,x\nalpha,1\n', { idColumn: 'x' })[0].id, '1');
+  assert.deepEqual(parseDelimited(''), []);
+});
+
+test('catalog-json flattens categories[].resources[] (AbdelStark resources.json)', async () => {
+  const { parseCatalogJson } = await import('../lib/parsers.mjs');
+  const items = parseCatalogJson(fs.readFileSync(fixture('sources', 'resources.json'), 'utf8'));
+  assert.equal(items.length, 3);
+  assert.deepEqual(items.map((i) => i.category), ['client-libraries', 'client-libraries', 'evaluation']);
+  assert.equal(items[1].title, 'jevql');
+  assert.equal(items[2].summary, 'Pre-registered calibration study.');
 });

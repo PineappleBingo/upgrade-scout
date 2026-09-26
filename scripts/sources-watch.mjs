@@ -10,7 +10,7 @@ import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { parseArgs, isMain, emit, fail, EXIT, mdTable, helpRequested, nowIso } from './lib/cli.mjs';
 import { httpRequest, isOffline, setOffline } from './lib/net.mjs';
-import { PARSERS } from './lib/parsers.mjs';
+import { PARSERS, parseDelimited } from './lib/parsers.mjs';
 import { sha256, canonicalJson, stripHtml } from './lib/text.mjs';
 import { lsRemote } from './link-check.mjs';
 
@@ -41,6 +41,10 @@ export function toItems(method, body, source = {}) {
     return [{ key: 'page', sig: sha256(text).slice(0, 16), label: `${text.length}자` }];
   }
   if (method === 'git-head') return [{ key: 'HEAD', sig: String(body).slice(0, 40), label: String(body).slice(0, 7) }];
+  if (method === 'csv' || method === 'tsv') {
+    const rows = parseDelimited(String(body), { delimiter: method === 'tsv' ? '\t' : ',', idColumn: source.id_column });
+    return rows.map((r) => ({ key: r.id, sig: sha256(canonicalJson(r.fields)).slice(0, 16), label: r.title, date: r.date }));
+  }
   const parsed = PARSERS[method](String(body).replace(/\r\n/g, '\n'));
   if (method === 'npm' || method === 'pypi') return parsed.latest ? [{ key: 'latest', sig: parsed.latest, label: parsed.latest, date: parsed.time }] : [];
   if (method === 'sitemap') return parsed.map((p) => ({ key: p.loc, sig: p.lastmod || '', label: p.loc.replace(/^https?:\/\/[^/]+/, ''), date: p.lastmod }));
@@ -111,7 +115,10 @@ export async function watch(registryRef, { only, stateDir, update = false, noWri
     let items;
     try { items = toItems(s.method, got.body, s); } catch (e) { results.push({ ...row, status: 'parse-suspect', note: `파싱 실패: ${e.message}` }); continue; }
     const sp = stateDir ? snapPath(stateDir, regId, s.id) : null;
-    const prev = sp && fs.existsSync(sp) ? JSON.parse(fs.readFileSync(sp, 'utf8')) : null;
+    let prev = sp && fs.existsSync(sp) ? JSON.parse(fs.readFileSync(sp, 'utf8')) : null;
+    // 레지스트리에서 방법·URL을 바꾸면 옛 스냅샷과는 비교할 수 없다 — 새 기준선으로 본다.
+    let reset = null;
+    if (prev && ((prev.method && prev.method !== s.method) || (prev.url && prev.url !== s.url))) { reset = '방법·URL이 바뀌어 새 기준선'; prev = null; }
     const listy = !['page-hash', 'git-head', 'npm', 'pypi'].includes(s.method);
     if (listy && items.length === 0) {
       results.push({ ...row, status: 'parse-suspect', note: prev ? `이전 ${prev.items.length}건 → 0건` : '0건 — 페이지 구조가 바뀌었는지 확인' });
@@ -120,10 +127,10 @@ export async function watch(registryRef, { only, stateDir, update = false, noWri
     const d = diffItems(prev, items, { since });
     const alerts = checkAlerts(got.body, s.alerts);
     if ((s.method === 'npm' || s.method === 'pypi') && s.pinned && items[0] && items[0].sig !== s.pinned) alerts.push({ id: 'version', note: `고정값 ${s.pinned} → 현재 ${items[0].sig}` });
-    results.push({ ...row, status: d.baseline ? 'baseline' : 'ok', ...d, alerts });
+    results.push({ ...row, status: d.baseline ? 'baseline' : 'ok', ...d, alerts, ...(reset ? { note: reset } : {}) });
     if (update && !noWrite && sp) {
       fs.mkdirSync(path.dirname(sp), { recursive: true });
-      fs.writeFileSync(sp, JSON.stringify({ id: s.id, url: s.url, at: now, items }, null, 1));
+      fs.writeFileSync(sp, JSON.stringify({ id: s.id, method: s.method, url: s.url, at: now, items }, null, 1));
     }
   }
   const tally = (st) => results.filter((r) => r.status === st).length;

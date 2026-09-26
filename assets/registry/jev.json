@@ -223,12 +223,53 @@
    "why_ko": "사례 101 — 갱신되지 않음. 링크 가용성은 link-check로 전수 확인"
   },
   {
+   "id": "robustness-yifan",
+   "tier": "B",
+   "method": "tsv",
+   "id_column": "url",
+   "url": "https://raw.githubusercontent.com/Yifan-Lan/awesome-jev-robustness/main/data/entries.tsv",
+   "cadence": "snapshot 갱신(09-24 기준 119건)",
+   "why_ko": "독립 강건성 감사 — 보정·선택지 순서·주입·입력 언어. 렌즈 약점 표와 언어 계수의 근거"
+  },
+  {
+   "id": "abdelstark-resources",
+   "tier": "B",
+   "method": "catalog-json",
+   "url": "https://raw.githubusercontent.com/AbdelStark/awesome-typesafe-jev/main/resources.json",
+   "cadence": "auto (last_updated 필드 · 커밋 09-26)",
+   "why_ko": "분류별 기계 판독 목록(09-23 기준 228) — 클라이언트·평가·앱"
+  },
+  {
+   "id": "anilmatcha-readme",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/Anil-matcha/awesome-jev-by-typesafe/main/README.md",
+   "cadence": "manual (커밋 09-23)",
+   "why_ko": "교차 확인용 목록"
+  },
+  {
    "id": "use-cases-walid",
    "tier": "C",
-   "method": "markdown-links",
-   "url": "https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/README.md",
-   "cadence": "static snapshot",
-   "why_ko": "X 데모 74개 스냅샷"
+   "method": "csv",
+   "url": "https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/repos.csv",
+   "cadence": "행마다 snapshot 열 · 커밋 09-21",
+   "why_ko": "리포 37 — CSV라 지난 실행 대비 diff가 정확"
+  },
+  {
+   "id": "use-cases-walid-more",
+   "tier": "C",
+   "method": "csv",
+   "url": "https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/more-repos.csv",
+   "cadence": "행마다 snapshot 열 · 커밋 09-21",
+   "why_ko": "추가 리포 111(한 줄 설명 포함)"
+  },
+  {
+   "id": "use-cases-walid-demos",
+   "tier": "C",
+   "method": "csv",
+   "url": "https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/demos.csv",
+   "cadence": "행마다 snapshot 열 · 커밋 09-21",
+   "why_ko": "X 데모 74 — 게시물은 로그인 벽이라 존재는 미확인"
   }
  ],
  "repos": [
@@ -2702,7 +2743,137 @@
    ],
    "status": "ok",
    "checked": "2026-09-26",
-   "note_ko": "X 데모 스냅샷"
+   "note_ko": "CSV 3종(repos·more-repos·demos) · 커밋 09-21"
+  },
+  {
+   "id": "robustness-list",
+   "name": "awesome-jev-robustness",
+   "url": "https://github.com/Yifan-Lan/awesome-jev-robustness",
+   "repo": "Yifan-Lan/awesome-jev-robustness",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "독립 강건성 감사 목록 119건(data/entries.tsv)"
+  },
+  {
+   "id": "abdelstark-awesome",
+   "name": "awesome-typesafe-jev",
+   "url": "https://github.com/AbdelStark/awesome-typesafe-jev",
+   "repo": "AbdelStark/awesome-typesafe-jev",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "resources.json 228 · llms.txt"
+  },
+  {
+   "id": "anilmatcha-awesome",
+   "name": "awesome-jev-by-typesafe",
+   "url": "https://github.com/Anil-matcha/awesome-jev-by-typesafe",
+   "repo": "Anil-matcha/awesome-jev-by-typesafe",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "교차 확인 목록"
+  },
+  {
+   "id": "calibration-audit",
+   "name": "jev-calibration-audit",
+   "url": "https://github.com/jujumilk3/jev-calibration-audit",
+   "repo": "jujumilk3/jev-calibration-audit",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "한·영 같은 문항: 정확도 −6.5pp · ECE 0.076 vs 0.075 · 기권 선택지를 빼면 붕괴(자체)"
+  },
+  {
+   "id": "jev-evaluation",
+   "name": "jev-evaluation",
+   "url": "https://github.com/willkelly/jev-evaluation",
+   "repo": "willkelly/jev-evaluation",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "사전 등록 123,805요청 — 과제에 따라 보정 유지·붕괴(자체)"
+  },
+  {
+   "id": "jagged",
+   "name": "jagged",
+   "url": "https://github.com/zkousama/jagged",
+   "repo": "zkousama/jagged",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "한 줄 주입으로 정확도 96.5% → 26.5%(자체)"
+  },
+  {
+   "id": "orderby-bench",
+   "name": "jev-orderby-bench",
+   "url": "https://github.com/yodablocks/jev-orderby-bench",
+   "repo": "yodablocks/jev-orderby-bench",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "확률로 정렬 — 요청당 40행이면 관문 실패(자체)"
+  },
+  {
+   "id": "dice",
+   "name": "jev-does-not-play-dice",
+   "url": "https://github.com/KantaHayashiAI/jev-does-not-play-dice",
+   "repo": "KantaHayashiAI/jev-does-not-play-dice",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "choice 과신: 정확도 19%에 확률 82.9%(자체)"
+  },
+  {
+   "id": "behavior-study",
+   "name": "jev-behavior-study",
+   "url": "https://github.com/RINNECODER/jev-behavior-study",
+   "repo": "RINNECODER/jev-behavior-study",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "산술: 정답이 첫 선택지면 88%, 마지막이면 57%(자체)"
+  },
+  {
+   "id": "ece-floor",
+   "name": "jev-exploration",
+   "url": "https://github.com/SamuelSacco/jev-exploration",
+   "repo": "SamuelSacco/jev-exploration",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "공개 ECE를 표본 잡음 바닥과 비교(자체)"
   },
   {
    "id": "quantdinger",

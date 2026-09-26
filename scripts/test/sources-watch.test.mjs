@@ -52,3 +52,19 @@ test('helpers: date fallback on baseline, alert polarity, registry validation', 
   assert.ok(reg.sources.some((s) => s.id === 'hackernoon-101' && s.method === 'html-numbered-list'));
   assert.ok(reg.sources.some((s) => s.id === 'catalog-kydlikebtc' && s.method === 'catalog-json'));
 });
+
+test('changing a source method or URL starts a new baseline instead of a false diff', async () => {
+  const state = fs.mkdtempSync(path.join(os.tmpdir(), 'scout-state-'));
+  await watch(REG, { stateDir: state, fixtures: fixture('sources', 'run1'), update: true, now: '2026-09-26T00:00:00Z' });
+  const reg = JSON.parse(fs.readFileSync(REG, 'utf8'));
+  const moved = reg.sources.find((s) => s.id === 'docs-sitemap');
+  moved.url = `${moved.url}?moved=1`;
+  const tmpReg = path.join(state, 'registry.moved.json');
+  fs.writeFileSync(tmpReg, JSON.stringify(reg));
+  const r = await watch(tmpReg, { stateDir: state, fixtures: fixture('sources', 'run2'), now: '2026-09-27T00:00:00Z' });
+  const row = r.sources.find((s) => s.id === 'docs-sitemap');
+  assert.equal(row.status, 'baseline');
+  assert.match(row.note, /새 기준선/);
+  const same = r.sources.find((s) => s.id === 'catalog');
+  assert.equal(same.status, 'ok', 'untouched sources still diff');
+});

@@ -40,3 +40,13 @@ test('scoreItems ranks deterministically; jev advisory never zero-filled', () =>
   assert.match(html, /role="img"/);
   assert.match(html, /8\.4/);
 });
+
+test('language coefficient multiplies before caps and is validated', () => {
+  assert.equal(synergy({ id: 'l1', fit: 10, cost: 10, risk: 10, lang: 0.9 }).total, 9);
+  const capped = synergy({ id: 'l2', fit: 10, cost: 10, risk: 10, lang: 0.9, grade: 'C' });
+  assert.equal(capped.total, 6);
+  assert.ok(capped.caps.some((c) => c.includes('언어 계수')));
+  assert.equal(synergy({ id: 'l3', fit: 8, cost: 6, risk: 6, lang: 1 }).caps.length, 0);
+  assert.throws(() => synergy({ id: 'l4', fit: 1, cost: 1, risk: 1, lang: 1.2 }), /언어 계수/);
+  assert.throws(() => synergy({ id: 'l5', fit: 1, cost: 1, risk: 1, lang: 0 }), /언어 계수/);
+});
