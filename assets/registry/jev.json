@@ -309,7 +309,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 7
   },
   {
    "id": "hn-003",
@@ -366,7 +375,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 6,
+   "risk": 7
   },
   {
    "id": "hn-006",
@@ -463,7 +481,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "③"
+   ],
+   "fit": 6,
+   "cost": 7,
+   "risk": 7
   },
   {
    "id": "hn-010",
@@ -482,7 +509,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "②"
+   ],
+   "fit": 4,
+   "cost": 8,
+   "risk": 6
   },
   {
    "id": "hn-011",
@@ -564,7 +600,16 @@
    "head": "8d5e60e",
    "license": "Apache-2.0",
    "stack": [],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 3,
+   "cost": 6,
+   "risk": 6
   },
   {
    "id": "hn-015",
@@ -689,7 +734,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "②"
+   ],
+   "fit": 6,
+   "cost": 7,
+   "risk": 6
   },
   {
    "id": "hn-020",
@@ -806,7 +860,15 @@
    "stack": [
     "rust"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X"
+   ],
+   "fit": 3,
+   "cost": 8,
+   "risk": 7
   },
   {
    "id": "hn-025",
@@ -991,7 +1053,17 @@
    "head": "f6056e7",
    "license": "MIT",
    "stack": [],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "③",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 8,
+   "risk": 7
   },
   {
    "id": "hn-032",
@@ -1434,7 +1506,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "①"
+   ],
+   "fit": 6,
+   "cost": 6,
+   "risk": 7
   },
   {
    "id": "hn-049",
@@ -1503,7 +1584,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 7,
+   "risk": 8
   },
   {
    "id": "hn-053",
@@ -1522,7 +1612,17 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "②",
+    "스킬"
+   ],
+   "fit": 8,
+   "cost": 6,
+   "risk": 7
   },
   {
    "id": "hn-054",
@@ -1631,7 +1731,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 6,
+   "risk": 7
   },
   {
    "id": "hn-059",
@@ -1920,7 +2029,16 @@
    "stack": [
     "node"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "X"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 6
   },
   {
    "id": "hn-072",
@@ -1939,7 +2057,17 @@
    "stack": [
     "go"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "⑤",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 6,
+   "risk": 6
   },
   {
    "id": "hn-073",
@@ -1958,7 +2086,16 @@
    "stack": [
     "python"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 6
   },
   {
    "id": "hn-074",
@@ -2029,7 +2166,17 @@
    "stack": [
     "scala"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "⑤",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 5,
+   "risk": 6
   },
   {
    "id": "hn-078",
@@ -2048,7 +2195,16 @@
    "stack": [
     "swift"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 7
   },
   {
    "id": "hn-079",
@@ -2067,7 +2223,16 @@
    "stack": [
     "php"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 4,
+   "cost": 8,
+   "risk": 7
   },
   {
    "id": "hn-080",
@@ -2086,7 +2251,16 @@
    "stack": [
     "elixir"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 6,
+   "risk": 7
   },
   {
    "id": "hn-081",
@@ -2387,7 +2561,16 @@
    "stack": [
     "python"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "X"
+   ],
+   "fit": 4,
+   "cost": 7,
+   "risk": 6
   },
   {
    "id": "hn-095",
@@ -2445,7 +2628,16 @@
     "node",
     "python"
    ],
-   "jev_calls": true
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 8,
+   "risk": 7
   },
   {
    "id": "hn-098",

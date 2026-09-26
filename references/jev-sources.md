@@ -73,7 +73,7 @@ sources-watch가 매 실행 이 값들과 대조해 경보를 낸다(`docs-model
 
 ## 인용 리포 (134곳)
 
-`jev.json`의 `repos`에 모두 있다 — HackerNoon 101의 항목 101개(GitHub 91곳 전부 존재 확인 · 09-26 라이브 재대조, 정밀 조사 42곳) + 이번 조사의 추가 리포(카탈로그 · 공식 SDK · 트레이딩 · 독립 강건성 감사 등). 분류별 수: routing 16 · guardrail 19 · ranking 12 · agent 19 · infra 23 · eval 8 · games 5 · finance 6 · user 3 · reference 3 · official 3 · catalog 9 · robustness 7 · alternative 1. 인용 전에는 `scripts/link-check.mjs`로 다시 확인한다.
+`jev.json`의 `repos`에 모두 있다 — HackerNoon 101의 항목 101개(GitHub 91곳 전부 존재 확인 · 09-26 라이브 재대조, 정밀 조사 63곳 — 09-26에 README에서 Jev 호출 흔적이 보인 21곳을 더함, 각 항목의 `reviewed`·`grade`·`flows`·적·비·리) + 이번 조사의 추가 리포(카탈로그 · 공식 SDK · 트레이딩 · 독립 강건성 감사 등). 분류별 수: routing 16 · guardrail 19 · ranking 12 · agent 19 · infra 23 · eval 8 · games 5 · finance 6 · user 3 · reference 3 · official 3 · catalog 9 · robustness 7 · alternative 1. 인용 전에는 `scripts/link-check.mjs`로 다시 확인한다.
 
 경고 목록(`red_flags`): typesafe-register(계정 등록 봇으로 한도 우회를 광고 — 인용·사용 금지) · jev-codex-router(보관(archived)).
 
