@@ -1,0 +1,1 @@
+{"name": "demo-market", "owner": {"name": "Demo Inc"}, "plugins": [{"name": "demo", "description": "Design guidance skill", "source": "./"}]}

@@ -1,0 +1,144 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/repo-reviewer@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "review"
+ ],
+ "properties": {
+  "review": {
+   "type": "object",
+   "required": [
+    "repo",
+    "items"
+   ],
+   "properties": {
+    "repo": {
+     "type": "object",
+     "required": [
+      "name",
+      "license",
+      "review_depth"
+     ],
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "url": {
+       "type": "string"
+      },
+      "commit": {
+       "type": "string"
+      },
+      "license": {
+       "type": "string"
+      },
+      "license_ref": {
+       "type": "string"
+      },
+      "review_depth": {
+       "enum": [
+        "clone",
+        "web-only"
+       ]
+      }
+     }
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "capability_ko",
+       "status",
+       "fit",
+       "cost",
+       "risk",
+       "difficulty",
+       "port_mode"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^RR-[\\w.-]+-\\d{2,}$"
+       },
+       "capability_ko": {
+        "type": "string"
+       },
+       "summary_en": {
+        "type": "string"
+       },
+       "status": {
+        "enum": [
+         "implemented",
+         "partial",
+         "claimed-only",
+         "absent"
+        ]
+       },
+       "impl_refs": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "claim_refs": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "fit": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 10
+       },
+       "cost": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 10
+       },
+       "risk": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 10
+       },
+       "difficulty": {
+        "enum": [
+         "S",
+         "M",
+         "L"
+        ]
+       },
+       "runtime_cost_ko": {
+        "type": "string"
+       },
+       "minus_ko": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "port_mode": {
+        "enum": [
+         "copy",
+         "adapt",
+         "idea-only",
+         "none"
+        ]
+       },
+       "license_ok": {
+        "type": "boolean"
+       },
+       "aspirational": {
+        "type": "array"
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,154 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/plugin-skill-scout@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "scouting"
+ ],
+ "properties": {
+  "scouting": {
+   "type": "object",
+   "required": [
+    "needs",
+    "searched",
+    "candidates"
+   ],
+   "properties": {
+    "needs": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "text_ko"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^N\\d{2,}$"
+       },
+       "keywords": {
+        "type": "array"
+       }
+      }
+     }
+    },
+    "searched": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "source",
+       "query",
+       "results"
+      ],
+      "properties": {
+       "source": {
+        "type": "string"
+       },
+       "query": {
+        "type": "array"
+       },
+       "results": {
+        "type": "integer",
+        "minimum": 0
+       }
+      }
+     }
+    },
+    "candidates": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "kind",
+       "name",
+       "source",
+       "surface",
+       "scores",
+       "verdict"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^PS\\d{2,}$"
+       },
+       "kind": {
+        "enum": [
+         "plugin",
+         "skill",
+         "mcp",
+         "agent"
+        ]
+       },
+       "name": {
+        "type": "string"
+       },
+       "source": {
+        "type": "string"
+       },
+       "install_cmd": {
+        "type": "string"
+       },
+       "license": {
+        "type": "string"
+       },
+       "surface": {
+        "type": "object",
+        "properties": {
+         "hooks": {
+          "type": "integer"
+         },
+         "mcp_servers": {
+          "type": "integer"
+         },
+         "commands": {
+          "type": "integer"
+         },
+         "agents": {
+          "type": "integer"
+         },
+         "skills": {
+          "type": "integer"
+         },
+         "bin": {
+          "type": "integer"
+         }
+        }
+       },
+       "scores": {
+        "type": "object",
+        "required": [
+         "need_fit",
+         "evidence",
+         "security",
+         "maintenance",
+         "token_cost",
+         "overlap"
+        ],
+        "additionalProperties": {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 10
+        }
+       },
+       "verdict": {
+        "enum": [
+         "adopt",
+         "trial",
+         "assess",
+         "hold"
+        ]
+       },
+       "verdict_ko": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

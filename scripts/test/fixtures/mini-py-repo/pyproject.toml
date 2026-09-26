@@ -1,0 +1,7 @@
+[project]
+name = "mini-py"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2",
+  "openai>=1.0",
+]

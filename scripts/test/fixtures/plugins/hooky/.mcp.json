@@ -1,0 +1,1 @@
+{"mcpServers": {"local": {"command": "npx", "args": ["-y", "some-mcp"]}, "cloud": {"url": "https://mcp.example.test/sse"}, "pinned": {"command": "npx", "args": ["-y", "pinned-mcp@0.9.0"]}}}

@@ -1,0 +1,8 @@
+{"id": "fixture", "sources": [
+ {"id": "docs-sitemap", "method": "sitemap", "url": "https://docs.example.test/sitemap.xml"},
+ {"id": "catalog", "method": "catalog-json", "url": "https://example.test/catalog.json"},
+ {"id": "hn", "method": "html-numbered-list", "url": "https://example.test/hn"},
+ {"id": "npm", "method": "npm", "url": "https://example.test/npm", "pinned": "0.6.0"},
+ {"id": "models", "method": "page-hash", "url": "https://example.test/models.md", "alerts": [{"id": "new-model", "re": "jev-1\\.1[4-9]"}, {"id": "price", "re": "0\\.042", "expect": true}]},
+ {"id": "blocked", "method": "page-hash", "url": "https://example.test/blocked"}
+]}

@@ -1,0 +1,556 @@
+{
+ "schema": "upgrade-scout/registry@1",
+ "id": "plugins",
+ "updated": "2026-09-26",
+ "pinned": {
+  "skills_cli": "1.7.0 (Node ≥22.20)",
+  "claude_cli": "2.1.283",
+  "search_subcommand": "없음 — claude plugin list --json --available",
+  "cloud_sessions": "사용자 플러그인을 로드하지 않음",
+  "checked": "2026-09-26"
+ },
+ "sources": [
+  {
+   "id": "mkt-official",
+   "tier": "A",
+   "method": "marketplace-json",
+   "url": "https://raw.githubusercontent.com/anthropics/claude-plugins-official/main/.claude-plugin/marketplace.json",
+   "cadence": "every-run",
+   "why_ko": "공식 마켓(09-26 기준 314) — 새·바뀐 플러그인"
+  },
+  {
+   "id": "mkt-community",
+   "tier": "A",
+   "method": "marketplace-json",
+   "url": "https://raw.githubusercontent.com/anthropics/claude-plugins-community/main/.claude-plugin/marketplace.json",
+   "cadence": "every-run",
+   "why_ko": "커뮤니티 미러(2,282) — 대부분 커밋 SHA 고정"
+  },
+  {
+   "id": "mkt-anthropic-skills",
+   "tier": "A",
+   "method": "marketplace-json",
+   "url": "https://raw.githubusercontent.com/anthropics/skills/main/.claude-plugin/marketplace.json",
+   "cadence": "every-run",
+   "why_ko": "Anthropic 스킬 마켓"
+  },
+  {
+   "id": "docs-skills",
+   "tier": "A",
+   "method": "page-hash",
+   "url": "https://code.claude.com/docs/en/skills",
+   "cadence": "every-run",
+   "why_ko": "스킬 로딩 규칙",
+   "alerts": [
+    {
+     "id": "load-once",
+     "re": "does not re-read",
+     "expect": true,
+     "note": "“스킬은 다시 읽지 않는다” 문구가 바뀜 — SKILL.md §0 재검토"
+    }
+   ]
+  },
+  {
+   "id": "docs-plugin-cli",
+   "tier": "A",
+   "method": "page-hash",
+   "url": "https://code.claude.com/docs/en/plugins/cli-reference",
+   "cadence": "every-run",
+   "why_ko": "plugin CLI 명령",
+   "alerts": [
+    {
+     "id": "search-subcommand",
+     "re": "claude plugin search",
+     "note": "plugin search 서브커맨드가 생겼는지 확인 — 검색 레시피 갱신"
+    }
+   ]
+  },
+  {
+   "id": "agentskills-spec",
+   "tier": "A",
+   "method": "page-hash",
+   "url": "https://agentskills.io/specification",
+   "cadence": "every-run",
+   "why_ko": "Agent Skills 표준(name·description 규칙)",
+   "alerts": [
+    {
+     "id": "desc-limit",
+     "re": "1,?024",
+     "expect": true,
+     "note": "description 1,024자 규칙이 바뀜 — selfcheck 기준 갱신"
+    }
+   ]
+  },
+  {
+   "id": "npm-skills-cli",
+   "tier": "A",
+   "method": "npm",
+   "url": "https://registry.npmjs.org/skills",
+   "pinned": "1.7.0",
+   "cadence": "every-run",
+   "why_ko": "npx skills 설치기 버전(설치 명령·Node 요구)"
+  },
+  {
+   "id": "list-quemsah",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/quemsah/awesome-claude-plugins/main/README.md",
+   "cadence": "auto-crawl",
+   "why_ko": "자동 크롤 색인"
+  },
+  {
+   "id": "list-composio-skills",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/ComposioHQ/awesome-claude-skills/master/README.md",
+   "cadence": "manual",
+   "why_ko": "스킬 목록"
+  },
+  {
+   "id": "list-hesreallyhim",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/hesreallyhim/awesome-claude-code/main/README.md",
+   "cadence": "manual",
+   "why_ko": "Claude Code 자원 목록"
+  }
+ ],
+ "verdicts": [
+  {
+   "name": "typesafe@typesafe-ai",
+   "source": "공식 벤더 마켓 typesafe-ai · HN #65",
+   "url": "https://github.com/typesafe-ai/skills",
+   "tier": "TypeSafe(벤더) · Anthropic 디렉터리 밖",
+   "components": "스킬 1(SKILL.md 149줄) · 훅·MCP·bin 없음 · plugin.json 0.5.7",
+   "scores": {
+    "fit": 9,
+    "evidence": 9,
+    "security": 9,
+    "maint": 8,
+    "tokens": 7,
+    "dup": 10
+   },
+   "verdict": "adopt",
+   "why_ko": "Jev 호출 코드를 쓸 때 최신 문서를 읽게 만드는 공식 스킬. 오래된 스킬은 필드를 지어낸다고 문서가 경고 — 업데이트 명령을 키트 README에 함께 적음",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "skill-creator",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": "https://github.com/anthropics/claude-plugins-official",
+   "tier": "anthropic · contained",
+   "components": "스킬 1",
+   "scores": {
+    "fit": 8,
+    "evidence": 10,
+    "security": 10,
+    "maint": 9,
+    "tokens": 8,
+    "dup": 9
+   },
+   "verdict": "adopt",
+   "why_ko": "upgrade-scout의 트리거 설명 평가·eval 반복에 그대로 사용. 이미 쓰는 사용자라면 설치할 것 없음",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Skill Discovery",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": null,
+   "tier": "community · contained",
+   "components": "스킬 1 · 명령 1",
+   "scores": {
+    "fit": 6,
+    "evidence": 5,
+    "security": 8,
+    "maint": 5,
+    "tokens": 8,
+    "dup": 7
+   },
+   "verdict": "trial",
+   "why_ko": "설치된 스킬·지침 파일 인벤토리 — 플러그인 스카우트가 “이미 있는 것”을 빼는 데 도움. v0.1.0이라 시험만",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Exa Deep Research",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": "https://github.com/exa-labs/exa-mcp-server",
+   "tier": "partner · remote",
+   "components": "스킬 2 · MCP 1(원격)",
+   "scores": {
+    "fit": 6,
+    "evidence": 8,
+    "security": 6,
+    "maint": 8,
+    "tokens": 6,
+    "dup": 5
+   },
+   "verdict": "trial",
+   "why_ko": "웹 리서처의 검색 폭을 넓힘. 키가 필요하고 질의가 외부로 나감 — 내장 WebSearch와 겹침",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "scriptify",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": null,
+   "tier": "community · contained",
+   "components": "스킬 3",
+   "scores": {
+    "fit": 6,
+    "evidence": 5,
+    "security": 8,
+    "maint": 5,
+    "tokens": 7,
+    "dup": 6
+   },
+   "verdict": "assess",
+   "why_ko": "지침을 결정적 스크립트로 바꾸는 방향이 “합계는 스크립트가” 원칙과 같음 — 방식만 참고",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Deep Review",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": null,
+   "tier": "community · contained",
+   "components": "스킬 1",
+   "scores": {
+    "fit": 5,
+    "evidence": 5,
+    "security": 8,
+    "maint": 5,
+    "tokens": 7,
+    "dup": 5
+   },
+   "verdict": "assess",
+   "why_ko": "레드팀 검증 역할(verifier)과 겹침 — 체크리스트만 비교",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Autoresearch",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": null,
+   "tier": "community · contained",
+   "components": "스킬 2",
+   "scores": {
+    "fit": 4,
+    "evidence": 5,
+    "security": 8,
+    "maint": 5,
+    "tokens": 7,
+    "dup": 6
+   },
+   "verdict": "assess",
+   "why_ko": "지표 하나를 돌리는 실험 루프 — 리포트형 조사와 목적이 다름",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "equity-research",
+   "source": "Anthropic FSI · SearchPlugins",
+   "url": "https://github.com/anthropics/financial-services",
+   "tier": "anthropic · contained",
+   "components": "스킬 9 · 명령 9",
+   "scores": {
+    "fit": 2,
+    "evidence": 10,
+    "security": 10,
+    "maint": 9,
+    "tokens": 5,
+    "dup": 8
+   },
+   "verdict": "hold",
+   "why_ko": "주식 리서치(실적·커버리지) — 전략 영상 추출과 거리가 멂",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "market-researcher",
+   "source": "Anthropic FSI · SearchPlugins",
+   "url": "https://github.com/anthropics/financial-services",
+   "tier": "anthropic · contained",
+   "components": "스킬 5 · 에이전트 1",
+   "scores": {
+    "fit": 2,
+    "evidence": 10,
+    "security": 10,
+    "maint": 9,
+    "tokens": 6,
+    "dup": 8
+   },
+   "verdict": "hold",
+   "why_ko": "섹터·경쟁사 개요 — TVSE 범위 밖",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "scout",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": null,
+   "tier": "community · remote",
+   "components": "스킬 3 · MCP 1 · 훅 2(SessionStart · UserPromptSubmit)",
+   "scores": {
+    "fit": 5,
+    "evidence": 4,
+    "security": 3,
+    "maint": 5,
+    "tokens": 5,
+    "dup": 4
+   },
+   "verdict": "hold",
+   "why_ko": "매 프롬프트마다 훅이 사용자 권한으로 실행 — 이득 대비 부담",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Auto Research",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": null,
+   "tier": "community · privileged",
+   "components": "비공개(구성 요소 미표시)",
+   "scores": {
+    "fit": 3,
+    "evidence": 4,
+    "security": 2,
+    "maint": 4,
+    "tokens": 6,
+    "dup": 5
+   },
+   "verdict": "hold",
+   "why_ko": "privileged 도달 범위 + 구성 요소를 볼 수 없음",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "skill-doctor",
+   "source": "Anthropic Directory · SearchPlugins",
+   "url": null,
+   "tier": "community · privileged",
+   "components": "스킬 3",
+   "scores": {
+    "fit": 5,
+    "evidence": 4,
+    "security": 3,
+    "maint": 5,
+    "tokens": 6,
+    "dup": 5
+   },
+   "verdict": "hold",
+   "why_ko": "스킬 파일을 고치는 도구 — privileged, 공식 claude plugin eval·skill-creator로 충분",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "paper-search · Enterprise Search · Bio Research · Pi Security",
+   "source": "SearchPlugins 기타 결과",
+   "url": null,
+   "tier": "community · anthropic 혼합",
+   "components": "—",
+   "scores": {
+    "fit": 1,
+    "evidence": 6,
+    "security": 6,
+    "maint": 6,
+    "tokens": 6,
+    "dup": 8
+   },
+   "verdict": "hold",
+   "why_ko": "키워드 겹침일 뿐 목적 무관",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Augustus",
+   "source": "HN #55 · 마켓 24601/Augustus",
+   "url": "https://github.com/24601/Augustus",
+   "tier": "community · 스킬만",
+   "components": "스킬 1 + 참고 16 + 파이썬 스크립트 6 · 훅·MCP 없음 · 태그 v0.7.2",
+   "scores": {
+    "fit": 8,
+    "evidence": 9,
+    "security": 9,
+    "maint": 8,
+    "tokens": 5,
+    "dup": 5
+   },
+   "verdict": "trial",
+   "why_ko": "Jev 배치 설계·평가 스킬(테스트 187). upgrade-scout의 Jev 렌즈와 겹치므로 태그 고정(@v0.7.2)으로 시험하고, 참고 문서를 한꺼번에 읽히지 않게 주의",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "jev-mcp (jkudish)",
+   "source": "HN #33 · npm @jkudish/jev-mcp",
+   "url": "https://github.com/jkudish/jev-mcp",
+   "tier": "community · MCP(stdio)",
+   "components": "MCP 도구 11 + 사용 스킬 · 훅 없음",
+   "scores": {
+    "fit": 8,
+    "evidence": 8,
+    "security": 6,
+    "maint": 7,
+    "tokens": 5,
+    "dup": 6
+   },
+   "verdict": "trial",
+   "why_ko": "가장 엄격한 응답 검증 · jev_screen으로 가져온 웹 글 선별. 문서의 npx -y는 0.9.0으로 고정해서만",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "is-malicious",
+   "source": "HN #17 · skills.sh 스킬 + CLI",
+   "url": "https://github.com/luantak/is-malicious",
+   "tier": "community · 스킬·CLI",
+   "components": "스킬 1(run.sh) · bin 1 · 훅 없음",
+   "scores": {
+    "fit": 6,
+    "evidence": 7,
+    "security": 5,
+    "maint": 6,
+    "tokens": 7,
+    "dup": 7
+   },
+   "verdict": "trial",
+   "why_ko": "후보 플러그인 코드 선별에 유용하지만 스킬이 “클론할 때마다 묻지 않고 스캔”하라고 지시 — CLI를 버전 고정해 손으로만 실행, 스킬로는 설치하지 않음",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Sniff Test",
+   "source": "HN #29 · Claude Code 플러그인",
+   "url": "https://github.com/DanRWilloughby/snifftest",
+   "tier": "community · 플러그인",
+   "components": "스킬·명령 · 전송 전 동의 프롬프트 · pre-commit 훅은 선택",
+   "scores": {
+    "fit": 4,
+    "evidence": 9,
+    "security": 8,
+    "maint": 7,
+    "tokens": 7,
+    "dup": 6
+   },
+   "verdict": "assess",
+   "why_ko": "영어 산문 린터라 직접 쓸 곳은 적음 — 무판정 대역·심은 결함 평가·주입 쌍둥이 테스트 설계만 가져옴",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "jev-mcp (blakestone-x)",
+   "source": "HN #34 · uvx(태그 고정)",
+   "url": "https://github.com/blakestone-x/jev-mcp",
+   "tier": "community · MCP(파이썬)",
+   "components": "MCP 도구 7 · 훅 없음",
+   "scores": {
+    "fit": 6,
+    "evidence": 7,
+    "security": 6,
+    "maint": 6,
+    "tokens": 6,
+    "dup": 4
+   },
+   "verdict": "assess",
+   "why_ko": "순서 앙상블·match 창 설계가 좋음. register.sh가 키를 평문으로 설정 파일에 씀 · 의존성 이름 httpx2 확인 필요 · jkudish판과 겹침",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "decide-mcp",
+   "source": "HN #84 · npx @0.1.0",
+   "url": "https://github.com/dakdevs/decide-mcp",
+   "tier": "community · MCP",
+   "components": "MCP 도구 1(decide) · 훅 없음",
+   "scores": {
+    "fit": 4,
+    "evidence": 6,
+    "security": 7,
+    "maint": 5,
+    "tokens": 8,
+    "dup": 5
+   },
+   "verdict": "assess",
+   "why_ko": "숫자마다 출처(분포·LLM 추정·없음)를 붙이는 방식이 좋음 — 도구 자체는 필요 적음",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "jev-guard",
+   "source": "HN #21 · 마켓 leepokai/jev-guard",
+   "url": "https://github.com/leepokai/jev-guard",
+   "tier": "community · 훅 5종",
+   "components": "훅 PreToolUse·PostToolUse(.*)·UserPromptSubmit·SessionStart·InstructionsLoaded · bin 1",
+   "scores": {
+    "fit": 7,
+    "evidence": 7,
+    "security": 3,
+    "maint": 6,
+    "tokens": 6,
+    "dup": 6
+   },
+   "verdict": "hold",
+   "why_ko": "모든 도구 호출·결과를 외부로 보내는 훅 + 설치기가 전역 설정을 고침 + 기본 fail-open. 질문셋(SCAN·INSTRUCTION)만 가져오고, 쓰려면 샌드박스에서 fail-closed로",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "limpet",
+   "source": "HN #32 · 마켓 noplan-inc/limpet",
+   "url": "https://github.com/noplan-inc/limpet",
+   "tier": "community · Stop 훅",
+   "components": "Stop 훅(python3) · userConfig 키(sensitive)",
+   "scores": {
+    "fit": 5,
+    "evidence": 7,
+    "security": 4,
+    "maint": 5,
+    "tokens": 7,
+    "dup": 6
+   },
+   "verdict": "hold",
+   "why_ko": "AUROC 보정 방법만 가져옴 — suggest·calibrate가 모든 프로젝트의 30일 대화를 올림",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "fast-jev-compaction",
+   "source": "HN #57",
+   "url": "https://github.com/tamaratran/fast-jev-compaction",
+   "tier": "community · 함수 훅(얼리 액세스)",
+   "components": "함수 훅 모듈 · userConfig 키",
+   "scores": {
+    "fit": 2,
+    "evidence": 6,
+    "security": 3,
+    "maint": 5,
+    "tokens": 7,
+    "dup": 8
+   },
+   "verdict": "hold",
+   "why_ko": "세션 기록을 고치고 대화 전체를 외부로 보냄 · 얼리 액세스 API",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "Jevbridge",
+   "source": "HN #62",
+   "url": "https://github.com/gamesonrblx/Jevbridge",
+   "tier": "community · MCP·ACP 프록시",
+   "components": "MCP 도구 4 · ACP 프록시 · 스킬",
+   "scores": {
+    "fit": 2,
+    "evidence": 5,
+    "security": 3,
+    "maint": 4,
+    "tokens": 6,
+    "dup": 5
+   },
+   "verdict": "hold",
+   "why_ko": "키가 없으면 말없이 LLM·휴리스틱으로 대체하고 빠진 답을 채움 — “System One” 표기를 믿을 수 없음",
+   "run": "tvse-jev-2026-09-26"
+  },
+  {
+   "name": "jev-superpowers",
+   "source": "HN #61",
+   "url": "https://github.com/AkashPriyadarshii/jev-superpowers",
+   "tier": "community · 훅 3종",
+   "components": "SessionStart 주입 · PreToolUse(Bash) · Stop 훅 · 스킬 약 20",
+   "scores": {
+    "fit": 2,
+    "evidence": 2,
+    "security": 1,
+    "maint": 3,
+    "tokens": 4,
+    "dup": 4
+   },
+   "verdict": "hold",
+   "why_ko": "나쁜 예: Stop 훅이 턴마다 현재 프로젝트의 ./scripts/test.sh를 실행 · plugin.json과 marketplace.json의 발행자 불일치 · Jev 코드 없음",
+   "run": "tvse-jev-2026-09-26"
+  }
+ ],
+ "notes_ko": [
+  "verdicts는 그 실행의 판정이다. 다음 실행은 매니페스트·훅을 다시 읽고 바뀐 것만 고친다.",
+  "SearchPlugins·SearchSkills는 사용자 claude.ai 카탈로그만 본다. 로컬 설치는 claude plugin list --json, 공개 생태계는 위 소스."
+ ]
+}

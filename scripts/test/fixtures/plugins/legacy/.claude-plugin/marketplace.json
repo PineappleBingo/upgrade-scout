@@ -1,0 +1,1 @@
+{"marketplace": {"name": "old-toolkit", "author": "someone", "version": "1.0.0", "plugins": [{"name": "tool-evaluator", "path": "plugins/tool-evaluator", "description": "Weighted scoring", "version": "1.0.0"}]}}
