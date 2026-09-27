@@ -1,9 +1,19 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fixture } from './_offline.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fixture, SCRIPTS } from './_offline.mjs';
 import { loadIndex, freshness, filterItems, rankItems, liveDelta } from '../radar.mjs';
 
 const DIR = fixture('radar');
+const RADAR = path.join(SCRIPTS, 'radar.mjs');
+
+function runCli(args) {
+  const r = spawnSync(process.execPath, [RADAR, ...args], { encoding: 'utf8', env: { ...process.env, UPGRADE_SCOUT_OFFLINE: '1' } });
+  return { status: r.status, stdout: r.stdout, stderr: r.stderr };
+}
 
 test('local index loads and validates', async () => {
   const r = await loadIndex(DIR);
@@ -47,4 +57,44 @@ test('live delta maps GitHub search results and keeps going on failure', async (
   assert.deepEqual(d.items.map((i) => [i.full_name, i.verified, i.sources[0]]), [['n/new', 'pending', 'live:topic:jev']]);
   const bad = await liveDelta(['topic:jev'], '2026-09-26', { fetchImpl: async () => { throw new Error('x'); } });
   assert.equal(bad.status, 'unavailable');
+});
+
+test('schema catches a bad sub-field: category.slug must be a string', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'radar-fixture-'));
+  fs.copyFileSync(path.join(DIR, 'meta.json'), path.join(tmp, 'meta.json'));
+  const items = JSON.parse(fs.readFileSync(path.join(DIR, 'index.json'), 'utf8'));
+  items[0].category.slug = 7;
+  fs.writeFileSync(path.join(tmp, 'index.json'), JSON.stringify(items));
+  const r = await loadIndex(tmp);
+  assert.equal(r.status, 'invalid');
+  assert.ok(r.errors.some((e) => e.includes('category.slug')), JSON.stringify(r.errors));
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+test('CLI: --index <dir> --keywords ranks and filters, exits 0', () => {
+  const r = runCli(['--index', DIR, '--keywords', 'comment', '--no-live', '--format', 'json']);
+  assert.equal(r.status, 0, r.stderr);
+  const out = JSON.parse(r.stdout);
+  assert.equal(out.status, 'ok');
+  assert.deepEqual(out.top.map((i) => i.full_name), ['a/comment-router']);
+});
+
+test('CLI: --clone --no-write plans the clone without touching disk', () => {
+  const dest = fs.mkdtempSync(path.join(os.tmpdir(), 'radar-clone-'));
+  fs.rmSync(dest, { recursive: true, force: true }); // must not exist beforehand — the CLI must not create it either
+  const r = runCli(['--index', DIR, '--keywords', 'comment', '--no-live', '--clone', '1', '--dest', dest, '--no-write', '--format', 'json']);
+  assert.equal(r.status, 0, r.stderr);
+  const out = JSON.parse(r.stdout);
+  assert.equal(out.clones.length, 1);
+  assert.equal(out.clones[0].done, false);
+  assert.match(out.clones[0].cmd, /git clone --depth 1/);
+  assert.ok(out.clones[0].path.endsWith('a__comment-router'), out.clones[0].path);
+  assert.equal(fs.existsSync(dest), false, 'dest folder must not be created in --no-write mode');
+});
+
+test('CLI: unreachable local index → exit NETWORK(4), status unavailable', () => {
+  const r = runCli(['--index', path.join(DIR, 'does-not-exist'), '--no-live', '--format', 'json']);
+  assert.equal(r.status, 4);
+  const out = JSON.parse(r.stdout);
+  assert.equal(out.status, 'unavailable');
 });

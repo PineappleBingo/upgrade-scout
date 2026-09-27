@@ -10,8 +10,11 @@
     "full_name": { "type": "string", "pattern": "^[\\w.-]+/[\\w.-]+$" }, "url": { "type": "string" },
     "description": { "type": ["string", "null"] },
     "readme_excerpt": { "type": ["string", "null"], "maxLength": 300 },
-    "summary_ko": { "anyOf": [{ "type": "null" }, { "type": "object", "required": ["what", "decision", "point"] }] },
-    "category": { "type": "object", "required": ["slug", "label", "emoji"] },
+    "summary_ko": { "anyOf": [{ "type": "null" }, { "type": "object", "required": ["what", "decision", "point"], "properties": {
+      "what": { "type": "string", "minLength": 1 }, "decision": { "type": "string", "minLength": 1 }, "point": { "type": "string", "minLength": 1 } } }] },
+    "category": { "type": "object", "required": ["slug", "label", "emoji"], "properties": {
+      "slug": { "type": "string", "minLength": 1 }, "label": { "type": "string", "minLength": 1 }, "emoji": { "type": "string", "minLength": 1 },
+      "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 } } },
     "keywords": { "type": "array", "items": { "type": "string" } }, "topics": { "type": "array", "items": { "type": "string" } },
     "stars": { "type": "integer", "minimum": 0 }, "forks": { "type": "integer", "minimum": 0 },
     "stars_7d_delta": { "type": ["integer", "null"] },
