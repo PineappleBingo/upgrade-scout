@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // sources-watch — 레지스트리의 소스를 실행마다 다시 받아 지난 스냅샷과 비교한다(새 항목·바뀐 항목·사라진 항목·경보).
-//   node sources-watch.mjs --registry jev|plugins|<path> [--only a,b] [--state-dir d] [--update] [--no-write]
+//   node sources-watch.mjs --registry jev|plugins|<path> (팩 이름 또는 코어 레지스트리) [--only a,b] [--state-dir d] [--update] [--no-write]
 //                          [--offline --fixtures dir] [--since 2026-09-20] [--format json|md]
 // 원칙: 받지 못한 것은 "확인 불가"(unavailable)이지 "변화 없음"이 아니다. 목록 파서가 갑자기 0건이면 parse-suspect.
 // 스냅샷은 --update일 때만 쓴다(계획 모드·no-write에서는 절대 쓰지 않음).
@@ -14,14 +14,20 @@ import { PARSERS, parseDelimited } from './lib/parsers.mjs';
 import { sha256, canonicalJson, stripHtml } from './lib/text.mjs';
 import { lsRemote } from './link-check.mjs';
 
-const HELP = `sources-watch.mjs --registry jev|plugins|<path> [--only ids] [--state-dir d] [--update] [--no-write] [--offline --fixtures d] [--since YYYY-MM-DD] [--format md]
+const HELP = `sources-watch.mjs --registry jev|plugins|<path> (팩 이름 또는 코어 레지스트리) [--only ids] [--state-dir d] [--update] [--no-write] [--offline --fixtures d] [--since YYYY-MM-DD] [--format md]
 상태: ok · baseline(첫 실행) · unavailable(받지 못함 — 변화 없음이 아님) · parse-suspect(0건) · skipped(오프라인).`;
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const SKILL_DIR = path.resolve(here, '..');
 
+export function registryPath(ref) {
+  if (/[\\/]|\.json$/.test(ref)) return ref;
+  const inPack = path.join(SKILL_DIR, 'packs', ref, 'registry.json');
+  return fs.existsSync(inPack) ? inPack : path.join(SKILL_DIR, 'assets', 'registry', `${ref}.json`);
+}
+
 export function loadRegistry(ref) {
-  const file = /[\\/]|\.json$/.test(ref) ? ref : path.join(SKILL_DIR, 'assets', 'registry', `${ref}.json`);
+  const file = registryPath(ref);
   const reg = JSON.parse(fs.readFileSync(file, 'utf8'));
   if (!Array.isArray(reg.sources)) throw new Error(`${file}: sources 배열이 없습니다`);
   const ids = new Set();

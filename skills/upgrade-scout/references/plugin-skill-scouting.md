@@ -12,7 +12,7 @@ FLOW 문장 · 사람 접점(T) · 빈칸(GAP)에서 필요 N01…을 만든다.
 |---|---|---|
 | 계정 카탈로그 | 사용자 claude.ai 카탈로그 | 세션 도구 SearchPlugins · SearchSkills(키워드 ≤8, 각 ≤64자) · ListPlugins · ListSkills |
 | 로컬 | 이미 설치한 것 | `claude plugin list --json --available` · `claude plugin marketplace list --json` · `~/.claude/skills` · `npx skills list` |
-| 공개 생태계 | 마켓·목록·레지스트리 | `sources-watch --registry plugins` · `npx skills find <kw>`(npm 캐시를 채우므로 write-scratch에서만) · awesome 목록 · SearchMcpRegistry(있으면) · Jev 관련은 `assets/registry/jev.json` |
+| 공개 생태계 | 마켓·목록·레지스트리 | `sources-watch --registry plugins` · `npx skills find <kw>`(npm 캐시를 채우므로 write-scratch에서만) · awesome 목록 · SearchMcpRegistry(있으면) · Jev 관련은 `packs/jev/registry.json` |
 
 `claude plugin search`는 없다. 클라우드 세션은 사용자가 로컬에 설치한 플러그인을 로드하지 않는다 — 계정 카탈로그와 공개 생태계로 판단하고 로컬 확인은 사용자 몫으로 남긴다. 검색마다 도구·질의·결과 수·시각을 기록한다.
 

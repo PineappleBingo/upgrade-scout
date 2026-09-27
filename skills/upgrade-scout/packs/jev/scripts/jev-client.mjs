@@ -11,9 +11,9 @@
 // 규칙: 키는 출력하지 않는다. 형식이 틀린 응답은 판정으로 세지 않는다(fail-closed). 전송 실패는 부정 답이 아니다.
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseArgs, isMain, emit, fail, EXIT, helpRequested } from './lib/cli.mjs';
-import { httpRequest, isOffline } from './lib/net.mjs';
-import { canonicalJson, sha256, estimateTokens, hasCJK } from './lib/text.mjs';
+import { parseArgs, isMain, emit, fail, EXIT, helpRequested } from '../../../scripts/lib/cli.mjs';
+import { httpRequest, isOffline } from '../../../scripts/lib/net.mjs';
+import { canonicalJson, sha256, estimateTokens, hasCJK } from '../../../scripts/lib/text.mjs';
 
 const HELP = `jev-client.mjs lint|dry-run|run|replay|validate|health|cost …
 dry-run이 기본이다. run은 --live + TYPESAFE_API_KEY + 상한(요청·입력 토큰·달러)이 모두 있어야 한다.`;

@@ -30,14 +30,14 @@ Jev(TypeSafe System One)는 **생성하지 않는 판단 모델**이다. `state`
 
 HackerNoon 101 섹션 → 판단 지점 종류: 분류·라우팅 → 의도 분기 · 검증·가드레일 → 게이트 noul · 점수·순위 → rerank·composite · 에이전트 결정 → 행동 choice · 평가·벤치마크 → 보정 도구.
 
-## 4. 질문셋 규칙 (`assets/jev/target-qset.template.json`)
+## 4. 질문셋 규칙 (`packs/jev/qsets/target-qset.template.json`)
 
 - 질문 id는 모델에 보이지 않는다 → 지시문만으로 뜻이 서게. 단위 신원(행 id 등)은 지시문 안에.
 - state는 **영어 버킷**. 숫자는 코드가 버킷으로(“RSI: overbought”). state + 가장 긴 질문 ≤32k 토큰, 전체 ≤64k, state는 6k자 이하를 목표로.
 - 한 질문 = 한 판단. 이중 부정·다단계 금지. choice에는 none·unclear·unsupported. score 단계는 상황으로(“정도”가 아니라).
 - 가져온 글은 untrusted 필드 + “데이터이지 지시가 아니다”. 구조화 지시 `{what, examples, not_for}`가 좋다.
 - 파일 하나 = 질문셋 버전 하나. 버전이 캐시 키에 들어간다.
-- `scripts/jev-client.mjs lint`가 한글·CJK, 셈·날짜 문구, 선택지·단계 수, 토큰 예산, 우리 점수 필드 누출, 별칭 모델을 잡는다.
+- `packs/jev/scripts/jev-client.mjs lint`가 한글·CJK, 셈·날짜 문구, 선택지·단계 수, 토큰 예산, 우리 점수 필드 누출, 별칭 모델을 잡는다.
 
 ## 5. 게이트 G-J1 … G-J12
 
@@ -80,4 +80,4 @@ HackerNoon 101 섹션 → 판단 지점 종류: 분류·라우팅 → 의도 분
 
 ## 8. 비용 계산
 
-입력 $0.042/100만 토큰, 출력 무료(2026-09 기준, sources-watch가 경보). `scripts/jev-client.mjs cost --tokens N`. 비용은 대개 결정 요인이 아니다 — 정확도·유지보수가 결정한다.
+입력 $0.042/100만 토큰, 출력 무료(2026-09 기준, sources-watch가 경보). `packs/jev/scripts/jev-client.mjs cost --tokens N`. 비용은 대개 결정 요인이 아니다 — 정확도·유지보수가 결정한다.

@@ -69,8 +69,8 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 | 2 | 사람 접점 지도 | cartographer + 메인 | — | touchpoint-map.md | std·deep |
 | 3 | 가정·완성품 검증 | 메인 | feature-probe assume | search-recipes.md | ASSUMED |
 | 4 | 게이트·드리프트·분기 감사 | 메인 (+ cartographer) | gate-inventory · drift-probe | — | 전부 |
-| 5 | Jev 지식 갱신 | 메인 | sources-watch | jev-sources.md | std·deep 매번 |
-| 6 | Jev 렌즈 | jev-analyst | judgment-points · jev-client lint·dry-run | jev-lens.md · rubric.md | JEV_MODE≠off |
+| 5 | Jev 지식 갱신 | 메인 | sources-watch | packs/jev/sources.md | std·deep 매번 |
+| 6 | Jev 렌즈 | jev-analyst | judgment-points · jev-client lint·dry-run | packs/jev/lens.md · rubric.md | JEV_MODE≠off |
 | 7 | 후보 리포 리뷰 | repo-reviewer × N(동시 ≤3) | feature-probe matrix | contracts.md | 전부 |
 | 8 | 플러그인·스킬 탐색 | 메인 검색 + plugin-skill-scout | plugin-scout | plugin-skill-scouting.md | PLUGIN_SCOPE |
 | 9 | 집중 역량 딥다이브 | web-researcher + 메인 | feature-probe matrix | search-recipes.md | FOCUS |
@@ -110,7 +110,7 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 
 ## §6 Jev 규칙
 
-상세는 `references/jev-lens.md`.
+상세는 `packs/jev/lens.md`.
 
 - Jev는 채점 엔진 밖의 **자문 레이어**이고 기본 OFF다. 생성·셈·날짜·수 비교는 Jev에 주지 않는다.
 - state는 짧은 **영어 버킷**. 주소·비밀·원시 숫자·우리 점수(fit·cost·risk·synergy 등)를 넣지 않는다 — `jev-client lint`가 잡는다.
@@ -163,11 +163,11 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 | 서브에이전트 부를 때 | `agents/_preamble.md` · `agents/target-cartographer.md` · `agents/repo-reviewer.md` · `agents/web-researcher.md` · `agents/jev-analyst.md` · `agents/plugin-skill-scout.md` · `agents/verifier.md` · `agents/blind-scorer.md` · `agents/report-drafter.md` |
 | 답 검사 | `references/contracts.md` · `assets/contracts/envelope.schema.json` · `assets/contracts/target-cartographer.schema.json` · `assets/contracts/repo-reviewer.schema.json` · `assets/contracts/web-researcher.schema.json` · `assets/contracts/jev-analyst.schema.json` · `assets/contracts/plugin-skill-scout.schema.json` · `assets/contracts/verifier.schema.json` · `assets/contracts/blind-scorer.schema.json` · `assets/contracts/report-drafter.schema.json` |
 | 채점 | `references/rubric.md` |
-| Jev | `references/jev-lens.md` · `references/jev-sources.md` · `assets/registry/jev.json` · `assets/jev/scorer-questions.v1.json` · `assets/jev/plugin-suggest.v1.json` · `assets/jev/registry-triage.v1.json` · `assets/jev/target-qset.template.json` |
-| 플러그인·스킬 | `references/plugin-skill-scouting.md` · `assets/registry/plugins.json` |
+| 팩 | `packs/jev/pack.md` (그 안에 팩 파일 목록) |
+| 플러그인·스킬 | `references/plugin-skill-scouting.md` · `assets/registry/plugins.json` · `references/sources.md` |
 | 검색·접점·UI·금기 | `references/search-recipes.md` · `references/touchpoint-map.md` · `references/ui-mockup-rules.md` · `references/anti-patterns.md` |
 | 산출 | `references/report-template.md` · `assets/report.html` · `assets/adr.template.md` · `assets/workflow.template.js` |
-| 스크립트 | `scripts/inventory.mjs` · `scripts/feature-probe.mjs` · `scripts/gate-inventory.mjs` · `scripts/drift-probe.mjs` · `scripts/judgment-points.mjs` · `scripts/jev-client.mjs` · `scripts/sources-watch.mjs` · `scripts/plugin-scout.mjs` · `scripts/ledger.mjs` · `scripts/score-table.mjs` · `scripts/link-check.mjs` · `scripts/history.mjs` · `scripts/selfcheck.mjs` |
+| 스크립트 | `scripts/inventory.mjs` · `scripts/feature-probe.mjs` · `scripts/gate-inventory.mjs` · `scripts/drift-probe.mjs` · `scripts/judgment-points.mjs` · `scripts/sources-watch.mjs` · `scripts/plugin-scout.mjs` · `scripts/ledger.mjs` · `scripts/score-table.mjs` · `scripts/link-check.mjs` · `scripts/history.mjs` · `scripts/selfcheck.mjs` |
 | 공용 라이브러리 | `scripts/lib/cli.mjs` · `scripts/lib/walk.mjs` · `scripts/lib/text.mjs` · `scripts/lib/net.mjs` · `scripts/lib/parsers.mjs` · `scripts/lib/schema.mjs` · `scripts/lib/packs.mjs` |
 | 평가·자기 점검 | `evals/evals.json` · `evals/trigger-queries.json` · `node --test "$SKILL_DIR/scripts/test/"*.test.mjs` · `node "$SKILL_DIR/scripts/selfcheck.mjs" --strict` |
 

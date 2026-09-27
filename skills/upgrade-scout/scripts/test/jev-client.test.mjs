@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { SCRIPTS } from './_offline.mjs';
-import { lintRequest, validateAnswer, validateResponse, bandOf, runRequests, cacheKey, costUsd } from '../jev-client.mjs';
+import { SKILL_DIR } from './_offline.mjs';
+import { lintRequest, validateAnswer, validateResponse, bandOf, runRequests, cacheKey, costUsd } from '../../packs/jev/scripts/jev-client.mjs';
 
 const REQ = {
   id: 'r1',
@@ -125,11 +125,11 @@ test('CLI: run without --live is refused; --live without a key exits 3; key neve
   fs.writeFileSync(f, JSON.stringify(REQ));
   const env = { ...process.env, UPGRADE_SCOUT_OFFLINE: '1' };
   delete env.TYPESAFE_API_KEY;
-  const a = spawnSync(process.execPath, [path.join(SCRIPTS, 'jev-client.mjs'), 'run', f], { env, encoding: 'utf8' });
+  const a = spawnSync(process.execPath, [path.join(SKILL_DIR, 'packs', 'jev', 'scripts', 'jev-client.mjs'), 'run', f], { env, encoding: 'utf8' });
   assert.equal(a.status, 2);
-  const b = spawnSync(process.execPath, [path.join(SCRIPTS, 'jev-client.mjs'), 'run', f, '--live'], { env, encoding: 'utf8' });
+  const b = spawnSync(process.execPath, [path.join(SKILL_DIR, 'packs', 'jev', 'scripts', 'jev-client.mjs'), 'run', f, '--live'], { env, encoding: 'utf8' });
   assert.equal(b.status, 3);
-  const c = spawnSync(process.execPath, [path.join(SCRIPTS, 'jev-client.mjs'), 'dry-run', f], { env: { ...env, TYPESAFE_API_KEY: 'sk-secret-123' }, encoding: 'utf8' });
+  const c = spawnSync(process.execPath, [path.join(SKILL_DIR, 'packs', 'jev', 'scripts', 'jev-client.mjs'), 'dry-run', f], { env: { ...env, TYPESAFE_API_KEY: 'sk-secret-123' }, encoding: 'utf8' });
   assert.equal(c.status, 0);
   assert.ok(!c.stdout.includes('sk-secret-123'));
 });

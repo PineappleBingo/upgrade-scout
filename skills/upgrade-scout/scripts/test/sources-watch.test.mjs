@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fixture } from './_offline.mjs';
-import { watch, toItems, diffItems, checkAlerts, loadRegistry } from '../sources-watch.mjs';
+import { watch, toItems, diffItems, checkAlerts, loadRegistry, registryPath } from '../sources-watch.mjs';
 
 const REG = fixture('sources', 'registry.fixture.json');
 
@@ -51,6 +51,9 @@ test('helpers: date fallback on baseline, alert polarity, registry validation', 
   assert.ok(reg.sources.length >= 15, 'shipped jev registry loads');
   assert.ok(reg.sources.some((s) => s.id === 'hackernoon-101' && s.method === 'html-numbered-list'));
   assert.ok(reg.sources.some((s) => s.id === 'catalog-kydlikebtc' && s.method === 'catalog-json'));
+  assert.match(registryPath('jev').replace(/\\/g, '/'), /packs\/jev\/registry\.json$/, 'jev resolves into the pack');
+  assert.match(registryPath('plugins').replace(/\\/g, '/'), /assets\/registry\/plugins\.json$/, 'core registry stays');
+  assert.equal(registryPath('x/y.json'), 'x/y.json');
 });
 
 test('changing a source method or URL starts a new baseline instead of a false diff', async () => {

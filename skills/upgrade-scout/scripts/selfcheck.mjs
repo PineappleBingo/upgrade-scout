@@ -213,7 +213,7 @@ export async function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true
   // 6) 팩 구조 + 레지스트리 id ↔ 문서 (코어: assets/registry/*.json ↔ references/sources.md, 팩: packs/<p>/<registry> ↔ packs/<p>/<sources_doc>)
   const packs = listPacks(skillDir);
   stats.packs = packs.map((p) => p.name);
-  const registryPairs = files.filter((f) => /^assets\/registry\/[^/]+\.json$/.test(f)).map((f) => [f, exists('references/sources.md') ? 'references/sources.md' : 'references/jev-sources.md']);
+  const registryPairs = files.filter((f) => /^assets\/registry\/[^/]+\.json$/.test(f)).map((f) => [f, 'references/sources.md']);
   for (const p of packs) {
     const rel = (x) => `packs/${path.basename(p.dir)}/${x}`;
     for (const k of PACK_REQUIRED) if (!p.raw[k]) err('pack', `${rel('pack.md')}: 필수 키 ${k}가 없다`);

@@ -1,7 +1,7 @@
 # jev-analyst — Jev 렌즈 (절차 6)
 
 계약: `assets/contracts/jev-analyst.schema.json` · 페이로드 키 `jev` · 유형 `Plan`
-먼저 읽기: `references/jev-lens.md`, `references/rubric.md`(J-루브릭)
+먼저 읽기: `packs/jev/lens.md`, `references/rubric.md`(J-루브릭)
 
 ## 입력
 

@@ -50,8 +50,8 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 
 ## 6. Jev 렌즈 (JEV_MODE ≠ off)
 
-- 먼저 읽기: `references/jev-lens.md`, `references/rubric.md`
-- 명령: `$S/jev-client.mjs lint <질문셋 초안>` · `dry-run`
+- 먼저 읽기: `packs/jev/lens.md`, `references/rubric.md`
+- 명령: `node "$SKILL_DIR/packs/jev/scripts/jev-client.mjs" lint <질문셋 초안>` · `dry-run`
 - 누가: jev-analyst(Plan)
 - 산출: JP 표(J1–J12 → `$S/score-table.mjs jp-items.json --mode jev`), 판정, 영어 질문셋 v1, 게이트, 보정 계획, not_fit
 - 종료: 모든 JP에 `ref`, 합계·판정은 스크립트 값
@@ -83,7 +83,7 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 
 ## 11. Jev 보조 채점 (JEV_MODE = lens+scorer, 선택)
 
-- 명령: `$S/ledger.mjs jev-requests ledger.json --questions $SKILL_DIR/assets/jev/scorer-questions.v1.json > reqs.json` → `$S/jev-client.mjs dry-run reqs.json`(요청 수·토큰·비용을 사용자에게 보여 준다) → 동의 + 키가 있으면 `run --live --max-requests … --max-input-tokens … --max-usd …` → `ledger attach-jev`
+- 명령: `$S/ledger.mjs jev-requests ledger.json --questions $SKILL_DIR/packs/jev/qsets/scorer-questions.v1.json > reqs.json` → `node "$SKILL_DIR/packs/jev/scripts/jev-client.mjs" dry-run reqs.json`(요청 수·토큰·비용을 사용자에게 보여 준다) → 동의 + 키가 있으면 `run --live --max-requests … --max-input-tokens … --max-usd …` → `ledger attach-jev`
 - 키가 없으면: 열에 “—(미실행: 키 없음)”, 0이 아니다
 - 규칙: 합계를 바꾸지 않는다. 차가 크면 재확인 대기열로 한 번만
 - 후보 사전 선별(후보가 8개를 넘을 때, 선택): 같은 질문셋에 README 발췌(영어 ≤700자)를 넣어 **순서만** 정한다. 탈락 후보도 표에 남기고, 리뷰를 대신하지 않는다
