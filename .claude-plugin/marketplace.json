@@ -1,0 +1,8 @@
+{
+  "name": "upgrade-scout",
+  "description": "Upgrade Scout — codebase × references research reports",
+  "owner": { "name": "PineappleBingo", "url": "https://github.com/PineappleBingo" },
+  "plugins": [
+    { "name": "upgrade-scout", "source": "./", "description": "리포·설계 문서·모델 문서 기준 코드베이스 업그레이드 리서치 (한국어 HTML 리포트)" }
+  ]
+}
