@@ -1,0 +1,22 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/design-mapper@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": ["mapping"],
+ "properties": {
+  "mapping": {
+   "type": "object",
+   "required": ["source", "measured_claims", "principles", "platform_checks", "mapping", "missing_pieces", "conflicts"],
+   "properties": {
+    "source": { "type": "object", "required": ["ref", "title", "kind"], "properties": { "ref": { "type": "string" }, "title": { "type": "string" }, "kind": { "enum": ["design", "playbook", "org-chart", "adr", "architecture", "other"] }, "checked": { "type": "string" } } },
+    "measured_claims": { "type": "boolean" },
+    "principles": { "type": "array", "items": { "type": "object", "required": ["id", "text_ko"], "properties": { "id": { "type": "string", "pattern": "^P\\d{2,}$" }, "text_ko": { "type": "string" }, "layer_ko": { "type": "string" }, "quote": { "type": "string", "maxLength": 300 } } } },
+    "platform_checks": { "type": "array", "items": { "type": "object", "required": ["assumption_ko", "verified"], "properties": { "assumption_ko": { "type": "string" }, "verified": { "enum": ["yes", "no", "unverifiable"] }, "url": { "type": "string" }, "checked": { "type": "string" } } } },
+    "mapping": { "type": "array", "items": { "type": "object", "required": ["principle", "status", "target_refs", "note_ko"], "properties": { "principle": { "type": "string" }, "status": { "enum": ["present", "partial", "absent"] }, "target_refs": { "type": "array", "items": { "type": "string" } }, "note_ko": { "type": "string" }, "search": { "type": "string" } } } },
+    "missing_pieces": { "type": "array", "maxItems": 3, "items": { "type": "object", "required": ["id", "title_ko", "design_ko", "touches", "fit", "cost", "risk"], "properties": { "id": { "type": "string", "pattern": "^MP\\d{2,}$" }, "title_ko": { "type": "string" }, "design_ko": { "type": "string" }, "touches": { "type": "array", "items": { "type": "string" } }, "fit": { "type": "number", "minimum": 0, "maximum": 10 }, "cost": { "type": "number", "minimum": 0, "maximum": 10 }, "risk": { "type": "number", "minimum": 0, "maximum": 10 } } } },
+    "conflicts": { "type": "array", "items": { "type": "object", "required": ["principle", "rule_ref", "text_ko"], "properties": { "principle": { "type": "string" }, "rule_ref": { "type": "string" }, "text_ko": { "type": "string" } } } }
+   }
+  }
+ }
+}

@@ -124,3 +124,29 @@ test('pack contract extension: jev pack_scores must carry J1–J12 (NOT_FIT exem
   assert.match(validateReply('capability-analyst', reply([], 'nope')).errors.join('\n'), /팩 nope/);
   assert.equal(validateReply('capability-analyst', reply([point('CP03', {})], null)).ok, true, 'no pack → no extension');
 });
+
+test('design-mapper: contract validates and missing pieces join the score table', () => {
+  const reply = { role: 'design-mapper', contract: 'upgrade-scout/design-mapper@2', run_id: 'r', status: 'ok',
+    claims: [{ id: 'dm1', text_ko: '수리 로그가 없다', kind: 'absence', evidence: [{ type: 'cmd', ref: 'rg -n repair src' }], recheck: { cmd: 'rg -n repair src', expect: '0' }, confidence: 'mid' }],
+    mapping: {
+      source: { ref: 'https://example.com/playbook', title: '위임 루프 플레이북', kind: 'playbook', checked: '2026-09-26' },
+      measured_claims: false,
+      principles: [{ id: 'P01', text_ko: '실패를 계층으로 귀속', quote: 'attribute the failure to one layer' }],
+      platform_checks: [{ assumption_ko: '스킬은 자기 파일을 고칠 수 있다', verified: 'no', url: 'https://code.claude.com/docs/en/skills', checked: '2026-09-26' }],
+      mapping: [{ principle: 'P01', status: 'absent', target_refs: [], note_ko: '없음', search: 'rg -n "repair|layer" src' }],
+      missing_pieces: [{ id: 'MP01', title_ko: '수리 로그', design_ko: 'append-only 기록 하나', touches: ['src/agents/rewriter.ts'], fit: 8, cost: 7, risk: 8 }],
+      conflicts: [],
+    } };
+  const res = validateReply('design-mapper', JSON.stringify(reply));
+  assert.equal(res.ok, true, res.errors.join('\n'));
+  const L = merge(emptyLedger('r'), [{ role: 'design-mapper', data: res.data }]);
+  assert.deepEqual(L.items.map((i) => [i.id, i.source]), [['MP01', 'design:위임 루프 플레이북']]);
+  assert.equal(L.claims[0].kind, 'absence');
+});
+
+test('design-mapper: at most three missing pieces', () => {
+  const pieces = [1, 2, 3, 4].map((n) => ({ id: `MP0${n}`, title_ko: 't', design_ko: 'd', touches: [], fit: 5, cost: 5, risk: 5 }));
+  const reply = { role: 'design-mapper', contract: 'upgrade-scout/design-mapper@2', run_id: 'r', status: 'ok', claims: [],
+    mapping: { source: { ref: 'x', title: 'x', kind: 'design' }, measured_claims: false, principles: [], platform_checks: [], mapping: [], missing_pieces: pieces, conflicts: [] } };
+  assert.equal(validateReply('design-mapper', JSON.stringify(reply)).ok, false);
+});

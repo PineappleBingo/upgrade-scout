@@ -11,7 +11,7 @@ test('this skill passes its own selfcheck without warnings', async () => {
   const res = await selfcheck(SKILL_DIR);
   assert.deepEqual(res.errors, []);
   assert.deepEqual(res.warnings, []);
-  assert.equal(res.stats.roles, 8);
+  assert.equal(res.stats.roles, 9);
 });
 
 test('frontmatter parser flags what YAML would reject or truncate', () => {

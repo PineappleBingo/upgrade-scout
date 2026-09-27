@@ -3,12 +3,12 @@
 // 워크플로 스크립트는 파일을 읽을 수 없으므로 메인 세션이 args로 모든 입력을 넘긴다:
 //   args = { asOf, target, depth, capabilityRefs, pack, pluginScope, caps: { concurrency: 3 },
 //            briefs: { <role>: "<_preamble + 역할 브리프 전문>" }, schemas: { <role>: <JSON Schema> },
-//            candidates: [{ name, path|url }], inputs: { inventory, judgmentPoints, needs } }
+//            candidates: [{ name, path|url }], designRefs: [{ title, ref, excerpt }], inputs: { inventory, judgmentPoints, needs } }
 // 규칙: 한 웨이브 동시 3–4개(깊이 deep만 4). 버린 것은 반드시 log()로 남긴다. Date.now()·Math.random() 금지.
 export const meta = {
   name: 'upgrade-scout',
   description: 'Map the target, review candidate repos, run the capability analysis and plugin scouting, then verify and blind-score',
-  phases: [{ title: 'Map' }, { title: 'Review' }, { title: 'Capability' }, { title: 'Plugins' }, { title: 'Verify' }],
+  phases: [{ title: 'Map' }, { title: 'Review' }, { title: 'Design' }, { title: 'Capability' }, { title: 'Plugins' }, { title: 'Verify' }],
 };
 
 const CAP = Math.max(1, Math.min(4, args.caps?.concurrency ?? 3));
@@ -32,6 +32,9 @@ const repos = args.candidates.slice(0, maxRepos);
 if (args.candidates.length > repos.length) log(`후보 ${args.candidates.length - repos.length}개를 깊이 상한으로 제외: ${args.candidates.slice(maxRepos).map((c) => c.name).join(', ')}`);
 const reviews = await inBatches(repos, (c) => agent(brief('repo-reviewer', { repo: c, target_summary: map }), { label: `review:${c.name}`, phase: 'Review', schema: args.schemas['repo-reviewer'] }));
 
+phase('Design');
+const designs = await inBatches(args.designRefs || [], (d) => agent(brief('design-mapper', { doc: d, target_summary: map }), { label: `design:${d.title}`, phase: 'Design', schema: args.schemas['design-mapper'] }));
+
 phase('Capability');
 const capability = args.capabilityRefs?.length ? await agent(brief('capability-analyst', { map, points: args.inputs.judgmentPoints, refs: args.capabilityRefs, pack: args.pack || null }), { label: 'capability', phase: 'Capability', schema: args.schemas['capability-analyst'] }) : null;
 
@@ -39,10 +42,10 @@ phase('Plugins');
 const scouting = args.pluginScope === 'off' ? null : await agent(brief('plugin-skill-scout', { needs: args.inputs.needs }), { label: 'plugins', phase: 'Plugins', schema: args.schemas['plugin-skill-scout'] });
 
 phase('Verify');
-const claims = reviews.flatMap((r) => r?.claims || []).filter((c) => ['absence', 'number', 'license'].includes(c.kind)).slice(0, args.depth === 'deep' ? 30 : 15);
+const claims = [...reviews, ...designs].flatMap((r) => r?.claims || []).filter((c) => ['absence', 'number', 'license'].includes(c.kind)).slice(0, args.depth === 'deep' ? 30 : 15);
 const [checks, blind] = await parallel([
   () => agent(brief('verifier', { claims }), { label: 'verify', phase: 'Verify', schema: args.schemas.verifier }),
-  () => agent(brief('blind-scorer', { items: reviews.flatMap((r) => r?.review?.items || []).map(({ fit, cost, risk, ...rest }) => rest) }), { label: 'blind', phase: 'Verify', schema: args.schemas['blind-scorer'] }),
+  () => agent(brief('blind-scorer', { items: [...reviews.flatMap((r) => r?.review?.items || []), ...designs.flatMap((d) => d?.mapping?.missing_pieces || [])].map(({ fit, cost, risk, ...rest }) => rest) }), { label: 'blind', phase: 'Verify', schema: args.schemas['blind-scorer'] }),
 ]);
 
-return { outputs: { map, reviews, capability, scouting, checks, blind }, dropped: args.candidates.slice(maxRepos).map((c) => c.name) };
+return { outputs: { map, reviews, designs, capability, scouting, checks, blind }, dropped: args.candidates.slice(maxRepos).map((c) => c.name) };

@@ -160,8 +160,8 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 | 언제 | 파일 |
 |---|---|
 | 1·10단계, 압축 뒤 복구 | `references/procedure.md` · `references/orchestration.md` |
-| 서브에이전트 부를 때 | `agents/_preamble.md` · `agents/target-cartographer.md` · `agents/repo-reviewer.md` · `agents/web-researcher.md` · `agents/capability-analyst.md` · `agents/plugin-skill-scout.md` · `agents/verifier.md` · `agents/blind-scorer.md` · `agents/report-drafter.md` |
-| 답 검사 | `references/contracts.md` · `assets/contracts/envelope.schema.json` · `assets/contracts/target-cartographer.schema.json` · `assets/contracts/repo-reviewer.schema.json` · `assets/contracts/web-researcher.schema.json` · `assets/contracts/capability-analyst.schema.json` · `assets/contracts/plugin-skill-scout.schema.json` · `assets/contracts/verifier.schema.json` · `assets/contracts/blind-scorer.schema.json` · `assets/contracts/report-drafter.schema.json` |
+| 서브에이전트 부를 때 | `agents/_preamble.md` · `agents/target-cartographer.md` · `agents/repo-reviewer.md` · `agents/web-researcher.md` · `agents/capability-analyst.md` · `agents/design-mapper.md` · `agents/plugin-skill-scout.md` · `agents/verifier.md` · `agents/blind-scorer.md` · `agents/report-drafter.md` |
+| 답 검사 | `references/contracts.md` · `assets/contracts/envelope.schema.json` · `assets/contracts/target-cartographer.schema.json` · `assets/contracts/repo-reviewer.schema.json` · `assets/contracts/web-researcher.schema.json` · `assets/contracts/capability-analyst.schema.json` · `assets/contracts/design-mapper.schema.json` · `assets/contracts/plugin-skill-scout.schema.json` · `assets/contracts/verifier.schema.json` · `assets/contracts/blind-scorer.schema.json` · `assets/contracts/report-drafter.schema.json` |
 | 채점 | `references/rubric.md` |
 | 팩 | `packs/jev/pack.md` (그 안에 팩 파일 목록) |
 | 플러그인·스킬 | `references/plugin-skill-scouting.md` · `assets/registry/plugins.json` · `references/sources.md` |

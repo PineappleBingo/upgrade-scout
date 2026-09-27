@@ -24,7 +24,7 @@ const HELP = `ledger.mjs validate|merge|pick|record|blind|attach-blind|jev-reque
 const here = path.dirname(fileURLToPath(import.meta.url));
 const CONTRACTS = path.resolve(here, '..', 'assets', 'contracts');
 const SKILL_DIR = path.resolve(here, '..');
-export const ROLE_KEY = { 'target-cartographer': 'map', 'repo-reviewer': 'review', 'web-researcher': 'research', 'capability-analyst': 'capability', 'plugin-skill-scout': 'scouting', verifier: 'checks', 'blind-scorer': 'scores', 'report-drafter': 'sections' };
+export const ROLE_KEY = { 'target-cartographer': 'map', 'repo-reviewer': 'review', 'web-researcher': 'research', 'capability-analyst': 'capability', 'design-mapper': 'mapping', 'plugin-skill-scout': 'scouting', verifier: 'checks', 'blind-scorer': 'scores', 'report-drafter': 'sections' };
 export const ROLE_ALIAS = { 'jev-analyst': 'capability-analyst' };
 
 export function emptyLedger(runId) {
@@ -89,6 +89,13 @@ export function merge(ledger, replies) {
         if (p.triage === 'NOT_FIT' || p.triage === 'NOT_FOR_JEV' || !p.axes) continue;
         if (L.items.some((x) => x.id === p.id)) continue;
         L.items.push({ id: p.id, label: p.decision_ko, source: `capability:${cap.subject}`, fit: p.axes.fit, cost: p.axes.cost, risk: p.axes.risk, grade: 'B', caps: [], ...(typeof p.lang === 'number' ? { lang: p.lang } : {}), summary_en: null, status: 'proposed' });
+      }
+    }
+    if (role === 'design-mapper') {
+      const m = data.mapping || {};
+      for (const p of m.missing_pieces || []) {
+        if (L.items.some((x) => x.id === p.id)) continue;
+        L.items.push({ id: p.id, label: p.title_ko, source: `design:${m.source?.title || m.source?.ref || '?'}`, fit: p.fit, cost: p.cost, risk: p.risk, grade: 'B', caps: [], summary_en: null, status: 'proposed' });
       }
     }
   }
