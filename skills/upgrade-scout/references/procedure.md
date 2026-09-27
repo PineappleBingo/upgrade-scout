@@ -66,7 +66,7 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 산출: RR 항목(구현 vs 주장, 적합·비용·리스크, 난이도, 런타임 비용, 마이너스) · 설계 문서는 mapping 항목(원칙별 있음/부분/없음, `references/lenses.md` §1)
 - 확인: 리포마다 `impl_refs` 2개를 `sed -n`으로, 라이선스는 항상 다시
 
-## 8. 플러그인·스킬 탐색 (PLUGIN_SCOPE)
+## 8. 플러그인·스킬 탐색 (LENSES: plugins)
 
 - 먼저 읽기: `references/plugin-skill-scouting.md`
 - 명령: SearchPlugins·SearchSkills(세션 도구) · `claude plugin list --json --available` · `$S/plugin-scout.mjs normalize …` · 받아 둔 후보에 `scan-local`
@@ -95,7 +95,7 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 
 - 산출: 무엇 · 데이터 · 루프 · 비용 · KPI · 가드레일 · 프로토타입 · 순서 의존. quick은 상위 3
 
-## 13. UI/UX (UI_SCOPE)
+## 13. UI/UX (LENSES: ui)
 
 - 먼저 읽기: `references/ui-mockup-rules.md` — 정적 목업, 자기보정 규칙, 추가 아이디어 5개 이상
 
