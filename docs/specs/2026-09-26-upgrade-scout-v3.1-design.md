@@ -1,8 +1,8 @@
 # upgrade-scout v3.1 통합 설계 명세
 
 - 상태: 설계 확정(2026-09-26) · 구현 전
-- 베이스: **v3.0 구현** — `PineappleBingo/claude-sync-kit` main의 `skills/upgrade-scout/`(PR #1 머지, TV-Strategy-Extractor × Jev 세션). 스크립트 13 · 공용 lib 6 · 역할 브리프 8 + 머리말 · JSON 계약 9 · 테스트 44 · selfcheck.
-- 얹는 것: RepoReel 세션의 설계 결정 D1–D6(설계 재검토 https://claude.ai/artifact/WujYKoCZtHU4wYTfKRgfEr). 통합 방식 결정(2026-09-26): **v3.0 구현을 살리고 구조를 바꾼다(v3.1)**, **배포 정본은 공개 플러그인 리포**.
+- 베이스: **v3.0 구현** — `PineappleBingo/claude-sync-kit` main의 `skills/upgrade-scout/`(PR #1 머지, `<target-repo>` × Jev 세션). 스크립트 13 · 공용 lib 6 · 역할 브리프 8 + 머리말 · JSON 계약 9 · 테스트 44 · selfcheck.
+- 얹는 것: `<target-project>` 세션의 설계 결정 D1–D6(설계 재검토 — 비공개 설계서). 통합 방식 결정(2026-09-26): **v3.0 구현을 살리고 구조를 바꾼다(v3.1)**, **배포 정본은 공개 플러그인 리포**.
 - 저장: 플러그인 리포가 생기면 `docs/specs/2026-09-26-upgrade-scout-v3.1-design.md`로 커밋. 사람이 읽는 판은 Upgrade Scout 설계서 아티팩트.
 
 ## 1. 목적
@@ -60,7 +60,7 @@ Jev 전용인 것을 `packs/jev/`로 옮기고, 코어는 팩이 없어도 완�
 - 정본: **공개 리포 `PineappleBingo/upgrade-scout`**(MIT) = 플러그인 겸 마켓플레이스. `.claude-plugin/plugin.json`(name `upgrade-scout`, version `3.1.0`) + `marketplace.json`(항목 source `"./"`). 스킬은 `skills/upgrade-scout/`(브리프 폴더 `agents/`는 스킬 안에 두어 플러그인 에이전트로 등록되지 않게).
 - 설치: `claude plugin marketplace add PineappleBingo/upgrade-scout` → `claude plugin install upgrade-scout@upgrade-scout`, 또는 `npx skills add PineappleBingo/upgrade-scout -g`. 호출: 플러그인 `/upgrade-scout:upgrade-scout`, npx 설치 `/upgrade-scout`.
 - claude-sync-kit: `skills/upgrade-scout/`를 지우고 키트의 전역 플러그인 목록에 upgrade-scout 설치 한 줄(키트 PR). 키트 v3.0 커밋은 이력으로 남고, 플러그인 리포 CHANGELOG에 출처 커밋을 적는다.
-- 공개 정리: 개인 아티팩트 링크 · 로컬 경로(`E:\gitprojects\…`) · 프로젝트 예시(RepoReel · TV-Strategy-Extractor)를 자리표시자로. 교훈·실행 레퍼런스의 출처 약어는 남기되 비공개 링크는 설계서에만. README 한국어 + 영어, 스킬 본문 한국어, 트리거 설명에 영어 키워드, 리포트는 사용자 언어.
+- 공개 정리: 개인 아티팩트 링크 · 로컬 경로(`<repo>\…`) · 프로젝트 예시(`<target-project>` · `<target-repo>`)를 자리표시자로. 교훈·실행 레퍼런스의 출처 약어는 남기되 비공개 링크는 설계서에만. README 한국어 + 영어, 스킬 본문 한국어, 트리거 설명에 영어 키워드, 리포트는 사용자 언어.
 - 업데이트: 릴리스마다 `version` 올림 · CHANGELOG · `claude plugin validate --strict` · `selfcheck --strict` · 테스트 · `claude plugin tag --push`.
 - 이 PC: 로컬 경로 마켓플레이스로 개발. 설치 후 `~/.claude/skills/upgrade-scout`(v2.0)와 `~/.claude/agents/scout-*.md`는 백업 폴더로.
 

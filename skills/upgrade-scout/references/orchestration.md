@@ -25,7 +25,7 @@ Agent 프롬프트 = `agents/_preamble.md` 전문 + `agents/<role>.md` 전문 + 
 - **웨이브 0 — 스크립트만, 병렬**: inventory · gate-inventory · judgment-points · drift-probe scan · feature-probe assume · sources-watch
 - **웨이브 A — 에이전트 ≤3**: cartographer + web-researcher(FOCUS). 그동안 메인은 계정·로컬 플러그인 검색과 3단계 종합
 - **웨이브 B — 묶음 ≤3**: repo-reviewer들 → design-mapper(설계 문서 레퍼런스마다 1) → capability-analyst(모델 능력 레퍼런스가 있을 때) → plugin-skill-scout(필요 목록 필요). 메인이 먼저 `$W/repos/`에 얕게 클론
-- **웨이브 C**: verifier + blind-scorer 병렬, 메인은 K/2 재확인 직접. 그다음 선택적 Jev 보조 채점, 재확인 한 라운드
+- **웨이브 C**: verifier + blind-scorer 병렬, 메인은 K/2 재확인 직접. 그다음 선택적 팩 보조 채점(예: Jev), 재확인 한 라운드
 - **웨이브 D — 메인만**: 12–15단계
 
 상한: quick 동시 1/총 1 · standard 3/10 · deep 4/16. **상한 때문에 뺀 것은 반드시 run.json `dropped`와 리포트 “실행 메타”에 적는다**(120개를 띄워 112개가 실패한 전례).

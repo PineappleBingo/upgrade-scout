@@ -1,7 +1,7 @@
 {
   "name": "upgrade-scout",
   "displayName": "Upgrade Scout",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "코드베이스를 리포·설계 문서·모델/API 문서·생태계 카탈로그 기준으로 리뷰해, 가져올 것과 뺄 것을 근거·점수·로드맵이 든 한국어 HTML 리포트로 만드는 리서치 스킬. 대상 코드는 고치지 않는다.",
   "author": { "name": "PineappleBingo", "url": "https://github.com/PineappleBingo" },
   "homepage": "https://github.com/PineappleBingo/upgrade-scout",
