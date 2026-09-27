@@ -70,7 +70,7 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 | 3 | 가정·완성품 검증 | 메인 | feature-probe assume | search-recipes.md | ASSUMED |
 | 4 | 게이트·드리프트·분기 감사 | 메인 (+ cartographer) | gate-inventory · drift-probe | — | 전부 |
 | 5 | Jev 지식 갱신 | 메인 | sources-watch | packs/jev/sources.md | std·deep 매번 |
-| 6 | Jev 렌즈 | jev-analyst | judgment-points · jev-client lint·dry-run | packs/jev/lens.md · rubric.md | JEV_MODE≠off |
+| 6 | Jev 렌즈 | capability-analyst | judgment-points · jev-client lint·dry-run | packs/jev/lens.md · rubric.md | JEV_MODE≠off |
 | 7 | 후보 리포 리뷰 | repo-reviewer × N(동시 ≤3) | feature-probe matrix | contracts.md | 전부 |
 | 8 | 플러그인·스킬 탐색 | 메인 검색 + plugin-skill-scout | plugin-scout | plugin-skill-scouting.md | PLUGIN_SCOPE |
 | 9 | 집중 역량 딥다이브 | web-researcher + 메인 | feature-probe matrix | search-recipes.md | FOCUS |
@@ -101,7 +101,7 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 
 ## §5 에이전트 운용
 
-- 역할 8: target-cartographer · repo-reviewer · web-researcher · jev-analyst · plugin-skill-scout · verifier · blind-scorer · report-drafter(deep만). 유형·입력·계약은 `references/orchestration.md` 표.
+- 역할 8: target-cartographer · repo-reviewer · web-researcher · capability-analyst · plugin-skill-scout · verifier · blind-scorer · report-drafter(deep만). 유형·입력·계약은 `references/orchestration.md` 표.
 - 프롬프트 = `agents/_preamble.md` + `agents/<역할>.md` + 입력 JSON + `assets/contracts/<역할>.schema.json` + “json 블록 하나만”.
 - 웨이브: 0 스크립트 병렬 → A 지도·웹 → B 리뷰(묶음 ≤3)·Jev·플러그인 → C 검증·블라인드(·선택적 Jev) → D 메인이 12–15단계.
 - 답은 `ledger.mjs validate <역할> <답>`으로 검사하고 `merge`로 합친다. 위반은 한 번 돌려보내고, 두 번째는 partial.
@@ -160,8 +160,8 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 | 언제 | 파일 |
 |---|---|
 | 1·10단계, 압축 뒤 복구 | `references/procedure.md` · `references/orchestration.md` |
-| 서브에이전트 부를 때 | `agents/_preamble.md` · `agents/target-cartographer.md` · `agents/repo-reviewer.md` · `agents/web-researcher.md` · `agents/jev-analyst.md` · `agents/plugin-skill-scout.md` · `agents/verifier.md` · `agents/blind-scorer.md` · `agents/report-drafter.md` |
-| 답 검사 | `references/contracts.md` · `assets/contracts/envelope.schema.json` · `assets/contracts/target-cartographer.schema.json` · `assets/contracts/repo-reviewer.schema.json` · `assets/contracts/web-researcher.schema.json` · `assets/contracts/jev-analyst.schema.json` · `assets/contracts/plugin-skill-scout.schema.json` · `assets/contracts/verifier.schema.json` · `assets/contracts/blind-scorer.schema.json` · `assets/contracts/report-drafter.schema.json` |
+| 서브에이전트 부를 때 | `agents/_preamble.md` · `agents/target-cartographer.md` · `agents/repo-reviewer.md` · `agents/web-researcher.md` · `agents/capability-analyst.md` · `agents/plugin-skill-scout.md` · `agents/verifier.md` · `agents/blind-scorer.md` · `agents/report-drafter.md` |
+| 답 검사 | `references/contracts.md` · `assets/contracts/envelope.schema.json` · `assets/contracts/target-cartographer.schema.json` · `assets/contracts/repo-reviewer.schema.json` · `assets/contracts/web-researcher.schema.json` · `assets/contracts/capability-analyst.schema.json` · `assets/contracts/plugin-skill-scout.schema.json` · `assets/contracts/verifier.schema.json` · `assets/contracts/blind-scorer.schema.json` · `assets/contracts/report-drafter.schema.json` |
 | 채점 | `references/rubric.md` |
 | 팩 | `packs/jev/pack.md` (그 안에 팩 파일 목록) |
 | 플러그인·스킬 | `references/plugin-skill-scouting.md` · `assets/registry/plugins.json` · `references/sources.md` |

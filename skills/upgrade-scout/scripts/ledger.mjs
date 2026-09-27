@@ -16,27 +16,48 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs, isMain, emit, fail, EXIT, mdTable, helpRequested, nowIso } from './lib/cli.mjs';
 import { extractJsonBlock, sha256, canonicalJson } from './lib/text.mjs';
 import { validate as schemaValidate } from './lib/schema.mjs';
+import { listPacks } from './lib/packs.mjs';
 
 const HELP = `ledger.mjs validate|merge|pick|record|blind|attach-blind|jev-requests|attach-jev|export …
 주장은 C-###, 수리는 F-##. 반박된 주장은 수리 로그로 남기고 딸린 항목은 다시 채점한다.`;
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const CONTRACTS = path.resolve(here, '..', 'assets', 'contracts');
-export const ROLE_KEY = { 'target-cartographer': 'map', 'repo-reviewer': 'review', 'web-researcher': 'research', 'jev-analyst': 'jev', 'plugin-skill-scout': 'scouting', verifier: 'checks', 'blind-scorer': 'scores', 'report-drafter': 'sections' };
+const SKILL_DIR = path.resolve(here, '..');
+export const ROLE_KEY = { 'target-cartographer': 'map', 'repo-reviewer': 'review', 'web-researcher': 'research', 'capability-analyst': 'capability', 'plugin-skill-scout': 'scouting', verifier: 'checks', 'blind-scorer': 'scores', 'report-drafter': 'sections' };
+export const ROLE_ALIAS = { 'jev-analyst': 'capability-analyst' };
 
 export function emptyLedger(runId) {
   return { schema: 'upgrade-scout/ledger@1', run_id: runId, claims: [], items: [], conflicts: [], rechecks: [], repair_log: [], queue: [] };
 }
 
 /** 답 글에서 json 블록 하나를 꺼내 봉투 + 역할 계약으로 검사한다. Plan 에이전트가 덧붙이는 꼬리 글은 무시한다. */
-export function validateReply(role, text) {
-  if (!ROLE_KEY[role]) return { ok: false, errors: [`알 수 없는 역할 ${role}`] };
+export function validateReply(roleIn, text) {
+  const role = ROLE_ALIAS[roleIn] || roleIn;
+  if (!ROLE_KEY[role]) return { ok: false, errors: [`알 수 없는 역할 ${roleIn}`] };
   let data;
-  try { data = typeof text === 'string' ? extractJsonBlock(text) : text; } catch (e) { return { ok: false, errors: [e.message] }; }
+  try { data = typeof text === 'string' ? extractJsonBlock(text) : structuredClone(text); } catch (e) { return { ok: false, errors: [e.message] }; }
+  if (data && ROLE_ALIAS[data.role]) {
+    data.role = ROLE_ALIAS[data.role];
+    if (typeof data.contract === 'string') data.contract = data.contract.replace(/^upgrade-scout\/[a-z-]+@/, `upgrade-scout/${data.role}@`);
+    if (data.jev && !data.capability) { data.capability = data.jev; delete data.jev; }
+  }
   const env = JSON.parse(fs.readFileSync(path.join(CONTRACTS, 'envelope.schema.json'), 'utf8'));
   const own = JSON.parse(fs.readFileSync(path.join(CONTRACTS, `${role}.schema.json`), 'utf8'));
   const errors = [...schemaValidate(env, data), ...schemaValidate(own, data)];
   if (data?.role && data.role !== role) errors.push(`$.role ${data.role} ≠ ${role}`);
+  const packName = role === 'capability-analyst' ? data?.capability?.pack : null;
+  if (packName) {
+    const pack = listPacks(SKILL_DIR).find((p) => p.name === packName);
+    if (!pack) errors.push(`$.capability.pack: 팩 ${packName}가 없다`);
+    else if (pack.contractExt) {
+      const ext = JSON.parse(fs.readFileSync(path.join(pack.dir, pack.contractExt), 'utf8'));
+      (data.capability.points || []).forEach((p, i) => {
+        if (['NOT_FIT', 'NOT_FOR_JEV'].includes(p.triage)) return;
+        errors.push(...schemaValidate(ext, p.pack_scores ?? {}, ext, `$.capability.points[${i}].pack_scores`));
+      });
+    }
+  }
   return { ok: errors.length === 0, errors, data };
 }
 
@@ -60,6 +81,14 @@ export function merge(ledger, replies) {
         const prev = L.items.find((x) => x.id === it.id);
         if (prev && prev.status !== it.status) L.conflicts.push({ item: it.id, a: prev.status, b: it.status, note_ko: '같은 항목에 상반된 구현 상태' });
         if (!prev) L.items.push({ id: it.id, label: it.capability_ko, source: data.review.repo.name, fit: it.fit, cost: it.cost, risk: it.risk, grade: it.status === 'implemented' ? 'A' : it.status === 'claimed-only' ? 'C' : 'B', caps: it.status === 'claimed-only' ? ['claims-only'] : [], summary_en: it.summary_en || null, status: it.status, port_mode: it.port_mode });
+      }
+    }
+    if (role === 'capability-analyst') {
+      const cap = data.capability || {};
+      for (const p of cap.points || []) {
+        if (p.triage === 'NOT_FIT' || p.triage === 'NOT_FOR_JEV' || !p.axes) continue;
+        if (L.items.some((x) => x.id === p.id)) continue;
+        L.items.push({ id: p.id, label: p.decision_ko, source: `capability:${cap.subject}`, fit: p.axes.fit, cost: p.axes.cost, risk: p.axes.risk, grade: 'B', caps: [], ...(typeof p.lang === 'number' ? { lang: p.lang } : {}), summary_en: null, status: 'proposed' });
       }
     }
   }

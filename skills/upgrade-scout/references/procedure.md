@@ -52,7 +52,7 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 
 - 먼저 읽기: `packs/jev/lens.md`, `references/rubric.md`
 - 명령: `node "$SKILL_DIR/packs/jev/scripts/jev-client.mjs" lint <질문셋 초안>` · `dry-run`
-- 누가: jev-analyst(Plan)
+- 누가: capability-analyst(Plan)
 - 산출: JP 표(J1–J12 → `$S/score-table.mjs jp-items.json --mode jev`), 판정, 영어 질문셋 v1, 게이트, 보정 계획, not_fit
 - 종료: 모든 JP에 `ref`, 합계·판정은 스크립트 값
 

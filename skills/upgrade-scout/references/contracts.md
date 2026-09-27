@@ -16,7 +16,7 @@
 
 - json 블록은 **정확히 하나**. 블록 밖 글(Plan의 “Critical Files” 꼬리 등)은 버린다 — `lib/text.mjs extractJsonBlock`.
 - `_ko` 필드는 한국어, `_en` 필드는 영어(Jev state로 쓰일 수 있음).
-- 역할별 페이로드 키: cartographer `map` · reviewer `review` · researcher `research` · jev-analyst `jev` · scout `scouting` · verifier `checks` · blind-scorer `scores` · drafter `sections`.
+- 역할별 페이로드 키: cartographer `map` · reviewer `review` · researcher `research` · capability-analyst `capability` · scout `scouting` · verifier `checks` · blind-scorer `scores` · drafter `sections`.
 
 ## id 체계
 
@@ -25,7 +25,7 @@
 | K01 | 제약 | cartographer |
 | A01 · GAP01 | 자산 · 빈칸 | cartographer |
 | T01 · G01 · L01 | 사람 접점 · 게이트 · LLM 호출 | cartographer |
-| JP01 | Jev 판단 지점 | jev-analyst |
+| CP01 | 모델 능력 판단 지점(v3.0 JP01도 받음) | capability-analyst |
 | RR-<repo>-01 | 리포 항목 | repo-reviewer |
 | W01 | 웹 대안 | web-researcher |
 | N01 · PS01 | 필요 · 플러그인 후보 | scout |

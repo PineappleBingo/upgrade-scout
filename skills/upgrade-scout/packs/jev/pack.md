@@ -14,6 +14,7 @@ provides:
   qsets: qsets
   qset_lint: scripts/jev-client.mjs
   scorer: criteria.json
+  contract_ext: contract-ext.json
 options:
   mode: auto
 radar:
@@ -33,5 +34,6 @@ radar:
 | `packs/jev/sources.md` · `packs/jev/registry.json` | 절차 5 `$S/sources-watch.mjs --registry jev` |
 | `packs/jev/qsets/scorer-questions.v1.json` · `packs/jev/qsets/plugin-suggest.v1.json` · `packs/jev/qsets/registry-triage.v1.json` · `packs/jev/qsets/target-qset.template.json` | 보조 채점 · 플러그인 2단 순위 · 레지스트리 선별 · 대상 질문셋 초안 |
 | `packs/jev/scripts/jev-client.mjs` | lint · dry-run · run(라이브) · replay · validate · health · cost |
+| `packs/jev/contract-ext.json` | capability 답의 `pack_scores.j` 검사(원장 validate) |
 
 옵션 `mode`: `auto`(기본) · `off` · `lens` · `lens+scorer`. 호환 별칭으로 최상위 `JEV_MODE`와 v2.0 값(`analyze` = lens, `accelerate` = lens+scorer)을 받는다. 라이브 호출 조건은 `packs/jev/lens.md` §6.

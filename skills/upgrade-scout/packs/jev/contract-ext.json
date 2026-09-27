@@ -1,0 +1,18 @@
+{
+ "$id": "upgrade-scout/pack-jev/pack-scores@1",
+ "description": "capability-analyst points[].pack_scores when capability.pack = jev (NOT_FIT·NOT_FOR_JEV points are exempt)",
+ "type": "object",
+ "required": ["j"],
+ "properties": {
+  "j": {
+   "type": "object",
+   "required": ["J1", "J2", "J3", "J4", "J5", "J6", "J7", "J8", "J9", "J10", "J11", "J12"],
+   "additionalProperties": false,
+   "properties": {
+    "J1": { "enum": [0, 1, 2] }, "J2": { "enum": [0, 1, 2] }, "J3": { "enum": [0, 1, 2] }, "J4": { "enum": [0, 1, 2] },
+    "J5": { "enum": [0, 1, 2] }, "J6": { "enum": [0, 1, 2] }, "J7": { "enum": [0, 1, 2] }, "J8": { "enum": [0, 1, 2] },
+    "J9": { "enum": [0, 1, 2] }, "J10": { "enum": [0, 1, 2] }, "J11": { "enum": [0, 1, 2] }, "J12": { "enum": [0, 1, 2] }
+   }
+  }
+ }
+}

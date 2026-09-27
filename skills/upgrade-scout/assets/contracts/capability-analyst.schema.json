@@ -1,0 +1,56 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/capability-analyst@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": ["capability"],
+ "properties": {
+  "capability": {
+   "type": "object",
+   "required": ["subject", "sheet", "points", "not_fit"],
+   "properties": {
+    "subject": { "type": "string", "minLength": 1 },
+    "pack": { "type": ["string", "null"] },
+    "registry_as_of": { "type": "string" },
+    "sheet": {
+     "type": "object",
+     "required": ["primitives", "limits", "cost", "languages", "sources"],
+     "properties": {
+      "primitives": { "type": "array", "items": { "type": "string" } },
+      "limits": { "type": "array", "items": { "type": "string" } },
+      "cost": { "type": "string" },
+      "languages": { "type": "string" },
+      "calibration": { "type": "string" },
+      "sources": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["url", "checked"], "properties": { "url": { "type": "string" }, "checked": { "type": "string" } } } }
+     }
+    },
+    "points": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": ["id", "ref", "decision_ko", "primitive", "triage", "gates"],
+      "properties": {
+       "id": { "type": "string", "pattern": "^(CP|JP)\\d{2,}$" },
+       "ref": { "type": "string" },
+       "decision_ko": { "type": "string" },
+       "mechanism": { "enum": ["llm-typed", "hidden-choice", "rule", "human", "threshold", "retrieval-gap", "none"] },
+       "primitive": { "type": "string" },
+       "triage": { "enum": ["DIRECT", "NEEDS_SHAPING", "NOT_FIT", "NOT_FOR_JEV"] },
+       "axes": { "type": "object", "required": ["fit", "cost", "risk"], "properties": { "fit": { "type": "number", "minimum": 0, "maximum": 10 }, "cost": { "type": "number", "minimum": 0, "maximum": 10 }, "risk": { "type": "number", "minimum": 0, "maximum": 10 } } },
+       "lang": { "type": "number", "minimum": 0, "maximum": 1 },
+       "pack_scores": { "type": "object" },
+       "question_sketch": { "type": "object" },
+       "gates": { "type": "object" },
+       "jaggedness": { "type": "array" },
+       "kpi_ko": { "type": "string" }
+      }
+     }
+    },
+    "not_fit": {
+     "type": "array",
+     "items": { "type": "object", "required": ["ref", "why_ko", "verdict"], "properties": { "verdict": { "enum": ["code", "reject"] } } }
+    }
+   }
+  }
+ }
+}

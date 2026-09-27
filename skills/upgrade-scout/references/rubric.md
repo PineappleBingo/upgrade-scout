@@ -44,7 +44,7 @@
 
 `node scripts/score-table.mjs jp.json --mode jev --format md`
 
-**분류 용어(jev-analyst `triage`)**: DIRECT(그대로) · NEEDS_SHAPING(질문 나누기·영어 버킷·no-match 추가가 먼저) · NOT_FOR_JEV(셈·날짜·생성·정확 조회·사람만 할 판단). J 판정과의 대응은 대체로 high → DIRECT, mid → NEEDS_SHAPING, code·reject → NOT_FOR_JEV지만, 합계가 아니라 이유로 적는다.
+**분류 용어(capability-analyst `triage`)**: DIRECT(그대로) · NEEDS_SHAPING(질문 나누기·영어 버킷·no-match 추가가 먼저) · NOT_FOR_JEV(셈·날짜·생성·정확 조회·사람만 할 판단). J 판정과의 대응은 대체로 high → DIRECT, mid → NEEDS_SHAPING, code·reject → NOT_FOR_JEV지만, 합계가 아니라 이유로 적는다.
 
 **J-점수는 시너지 합계에 섞지 않는다** — 옆 열로만.
 

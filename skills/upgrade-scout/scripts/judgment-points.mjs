@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // judgment-points — 코드베이스에서 "고르기·맞다/아니다·등급"이 일어나는 자리(판단 지점) 후보를 찾는다.
 //   node judgment-points.mjs <repo> [--min-score 40] [--format md] [--top 60]
-// Jev 같은 타입 판단 모델이 대신할 수 있는 자리의 "리드"다. jev-analyst가 파일을 열어 J-루브릭으로 확정한다.
+// Jev 같은 타입 판단 모델이 대신할 수 있는 자리의 "리드"다. capability-analyst가 파일을 열어 확정한다(Jev 팩이면 J-루브릭).
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs, isMain, emit, fail, EXIT, mdTable, helpRequested } from './lib/cli.mjs';

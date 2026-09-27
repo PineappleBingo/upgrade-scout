@@ -81,3 +81,35 @@ test('schema: $ref, enum, additionalProperties, patterns', () => {
   assert.deepEqual(validate(s, { a: 'C-001', b: 2 }), []);
   assert.equal(validate(s, { a: 'X', b: 3, c: 1 }).length, 3);
 });
+
+test('jev-analyst alias: v3.0 replies are accepted as capability-analyst', () => {
+  const reply = { role: 'jev-analyst', contract: 'upgrade-scout/jev-analyst@2', run_id: 'r', status: 'ok', claims: [],
+    capability: { subject: 'TypeSafe Jev', sheet: { primitives: ['choice'], limits: [], cost: '$0.042/1M', languages: 'en best', sources: [{ url: 'https://docs.typesafe.ai', checked: '2026-09-26' }] }, points: [], not_fit: [] } };
+  const res = validateReply('jev-analyst', JSON.stringify(reply));
+  assert.equal(res.ok, true, res.errors.join('\n'));
+  assert.equal(res.data.role, 'capability-analyst');
+});
+
+test('capability points with axes become score items; NOT_FIT does not', () => {
+  const L = merge(emptyLedger('r'), [{ role: 'capability-analyst', data: { claims: [], capability: { subject: 'Jev', sheet: {}, not_fit: [], points: [
+    { id: 'CP01', ref: 'a.ts:1', decision_ko: '댓글 의도 분류', primitive: 'choice', triage: 'DIRECT', gates: {}, axes: { fit: 9, cost: 7, risk: 8 }, lang: 0.9 },
+    { id: 'CP02', ref: 'b.ts:1', decision_ko: '날짜 비교', primitive: 'none', triage: 'NOT_FIT', gates: {}, axes: { fit: 1, cost: 1, risk: 1 } },
+  ] } } }]);
+  assert.deepEqual(L.items.map((i) => i.id), ['CP01']);
+  assert.equal(L.items[0].source, 'capability:Jev');
+  assert.equal(L.items[0].lang, 0.9);
+});
+
+test('pack contract extension: jev pack_scores must carry J1–J12 (NOT_FIT exempt)', () => {
+  const j = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [`J${i + 1}`, 1]));
+  const point = (id, extra) => ({ id, ref: 'a.ts:1', decision_ko: 'd', primitive: 'choice', triage: 'DIRECT', gates: {}, ...extra });
+  const reply = (points, pack = 'jev') => ({ role: 'capability-analyst', contract: 'upgrade-scout/capability-analyst@2', run_id: 'r', status: 'ok', claims: [],
+    capability: { subject: 'Jev', pack, sheet: { primitives: [], limits: [], cost: '', languages: '', sources: [{ url: 'https://docs.typesafe.ai', checked: '2026-09-26' }] }, points, not_fit: [] } });
+  assert.equal(validateReply('capability-analyst', reply([point('CP01', { pack_scores: { j } })])).ok, true);
+  const bad = validateReply('capability-analyst', reply([point('CP01', { pack_scores: { j: { ...j, J12: undefined } } })]));
+  assert.equal(bad.ok, false);
+  assert.match(bad.errors.join('\n'), /pack_scores/);
+  assert.equal(validateReply('capability-analyst', reply([point('CP02', { triage: 'NOT_FIT' })])).ok, true, 'NOT_FIT needs no J scores');
+  assert.match(validateReply('capability-analyst', reply([], 'nope')).errors.join('\n'), /팩 nope/);
+  assert.equal(validateReply('capability-analyst', reply([point('CP03', {})], null)).ok, true, 'no pack → no extension');
+});
