@@ -166,8 +166,9 @@ description: 프로젝트를 계획하거나 업그레이드할 때 다른 리�
 | 팩 | `packs/jev/pack.md` (그 안에 팩 파일 목록) |
 | 플러그인·스킬 | `references/plugin-skill-scouting.md` · `assets/registry/plugins.json` · `references/sources.md` |
 | 검색·접점·UI·금기 | `references/search-recipes.md` · `references/touchpoint-map.md` · `references/ui-mockup-rules.md` · `references/anti-patterns.md` · `references/lenses.md` |
+| 생태계 레이더 | `references/radar-format.md` · `assets/radar-index.schema.json` |
 | 산출 | `references/report-template.md` · `assets/report.html` · `assets/adr.template.md` · `assets/workflow.template.js` |
-| 스크립트 | `scripts/inventory.mjs` · `scripts/feature-probe.mjs` · `scripts/gate-inventory.mjs` · `scripts/drift-probe.mjs` · `scripts/judgment-points.mjs` · `scripts/sources-watch.mjs` · `scripts/plugin-scout.mjs` · `scripts/ledger.mjs` · `scripts/score-table.mjs` · `scripts/link-check.mjs` · `scripts/history.mjs` · `scripts/refs.mjs` · `scripts/selfcheck.mjs` |
+| 스크립트 | `scripts/inventory.mjs` · `scripts/feature-probe.mjs` · `scripts/gate-inventory.mjs` · `scripts/drift-probe.mjs` · `scripts/judgment-points.mjs` · `scripts/sources-watch.mjs` · `scripts/plugin-scout.mjs` · `scripts/ledger.mjs` · `scripts/score-table.mjs` · `scripts/link-check.mjs` · `scripts/history.mjs` · `scripts/refs.mjs` · `scripts/radar.mjs` · `scripts/selfcheck.mjs` |
 | 공용 라이브러리 | `scripts/lib/cli.mjs` · `scripts/lib/walk.mjs` · `scripts/lib/text.mjs` · `scripts/lib/net.mjs` · `scripts/lib/parsers.mjs` · `scripts/lib/schema.mjs` · `scripts/lib/packs.mjs` |
 | 평가·자기 점검 | `evals/evals.json` · `evals/trigger-queries.json` · `node --test "$SKILL_DIR/scripts/test/"*.test.mjs` · `node "$SKILL_DIR/scripts/selfcheck.mjs" --strict` |
 

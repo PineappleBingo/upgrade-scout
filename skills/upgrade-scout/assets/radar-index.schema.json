@@ -1,0 +1,25 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/radar-index@1",
+ "$defs": {
+  "meta": { "type": "object", "required": ["schema", "topic", "generated_at", "counts", "sources"], "properties": {
+    "schema": { "const": "radar-index/1" }, "topic": { "type": "string" }, "generated_at": { "type": "string" },
+    "counts": { "type": "object", "required": ["total"], "properties": { "total": { "type": "integer", "minimum": 0 } } },
+    "sources": { "type": "array" }, "queue": { "type": "object" } } },
+  "item": { "type": "object", "required": ["full_name", "url", "category", "stars", "forks", "pushed_at", "first_seen", "sources", "verified", "flags", "score"], "properties": {
+    "full_name": { "type": "string", "pattern": "^[\\w.-]+/[\\w.-]+$" }, "url": { "type": "string" },
+    "description": { "type": ["string", "null"] },
+    "readme_excerpt": { "type": ["string", "null"], "maxLength": 300 },
+    "summary_ko": { "anyOf": [{ "type": "null" }, { "type": "object", "required": ["what", "decision", "point"] }] },
+    "category": { "type": "object", "required": ["slug", "label", "emoji"] },
+    "keywords": { "type": "array", "items": { "type": "string" } }, "topics": { "type": "array", "items": { "type": "string" } },
+    "stars": { "type": "integer", "minimum": 0 }, "forks": { "type": "integer", "minimum": 0 },
+    "stars_7d_delta": { "type": ["integer", "null"] },
+    "pushed_at": { "type": "string" }, "created_at": { "type": "string" }, "first_seen": { "type": "string" },
+    "sources": { "type": "array", "items": { "type": "string" } },
+    "verified": { "enum": ["code", "docs", "pending"] },
+    "decision_types": { "type": "array", "items": { "type": "string" } },
+    "flags": { "type": "array", "items": { "type": "string" } },
+    "score": { "type": "number", "minimum": 0, "maximum": 10 } } }
+ }
+}

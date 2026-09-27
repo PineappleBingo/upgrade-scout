@@ -59,6 +59,7 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 ## 7. 후보 리포 리뷰
 
 - 준비: 메인이 `$W/repos/`에 얕게 클론(`git clone --depth 1 --filter=blob:limit=300k`). no-write면 웹으로(근거 B)
+- 생태계 레퍼런스·팩 레이더가 있으면: `$S/radar.mjs --pack <팩> --keywords <FOCUS 키워드> --top 10 --format md`로 신선도·즉석 보충·상위 N을 먼저 받고, 그 리포도 여기서 함께 클론·리뷰한다(`references/radar-format.md`)
 - 명령: `$S/feature-probe.mjs matrix --repos a=/p,b=/q --keywords k.json`
 - 누가: repo-reviewer × 리포, 동시 ≤3
 - 산출: RR 항목(구현 vs 주장, 적합·비용·리스크, 난이도, 런타임 비용, 마이너스)

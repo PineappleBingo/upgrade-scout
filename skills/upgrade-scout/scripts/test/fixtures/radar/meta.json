@@ -1,0 +1,1 @@
+{ "schema": "radar-index/1", "topic": "jev", "generated_at": "2026-09-26T21:00:00Z", "counts": { "total": 3, "new_24h": 1, "new_7d": 2, "verified": 2 }, "sources": [{ "id": "github-search", "url": "https://api.github.com/search/repositories", "status": "ok", "checked_at": "2026-09-26T21:00:00Z" }], "queue": { "summaries_pending": 1, "verification_pending": 1 } }
