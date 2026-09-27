@@ -17,6 +17,8 @@
 - json 블록은 **정확히 하나**. 블록 밖 글(Plan의 “Critical Files” 꼬리 등)은 버린다 — `lib/text.mjs extractJsonBlock`.
 - `_ko` 필드는 한국어, `_en` 필드는 영어(Jev state로 쓰일 수 있음).
 - 역할별 페이로드 키: cartographer `map` · reviewer `review` · researcher `research` · capability-analyst `capability` · design-mapper `mapping` · scout `scouting` · verifier `checks` · blind-scorer `scores` · drafter `sections`.
+- 봉투 `subject`는 주장과 항목을 잇는 열쇠다 — reviewer는 리포 이름, capability-analyst는 `capability.subject`, design-mapper는 `source.title`(비우면 merge가 이 값으로 채운다).
+- v3.0 `jev-analyst` 답: 역할·계약 이름, `jev` → `capability`, 점의 `j` → `pack_scores.j`, `pack: jev`만 옮긴다. v3.0 답에는 능력 시트(`sheet`)가 없어 검사에서 떨어진다 — 시트를 지어내지 않고 v3.1 계약으로 다시 요청한다.
 
 ## id 체계
 
@@ -28,6 +30,7 @@
 | CP01 | 모델 능력 판단 지점(v3.0 JP01도 받음) | capability-analyst |
 | P01 · MP01 | 설계 원칙 · 빠진 조각 | design-mapper |
 | RR-<repo>-01 | 리포 항목 | repo-reviewer |
+| `CP01@<subject slug>` · `MP01@<문서 제목 slug>` · `AA-<원칙 키>` | 원장 항목 id — 문서·능력이 여럿이어도 겹치지 않게 merge가 출처를 붙인다. 그래도 겹치면 `conflicts`에 남긴다 | ledger |
 | W01 | 웹 대안 | web-researcher |
 | N01 · PS01 | 필요 · 플러그인 후보 | scout |
 | C-001 | 전역 주장(합칠 때 부여) | ledger |

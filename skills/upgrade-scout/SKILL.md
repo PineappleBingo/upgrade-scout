@@ -34,7 +34,8 @@ description: 코드베이스를 레퍼런스(리포 · 설계 문서 · 모델/A
 | `CANDIDATES` | `REFERENCES`의 리포 항목 |
 | `UI_SCOPE: on` | `LENSES`에 `ui` |
 | `PLUGIN_SCOPE`(auto · light · full) | `LENSES`에 `plugins` + 같은 세부 옵션(`references/plugin-skill-scouting.md`) |
-| `JEV_MODE`(auto · off · lens · lens+scorer, v2.0 analyze · accelerate) | Jev 팩 옵션 `mode`(`packs/jev/pack.md`) |
+| `JEV_MODE`(auto · off · lens · lens+scorer, v2.0 analyze · accelerate) | Jev 팩 옵션 `mode`(뜻은 §6) |
+| 역할 `jev-analyst`(v3.0 답) | `capability-analyst` — `ledger.mjs validate`가 이름 · `jev` → `capability` · 점의 `j` → `pack_scores.j`만 옮긴다. v3.0 답은 능력 시트가 없어 검사에서 떨어지므로 v3.1 계약으로 다시 요청 |
 
 모르는 값은 묻기 전에 추론한다. 물어야 하면 AskUserQuestion 한 번, 질문 3개 이하. 추론한 값은 리포트 머리에 “가정한 값”으로 적는다.
 

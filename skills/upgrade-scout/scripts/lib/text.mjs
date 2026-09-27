@@ -103,6 +103,7 @@ export function extractJsonBlock(text) {
   return JSON.parse(blocks[0]);
 }
 
+/** 글자(한글 포함)·숫자만 남긴 소문자 slug. 라틴 악센트는 벗긴다(é → e). */
 export function slugify(s) {
-  return String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 64) || 'item';
+  return String(s).toLowerCase().normalize('NFKD').replace(/\p{M}/gu, '').normalize('NFC').replace(/[^\p{L}\p{N}\s_-]/gu, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 64) || 'item';
 }

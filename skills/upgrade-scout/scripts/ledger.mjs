@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs, isMain, emit, fail, EXIT, mdTable, helpRequested, nowIso } from './lib/cli.mjs';
-import { extractJsonBlock, sha256, canonicalJson } from './lib/text.mjs';
+import { extractJsonBlock, sha256, canonicalJson, slugify } from './lib/text.mjs';
 import { validate as schemaValidate } from './lib/schema.mjs';
 import { listPacks } from './lib/packs.mjs';
 
@@ -37,10 +37,18 @@ export function validateReply(roleIn, text) {
   if (!ROLE_KEY[role]) return { ok: false, errors: [`알 수 없는 역할 ${roleIn}`] };
   let data;
   try { data = typeof text === 'string' ? extractJsonBlock(text) : structuredClone(text); } catch (e) { return { ok: false, errors: [e.message] }; }
-  if (data && ROLE_ALIAS[data.role]) {
+  if (data?.role === 'jev-analyst') {
+    // v3.0 답 옮기기: 역할·계약 이름, 페이로드 jev → capability, pack·subject 기본값, 점의 j → pack_scores.j. 능력 시트는 지어내지 않는다.
     data.role = ROLE_ALIAS[data.role];
     if (typeof data.contract === 'string') data.contract = data.contract.replace(/^upgrade-scout\/[a-z-]+@/, `upgrade-scout/${data.role}@`);
     if (data.jev && !data.capability) { data.capability = data.jev; delete data.jev; }
+    const cap = data.capability;
+    if (cap && typeof cap === 'object') {
+      cap.pack ??= 'jev';
+      cap.subject ??= 'TypeSafe Jev (v3.0 reply)';
+      for (const p of Array.isArray(cap.points) ? cap.points : []) if (p?.j && !p.pack_scores) { p.pack_scores = { j: p.j }; delete p.j; }
+      if (!cap.sheet) return { ok: false, errors: ['v3.0 jev-analyst 답에는 능력 시트(sheet)가 없다 — 지어내지 않는다. v3.1 capability-analyst 계약으로 다시 요청할 것'], data };
+    }
   }
   const env = JSON.parse(fs.readFileSync(path.join(CONTRACTS, 'envelope.schema.json'), 'utf8'));
   const own = JSON.parse(fs.readFileSync(path.join(CONTRACTS, `${role}.schema.json`), 'utf8'));
@@ -68,11 +76,20 @@ const nextId = (arr, prefix, width) => `${prefix}${String(arr.length + 1).padSta
 export function merge(ledger, replies) {
   const L = structuredClone(ledger);
   const byKey = new Map(L.claims.map((c) => [c.key, c]));
-  for (const { role, data } of replies) {
+  // 같은 id가 이미 있으면: 같은 항목이면 건너뛰고, 다른 항목이면 말없이 버리지 않고 충돌로 남긴다.
+  const addItem = (item) => {
+    const prev = L.items.find((x) => x.id === item.id);
+    if (!prev) return L.items.push(item);
+    if (prev.source !== item.source || prev.label !== item.label) L.conflicts.push({ item: item.id, a: prev.label, b: item.label, note_ko: '같은 id의 다른 항목 — 뒤 항목은 합치지 않았다' });
+  };
+  for (const { role: roleIn, data } of replies) {
+    const role = ROLE_ALIAS[roleIn] || roleIn;
+    // 주장과 항목을 잇는 열쇠: 봉투 subject, 없으면 그 역할이 다루는 대상 이름.
+    const subject = data.subject || data.review?.repo?.name || data.capability?.subject || data.mapping?.source?.title || null;
     for (const c of data.claims || []) {
       const key = evKey(c);
       if (byKey.has(key)) { byKey.get(key).sources.push(`${role}:${c.id}`); continue; }
-      const claim = { id: nextId(L.claims, 'C-', 3), key, role, local_id: c.id, subject: data.subject || null, text_ko: c.text_ko, kind: c.kind, evidence: c.evidence || [], recheck: c.recheck || null, confidence: c.confidence, status: 'open', sources: [`${role}:${c.id}`] };
+      const claim = { id: nextId(L.claims, 'C-', 3), key, role, local_id: c.id, subject, text_ko: c.text_ko, kind: c.kind, evidence: c.evidence || [], recheck: c.recheck || null, confidence: c.confidence, status: 'open', sources: [`${role}:${c.id}`] };
       L.claims.push(claim);
       byKey.set(key, claim);
     }
@@ -87,33 +104,33 @@ export function merge(ledger, replies) {
       const cap = data.capability || {};
       for (const p of cap.points || []) {
         if (p.triage === 'NOT_FIT' || p.triage === 'NOT_FOR_JEV' || !p.axes) continue;
-        if (L.items.some((x) => x.id === p.id)) continue;
-        L.items.push({ id: p.id, label: p.decision_ko, source: `capability:${cap.subject}`, fit: p.axes.fit, cost: p.axes.cost, risk: p.axes.risk, grade: 'B', caps: [], ...(typeof p.lang === 'number' ? { lang: p.lang } : {}), summary_en: null, status: 'proposed' });
+        addItem({ id: `${p.id}@${slugify(cap.subject)}`, label: p.decision_ko, source: `capability:${cap.subject}`, subject, fit: p.axes.fit, cost: p.axes.cost, risk: p.axes.risk, grade: 'B', caps: [], ...(typeof p.lang === 'number' ? { lang: p.lang } : {}), summary_en: null, status: 'proposed' });
       }
     }
     if (role === 'design-mapper') {
       const m = data.mapping || {};
+      const title = m.source?.title || m.source?.ref || '?';
       for (const p of m.missing_pieces || []) {
-        if (L.items.some((x) => x.id === p.id)) continue;
-        L.items.push({ id: p.id, label: p.title_ko, source: `design:${m.source?.title || m.source?.ref || '?'}`, fit: p.fit, cost: p.cost, risk: p.risk, grade: 'B', caps: [], summary_en: null, status: 'proposed' });
+        addItem({ id: `${p.id}@${slugify(title)}`, label: p.title_ko, source: `design:${title}`, subject, fit: p.fit, cost: p.cost, risk: p.risk, grade: 'B', caps: [], summary_en: null, status: 'proposed' });
       }
     }
     if (role === 'target-cartographer') {
       for (const p of data.map?.agents?.principles || []) {
         if (!['partial', 'missing'].includes(p.verdict) || !p.fix) continue;
-        const id = `AA-${p.key}`;
-        if (L.items.some((x) => x.id === id)) continue;
-        L.items.push({ id, label: p.fix.title_ko, source: 'agent-architecture', fit: p.fix.fit, cost: p.fix.cost, risk: p.fix.risk, grade: 'B', caps: [], summary_en: null, status: 'proposed' });
+        addItem({ id: `AA-${p.key}`, label: p.fix.title_ko, source: 'agent-architecture', subject, fit: p.fix.fit, cost: p.fix.cost, risk: p.fix.risk, grade: 'B', caps: [], summary_en: null, status: 'proposed' });
       }
     }
   }
   return L;
 }
 
-/** 재확인할 주장 K개 — 없음·숫자·라이선스 주장, 상위 항목·충돌에 딸린 주장, 낮은 확신 순. */
+/** 항목이 주장과 이어지는 열쇠(주장의 subject와 같은 값). */
+const subjectOf = (i) => i.subject ?? i.source;
+
+/** 재확인할 주장 K개 —없음·숫자·라이선스 주장, 상위 항목·충돌에 딸린 주장, 낮은 확신 순. */
 export function pick(ledger, k = 15) {
-  const top = new Set([...ledger.items].sort((a, b) => (b.fit * 0.4 + b.cost * 0.3 + b.risk * 0.3) - (a.fit * 0.4 + a.cost * 0.3 + a.risk * 0.3)).slice(0, 5).map((i) => i.source));
-  const conflicted = new Set(ledger.conflicts.map((c) => c.item));
+  const top = new Set([...ledger.items].sort((a, b) => (b.fit * 0.4 + b.cost * 0.3 + b.risk * 0.3) - (a.fit * 0.4 + a.cost * 0.3 + a.risk * 0.3)).slice(0, 5).map(subjectOf));
+  const conflicted = new Set(ledger.conflicts.map((c) => { const it = ledger.items.find((i) => i.id === c.item); return it ? subjectOf(it) : c.item; }));
   const queued = new Set(ledger.queue || []);
   const w = (c) => (['absence', 'number', 'license'].includes(c.kind) ? 3 : 0) + (top.has(c.subject) ? 2 : 0) + (conflicted.has(c.subject) || queued.has(c.subject) ? 2 : 0) + (c.confidence === 'low' ? 2 : c.confidence === 'mid' ? 1 : 0) + (c.evidence.length === 0 ? 2 : 0);
   return ledger.claims.filter((c) => c.status === 'open' && c.kind !== 'opinion').map((c) => ({ id: c.id, weight: w(c), kind: c.kind, text_ko: c.text_ko, recheck: c.recheck })).sort((a, b) => b.weight - a.weight || a.id.localeCompare(b.id)).slice(0, k);
@@ -135,7 +152,7 @@ export function record(ledger, { claim, cmd, exit = null, excerpt = '', verdict,
 }
 
 export function blindExport(ledger) {
-  return ledger.items.map((i) => ({ item_id: i.id, label: i.label, source: i.source, grade: i.grade, status: i.status, port_mode: i.port_mode, evidence: ledger.claims.filter((c) => c.subject === i.source && c.status !== 'refuted').slice(0, 5).map((c) => ({ kind: c.kind, text_ko: c.text_ko })) }));
+  return ledger.items.map((i) => ({ item_id: i.id, label: i.label, source: i.source, grade: i.grade, status: i.status, port_mode: i.port_mode, evidence: ledger.claims.filter((c) => c.subject === subjectOf(i) && c.status !== 'refuted').slice(0, 5).map((c) => ({ kind: c.kind, text_ko: c.text_ko })) }));
 }
 
 export function attachBlind(ledger, scores) {
@@ -146,7 +163,7 @@ export function attachBlind(ledger, scores) {
     it.blind = { fit: s.fit, cost: s.cost, risk: s.risk };
     const diff = Math.max(...['fit', 'cost', 'risk'].map((k) => Math.abs(s[k] - it[k])));
     it.blind_diff = diff;
-    if (diff >= 2 && !L.queue.includes(it.source)) L.queue.push(it.source);
+    if (diff >= 2 && !L.queue.includes(subjectOf(it))) L.queue.push(subjectOf(it));
   }
   return L;
 }
@@ -172,7 +189,7 @@ export function attachJev(ledger, run, { scoreKey = 'fit' } = {}) {
     if (!a || typeof a.score !== 'number') { it.jev = { skipped: 'no-score' }; continue; }
     it.jev = { score: a.score, confidence: a.confidence ?? null, advisory: Math.round(a.score * 2.5 * 10) / 10 };
     const main = it.fit;
-    if (Math.abs(it.jev.advisory - main) >= 2.5 && (a.confidence ?? 0) >= 0.6 && !L.queue.includes(it.source)) L.queue.push(it.source);
+    if (Math.abs(it.jev.advisory - main) >= 2.5 && (a.confidence ?? 0) >= 0.6 && !L.queue.includes(subjectOf(it))) L.queue.push(subjectOf(it));
   }
   return L;
 }

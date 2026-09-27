@@ -1,6 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import './_offline.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { SCRIPTS } from './_offline.mjs';
 import { validateReply, emptyLedger, merge, pick, record, blindExport, attachBlind, jevRequests, attachJev, exportMd } from '../ledger.mjs';
 import { append, verify, diff } from '../history.mjs';
 import { validate } from '../lib/schema.mjs';
@@ -90,15 +94,92 @@ test('jev-analyst alias: v3.0 replies are accepted as capability-analyst', () =>
   assert.equal(res.data.role, 'capability-analyst');
 });
 
-test('jev-analyst alias: a genuine v3.0 payload (key `jev`, no `capability`) is migrated', () => {
+test('jev-analyst alias: a genuine v3.0 reply (v3.0 schema: `jev` key, JP ids, point `j`, no sheet) fails with one clear re-request error', () => {
+  const j = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [`J${i + 1}`, 1]));
+  const v30 = { role: 'jev-analyst', contract: 'upgrade-scout/jev-analyst@2', run_id: 'r', status: 'ok', claims: [],
+    jev: { registry_as_of: '2026-09-20', not_fit: [{ ref: 'src/date.ts:3', why_ko: '날짜 비교', verdict: 'code' }], points: [
+      { id: 'JP01', ref: 'src/intent.ts:10', decision_ko: '댓글 의도 분류', mechanism: 'llm-typed', primitive: 'choice', triage: 'DIRECT', j, pattern: 'confidence-routing',
+        cookbooks: ['classification_using_confidence'], question_sketch: { id: 'intent', type: 'choice', instructions_en: 'Which intent does the comment express?' }, gates: {} },
+    ] } };
+  const res = validateReply('jev-analyst', JSON.stringify(v30));
+  assert.equal(res.ok, false);
+  assert.equal(res.errors.length, 1, res.errors.join('\n'));
+  assert.match(res.errors[0], /v3\.0.*sheet.*v3\.1/);
+  const withSheet = structuredClone(v30);
+  withSheet.jev.sheet = { primitives: ['choice'], limits: [], cost: '$0.042/1M', languages: 'en best', sources: [{ url: 'https://docs.typesafe.ai', checked: '2026-09-26' }] };
+  const ok = validateReply('jev-analyst', JSON.stringify(withSheet));
+  assert.equal(ok.ok, true, ok.errors.join('\n'));
+  assert.equal(ok.data.role, 'capability-analyst');
+  assert.equal(ok.data.contract, 'upgrade-scout/capability-analyst@2');
+  assert.equal('jev' in ok.data, false);
+  assert.equal(ok.data.capability.pack, 'jev');
+  assert.equal(ok.data.capability.subject, 'TypeSafe Jev (v3.0 reply)');
+  assert.deepEqual(ok.data.capability.points[0].pack_scores, { j });
+  assert.equal('j' in ok.data.capability.points[0], false);
+});
+
+test('jev-analyst alias: CLI merge keeps the items (role normalized before merging)', () => {
+  const j = Object.fromEntries(Array.from({ length: 12 }, (_, i) => [`J${i + 1}`, 1]));
   const reply = { role: 'jev-analyst', contract: 'upgrade-scout/jev-analyst@2', run_id: 'r', status: 'ok', claims: [],
-    jev: { subject: 'TypeSafe Jev', sheet: { primitives: ['choice'], limits: [], cost: '$0.042/1M', languages: 'en best', sources: [{ url: 'https://docs.typesafe.ai', checked: '2026-09-26' }] }, points: [], not_fit: [] } };
-  const res = validateReply('jev-analyst', JSON.stringify(reply));
-  assert.equal(res.ok, true, res.errors.join('\n'));
-  assert.equal(res.data.role, 'capability-analyst');
-  assert.equal(res.data.contract, 'upgrade-scout/capability-analyst@2');
-  assert.equal('jev' in res.data, false);
-  assert.equal(res.data.capability.subject, reply.jev.subject);
+    capability: { subject: 'TypeSafe Jev', pack: 'jev', sheet: { primitives: ['choice'], limits: [], cost: '', languages: '', sources: [{ url: 'https://docs.typesafe.ai', checked: '2026-09-26' }] }, not_fit: [],
+      points: [{ id: 'CP01', ref: 'a.ts:1', decision_ko: '댓글 의도 분류', primitive: 'choice', triage: 'DIRECT', gates: {}, axes: { fit: 9, cost: 7, risk: 8 }, pack_scores: { j } }] } };
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ledger-cli-'));
+  fs.writeFileSync(path.join(dir, 'reply.json'), JSON.stringify(reply));
+  const r = spawnSync(process.execPath, [path.join(SCRIPTS, 'ledger.mjs'), 'merge', path.join(dir, 'ledger.json'), `jev-analyst=${path.join(dir, 'reply.json')}`, '--no-write'], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(JSON.parse(r.stdout).items, 1);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+const designReply = (title, ref, pieces = [{ id: 'MP01', title_ko: `${title} 조각`, design_ko: 'd', touches: [], fit: 8, cost: 7, risk: 8 }], claims = []) => ({
+  role: 'design-mapper', contract: 'upgrade-scout/design-mapper@2', run_id: 'r', status: 'ok', claims,
+  mapping: { source: { ref, title, kind: 'design' }, measured_claims: false, principles: [], platform_checks: [], mapping: [], missing_pieces: pieces, conflicts: [] } });
+const capReply = (subject, decision = '의도 분류') => ({ subject, claims: [], capability: { subject, sheet: {}, not_fit: [], points: [
+  { id: 'CP01', ref: 'a.ts:1', decision_ko: decision, primitive: 'choice', triage: 'DIRECT', gates: {}, axes: { fit: 9, cost: 7, risk: 8 } }] } });
+
+test('merge: two design docs (or two capability subjects) that both number MP01/CP01 keep every item', () => {
+  const L = merge(emptyLedger('r'), [{ role: 'design-mapper', data: designReply('Doc A', 'a.md') }, { role: 'design-mapper', data: designReply('Doc B', 'b.md') }]);
+  assert.deepEqual(L.items.map((i) => i.id), ['MP01@doc-a', 'MP01@doc-b']);
+  const C = merge(emptyLedger('r'), [{ role: 'capability-analyst', data: capReply('TypeSafe Jev') }, { role: 'capability-analyst', data: capReply('OpenAI Moderation') }]);
+  assert.deepEqual(C.items.map((i) => i.id), ['CP01@typesafe-jev', 'CP01@openai-moderation']);
+  assert.deepEqual(C.conflicts, []);
+});
+
+test('merge: an id clash that survives qualification is a recorded conflict, never a silent drop; re-merging the same reply is a no-op', () => {
+  const same = merge(emptyLedger('r'), [{ role: 'design-mapper', data: designReply('Doc', 'a.md') }, { role: 'design-mapper', data: designReply('Doc', 'a.md') }]);
+  assert.equal(same.items.length, 1);
+  assert.deepEqual(same.conflicts, []);
+  const other = designReply('Doc', 'b.md', [{ id: 'MP01', title_ko: '다른 조각', design_ko: 'd', touches: [], fit: 5, cost: 5, risk: 5 }]);
+  const clash = merge(emptyLedger('r'), [{ role: 'design-mapper', data: designReply('Doc', 'a.md') }, { role: 'design-mapper', data: other }]);
+  assert.equal(clash.items.length, 1);
+  assert.equal(clash.conflicts.length, 1);
+  assert.deepEqual([clash.conflicts[0].item, clash.conflicts[0].a, clash.conflicts[0].b], ['MP01@doc', 'Doc 조각', '다른 조각']);
+});
+
+test('claims link to design, capability and agent-architecture items: pick boosts them, blind export carries evidence, blind diff re-queues', () => {
+  const absence = { id: 'dm1', text_ko: '수리 로그가 없다', kind: 'absence', evidence: [{ type: 'cmd', ref: 'rg -n repair src' }], recheck: { cmd: 'rg -n repair src', expect: '0' }, confidence: 'mid' };
+  let L = merge(emptyLedger('r'), [{ role: 'design-mapper', data: designReply('위임 루프 플레이북', 'https://example.com/playbook', undefined, [absence]) }]);
+  assert.equal(L.items[0].subject, '위임 루프 플레이북');
+  assert.equal(L.claims[0].subject, '위임 루프 플레이북', 'design-mapper claims fall back to the source title like the items');
+  assert.equal(blindExport(L)[0].evidence.length, 1);
+  assert.equal(pick(L)[0].weight, 6, 'absence 3 + top item 2 + mid 1');
+  L = attachBlind(L, [{ item_id: L.items[0].id, fit: 2, cost: 7, risk: 8 }]);
+  assert.deepEqual(L.queue, ['위임 루프 플레이북']);
+  assert.equal(pick(L)[0].weight, 8, 'queued subject adds 2');
+  const cap = capReply('TypeSafe Jev');
+  cap.claims = [{ id: 'ca1', text_ko: '문서에 choice가 있다', kind: 'fact', evidence: [{ type: 'url', url: 'https://docs.typesafe.ai' }], confidence: 'high' }];
+  const cart = { role: 'target-cartographer', subject: 'reel', claims: [{ id: 'tc1', text_ko: '비용 기록이 없다', kind: 'absence', evidence: [], confidence: 'mid' }],
+    map: { agents: { principles: [{ key: 'observability', verdict: 'missing', fix: { title_ko: '에이전트별 토큰 기록', fit: 7, cost: 8, risk: 9 } }] } } };
+  const M = merge(emptyLedger('r'), [{ role: 'capability-analyst', data: cap }, { role: 'target-cartographer', data: cart }]);
+  assert.deepEqual(blindExport(M).map((b) => [b.item_id, b.evidence.length]), [['CP01@typesafe-jev', 1], ['AA-observability', 1]]);
+  const J = attachJev(M, { rows: [{ id: 'AA-observability', status: 'ok', answers: { fit: { score: 0, confidence: 0.9 } } }] });
+  assert.deepEqual(J.queue, ['reel']);
+});
+
+test('pick: a conflicted item boosts the claims about its subject', () => {
+  const L = merge(emptyLedger('r1'), [{ role: 'repo-reviewer', data: reviewer('hunch') }, { role: 'repo-reviewer', data: reviewer('hunch', 'claimed-only') }]);
+  assert.equal(L.conflicts.length, 1);
+  assert.equal(pick(L).find((p) => p.kind === 'fact').weight, 4, 'top item 2 + conflict 2');
 });
 
 test('capability points with axes become score items; NOT_FIT does not', () => {
@@ -106,7 +187,7 @@ test('capability points with axes become score items; NOT_FIT does not', () => {
     { id: 'CP01', ref: 'a.ts:1', decision_ko: '댓글 의도 분류', primitive: 'choice', triage: 'DIRECT', gates: {}, axes: { fit: 9, cost: 7, risk: 8 }, lang: 0.9 },
     { id: 'CP02', ref: 'b.ts:1', decision_ko: '날짜 비교', primitive: 'none', triage: 'NOT_FIT', gates: {}, axes: { fit: 1, cost: 1, risk: 1 } },
   ] } } }]);
-  assert.deepEqual(L.items.map((i) => i.id), ['CP01']);
+  assert.deepEqual(L.items.map((i) => i.id), ['CP01@jev']);
   assert.equal(L.items[0].source, 'capability:Jev');
   assert.equal(L.items[0].lang, 0.9);
 });
@@ -140,7 +221,7 @@ test('design-mapper: contract validates and missing pieces join the score table'
   const res = validateReply('design-mapper', JSON.stringify(reply));
   assert.equal(res.ok, true, res.errors.join('\n'));
   const L = merge(emptyLedger('r'), [{ role: 'design-mapper', data: res.data }]);
-  assert.deepEqual(L.items.map((i) => [i.id, i.source]), [['MP01', 'design:위임 루프 플레이북']]);
+  assert.deepEqual(L.items.map((i) => [i.id, i.source]), [['MP01@위임-루프-플레이북', 'design:위임 루프 플레이북']]);
   assert.equal(L.claims[0].kind, 'absence');
 });
 

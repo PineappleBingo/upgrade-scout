@@ -9,7 +9,7 @@
 
 ## 할 일
 
-1. `source`: ref · title · kind · checked. `measured_claims`: 저자가 측정값으로 뒷받침하는지(주장뿐이면 false).
+1. `source`: ref · title · kind · checked. 봉투 `subject`는 `source.title`과 같게. `measured_claims`: 저자가 측정값으로 뒷받침하는지(주장뿐이면 false).
 2. `principles[]` P01…: 원칙·계층·단계·규칙·실패 모드를 원문 순서대로. 원문 인용은 300자 이내.
 3. `platform_checks[]`: 문서가 전제하는 플랫폼 능력(예: "스킬이 자기 파일을 고친다")을 **공식 문서**로 확인 — yes · no · unverifiable + URL + 확인일. 커뮤니티 글은 근거가 아니다.
 4. `mapping[]`: 원칙마다 대상에 present · partial · absent + `target_refs`(path:line). absent는 어디를 어떻게 찾았는지 `search`에 명령으로 남기고, 같은 내용의 `kind: absence` 주장을 `claims`에 낸다(재확인 대상).
