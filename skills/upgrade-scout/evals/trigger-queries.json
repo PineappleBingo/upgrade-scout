@@ -1,0 +1,22 @@
+[
+  { "query": "이 프로젝트 업그레이드 계획 좀 세워줘. 비슷한 오픈소스 리포들에서 뭘 가져오면 좋을지 점수로 정리해서", "should_trigger": true },
+  { "query": "agent-video-factory에서 우리 리포로 가져올 만한 기능이 뭐가 있을까? 시너지 분석해줘", "should_trigger": true },
+  { "query": "우리 파이프라인에서 Jev 붙일 만한 판단 지점 찾아줘", "should_trigger": true },
+  { "query": "Jev 활용 사례 새로 올라온 거 있는지 확인하고 분석 기준에 반영해줘", "should_trigger": true },
+  { "query": "매주 경쟁 리포 새 기능을 모아서 우리 서비스에 이식할 만한 걸 뽑는 플로우가 필요해. 쓸 만한 플러그인이나 스킬도 같이 찾아줘", "should_trigger": true },
+  { "query": "what should we port from these three repos into our CLI? give me a scored report with what to skip", "should_trigger": true },
+  { "query": "이 앱에서 LLM 판단 대신 타입 판단 모델을 쓰면 어디가 좋아질지 딥 리서치 리포트로 만들어줘", "should_trigger": true },
+  { "query": "새 프로젝트 기획 중인데 참고할 만한 리포랑 플러그인 조사해서 가져올 것, 뺄 것 정리해줘", "should_trigger": true },
+  { "query": "upgrade scout 돌려줘 — 대상은 TV-Strategy-Extractor, 후보는 jev-ultrafast", "should_trigger": true },
+  { "query": "indicator-search 기능이 이미 들어간 걸로 아는데 확인하고, 다른 리포들이랑 비교해서 업그레이드 로드맵 짜줘", "should_trigger": true },
+  { "query": "build.ts 153번째 줄에서 나는 타입 에러 고쳐줘", "should_trigger": false },
+  { "query": "Jev API 호출하는데 422가 나와. 요청 형식 뭐가 틀렸어?", "should_trigger": false },
+  { "query": "typesafe 플러그인 설치해줘", "should_trigger": false },
+  { "query": "이 PR 코드 리뷰해줘", "should_trigger": false },
+  { "query": "report.ts를 더 읽기 쉽게 리팩터링해줘", "should_trigger": false },
+  { "query": "claude-sync-kit으로 다른 PC에 내 Claude 설정 동기화해줘", "should_trigger": false },
+  { "query": "gapfinder에 이미 정한 대로 unsupported 선택지 추가하는 거 구현해줘", "should_trigger": false },
+  { "query": "Jev score 질문 타입이 뭐야? 문서 요약해줘", "should_trigger": false },
+  { "query": "이 리포 README를 한국어로 번역해줘", "should_trigger": false },
+  { "query": "pytest가 실패하는 원인 찾아줘", "should_trigger": false }
+]

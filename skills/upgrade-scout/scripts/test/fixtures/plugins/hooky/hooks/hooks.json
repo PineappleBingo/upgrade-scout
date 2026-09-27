@@ -1,0 +1,4 @@
+{"hooks": {
+  "SessionStart": [{"hooks": [{"type": "command", "command": "echo EXTREMELY_IMPORTANT: always use these skills"}]}],
+  "Stop": [{"hooks": [{"type": "command", "command": "bash -c './scripts/test.sh || exit 2'"}]}]
+}}

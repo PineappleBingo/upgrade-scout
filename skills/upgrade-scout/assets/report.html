@@ -1,0 +1,258 @@
+<title>{{TITLE_2_TO_4_WORDS}}</title>
+<meta name="description" content="{{ONE_SENTENCE}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f5f6f2; --surface: #ffffff; --surface-2: #eef1ec;
+    --ink: #141c1a; --ink-2: #4a5652; --muted: #6d7975;
+    --line: #dde3dd; --line-strong: #c4ccc5;
+    --accent: #0b8a7a; --accent-ink: #086b5f; --accent-soft: #d9efeb;
+    --score-hi: #0b6c60; --score-mid: #1c8f80; --score-lo: #3fb0a0; --track: #dcebe7;
+    --heat-0: #eef1ec; --heat-1: #bfe3dc; --heat-2: #0b6c60; --heat-ink-2: #ffffff;
+    --neg: #b42318; --neg-soft: #fbeae7; --warn: #b54708; --warn-soft: #fdf0e2; --good: #067647; --good-soft: #e3f4ea;
+    --code-bg: #eef1ec;
+    --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0f1412; --surface: #161d1a; --surface-2: #1d2622;
+      --ink: #e8ece9; --ink-2: #b4bdb8; --muted: #8f9a95;
+      --line: #27322d; --line-strong: #3a4740;
+      --accent: #13a08f; --accent-ink: #4fd6c2; --accent-soft: #123b35;
+      --score-hi: #4fd6c2; --score-mid: #22a08f; --score-lo: #1e6f63; --track: #22302c;
+      --heat-0: #1d2622; --heat-1: #1e5a51; --heat-2: #4fd6c2; --heat-ink-2: #0f1412;
+      --neg: #f28b82; --neg-soft: #3a1f1c; --warn: #f2b56b; --warn-soft: #3a2a17; --good: #7fd8a3; --good-soft: #17342a;
+      --code-bg: #1d2622;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0f1412; --surface: #161d1a; --surface-2: #1d2622;
+    --ink: #e8ece9; --ink-2: #b4bdb8; --muted: #8f9a95;
+    --line: #27322d; --line-strong: #3a4740;
+    --accent: #13a08f; --accent-ink: #4fd6c2; --accent-soft: #123b35;
+    --score-hi: #4fd6c2; --score-mid: #22a08f; --score-lo: #1e6f63; --track: #22302c;
+    --heat-0: #1d2622; --heat-1: #1e5a51; --heat-2: #4fd6c2; --heat-ink-2: #0f1412;
+    --neg: #f28b82; --neg-soft: #3a1f1c; --warn: #f2b56b; --warn-soft: #3a2a17; --good: #7fd8a3; --good-soft: #17342a;
+    --code-bg: #1d2622;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15.5px; line-height: 1.7; -webkit-font-smoothing: antialiased; word-break: keep-all; overflow-wrap: anywhere; margin: 0; }
+  a { color: var(--accent-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible, summary:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  code, .mono { font-family: var(--mono); font-size: .86em; }
+  code { background: var(--code-bg); padding: .1em .4em; border-radius: 4px; }
+  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: .9rem 1rem; overflow-x: auto; font-size: .8rem; line-height: 1.55; margin: 0; }
+  h1, h2, h3, h4 { text-wrap: balance; line-height: 1.25; margin: 0; font-weight: 700; letter-spacing: -.01em; }
+  h1 { font-size: clamp(1.7rem, 1.2rem + 2.2vw, 2.55rem); }
+  h2 { font-size: 1.45rem; margin-top: .25rem; }
+  h3 { font-size: 1.12rem; margin-top: .5rem; }
+  h4 { font-size: 1rem; }
+  p { margin: 0; max-width: 74ch; }
+  ul, ol { margin: 0; padding-left: 1.25rem; }
+  li { margin: .2rem 0; max-width: 80ch; }
+  li::marker { color: var(--muted); }
+  strong { font-weight: 600; }
+  .eyebrow { font-family: var(--mono); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .muted { color: var(--muted); } .ink2 { color: var(--ink-2); } .small { font-size: .88rem; }
+
+  .shell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; max-width: 1240px; margin: 0 auto; padding-block: 2rem 4rem; padding-inline: 16px; }
+  @media (min-width: 1080px) {
+    .shell { grid-template-columns: 236px minmax(0, 1fr); gap: 3rem; padding-inline: 32px; }
+    .toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 1.25rem); align-self: start; max-height: calc(100vh - 3rem); overflow: auto; }
+  }
+  .toc { display: flex; flex-direction: column; gap: .35rem; font-size: .86rem; }
+  .toc .eyebrow { margin-bottom: .35rem; }
+  .toc a { color: var(--ink-2); text-decoration: none; padding: .15rem .5rem; border-left: 2px solid var(--line); display: block; }
+  .toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+  .toc a .n { font-family: var(--mono); font-size: .72rem; color: var(--muted); margin-right: .4rem; }
+  @media (max-width: 1079px) { .toc { flex-direction: row; flex-wrap: wrap; gap: .4rem; } .toc a { border: 1px solid var(--line); border-radius: 999px; padding: .2rem .7rem; } .toc .eyebrow { width: 100%; } }
+
+  .content { display: flex; flex-direction: column; gap: 3.25rem; min-width: 0; }
+  header.hero { display: flex; flex-direction: column; gap: 1rem; padding-bottom: 2rem; border-bottom: 1px solid var(--line); }
+  .hero .lede { font-size: 1.05rem; color: var(--ink-2); max-width: 70ch; }
+  .meta { display: flex; flex-wrap: wrap; gap: .5rem .9rem; font-family: var(--mono); font-size: .76rem; color: var(--muted); }
+  .meta b { color: var(--ink-2); font-weight: 500; }
+  .vtag { display: inline-flex; align-items: center; gap: .4rem; font-family: var(--mono); font-size: .78rem; padding: .15rem .6rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); border: 1px solid var(--accent); width: fit-content; }
+
+  section { display: flex; flex-direction: column; gap: 1.25rem; scroll-margin-top: 1rem; }
+  .sec-head { display: flex; flex-direction: column; gap: .35rem; }
+  .sec-head .eyebrow::before { content: ""; display: inline-block; width: 1.4rem; height: 2px; background: var(--accent); vertical-align: middle; margin-right: .55rem; }
+
+  .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  @media (min-width: 720px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: .85rem 1rem; display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+  .kpi .label { font-size: .78rem; color: var(--muted); }
+  .kpi .value { font-size: 1.55rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .kpi .sub { font-size: .76rem; color: var(--ink-2); }
+
+  .verdicts { display: grid; gap: .6rem; }
+  .verdict { display: grid; grid-template-columns: 7.5rem 1fr; gap: .8rem; padding: .85rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .verdict .k { font-family: var(--mono); font-size: .74rem; color: var(--accent-ink); padding-top: .25rem; }
+  .verdict p { max-width: none; }
+
+  .callout { border-left: 3px solid var(--accent); background: var(--surface); padding: .8rem 1rem; border-radius: 0 8px 8px 0; }
+  .callout.neg { border-left-color: var(--neg); } .callout.warn { border-left-color: var(--warn); }
+  .callout p { max-width: none; }
+
+  table { border-collapse: collapse; width: 100%; font-size: .86rem; }
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .tbl table { min-width: 640px; }
+  th, td { text-align: left; vertical-align: top; padding: .5rem .65rem; border-bottom: 1px solid var(--line); }
+  th:first-child, td:first-child { min-width: 7rem; }
+  th { font-size: .72rem; letter-spacing: .05em; color: var(--muted); font-weight: 500; background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+  .tbl td.num:first-child, .tbl th.num:first-child { min-width: 2.4rem; }
+  .tbl table.fixed { table-layout: fixed; }
+  td .why { display: block; color: var(--ink-2); font-size: .8rem; margin-top: .15rem; }
+  td.narrow { min-width: 0; }
+  .tbl.dense table { font-size: .8rem; } .tbl.dense th, .tbl.dense td { padding: .35rem .45rem; }
+
+  .heat td.h { text-align: center; font-family: var(--mono); font-size: .76rem; min-width: 2.1rem; padding: .35rem .2rem; }
+  .heat td.h0 { background: var(--heat-0); color: var(--muted); }
+  .heat td.h1 { background: var(--heat-1); color: var(--ink); }
+  .heat td.h2 { background: var(--heat-2); color: var(--heat-ink-2); font-weight: 600; }
+  .heat th.h { text-align: center; padding-inline: .2rem; }
+
+  .chip { display: inline-flex; align-items: center; gap: .3rem; font-family: var(--mono); font-size: .72rem; padding: .08rem .5rem; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--ink-2); white-space: nowrap; }
+  .chip.s, .chip.hi, .chip.adopt { border-color: var(--good); color: var(--good); }
+  .chip.m, .chip.mid, .chip.trial { border-color: var(--warn); color: var(--warn); }
+  .chip.l, .chip.rej, .chip.hold { border-color: var(--neg); color: var(--neg); }
+  .chip.code, .chip.assess { border-color: var(--line-strong); color: var(--ink-2); }
+  .chip.src { background: var(--surface-2); border-color: transparent; }
+  .chip.done { border-color: var(--accent); color: var(--accent-ink); background: var(--accent-soft); }
+  .chip.jev { border-color: var(--accent); color: var(--accent-ink); border-style: dashed; }
+
+  .rank { display: grid; gap: .45rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; }
+  .rank .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(110px, 40%) 2.6rem; align-items: center; gap: .7rem; }
+  @media (max-width: 640px) { .rank .row { grid-template-columns: minmax(0, 1fr) minmax(80px, 34%) 2.4rem; } }
+  .rank .lbl { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .5rem; min-width: 0; font-size: .85rem; }
+  .rank .track { height: 14px; background: var(--track); border-radius: 0 4px 4px 0; }
+  .rank .track i { display: block; height: 100%; border-radius: 0 4px 4px 0; background: var(--score-mid); }
+  .rank .row.hi .track i { background: var(--score-hi); } .rank .row.lo .track i { background: var(--score-lo); }
+  .rank .v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: .85rem; text-align: right; }
+  .legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: .78rem; color: var(--ink-2); }
+  .legend i { display: inline-block; width: 12px; height: 8px; border-radius: 0 2px 2px 0; margin-right: .35rem; vertical-align: middle; }
+
+  .cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: .8rem; }
+  @media (min-width: 720px) { .cards.c2, .cards.c3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cards .span2 { grid-column: 1 / -1; } }
+  @media (min-width: 1000px) { .cards.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: .55rem; min-width: 0; }
+  .card h4 { display: flex; gap: .5rem; align-items: baseline; flex-wrap: wrap; }
+  .card .num { font-family: var(--mono); font-size: .78rem; color: var(--accent-ink); }
+  .card p, .card li { max-width: none; font-size: .9rem; }
+  .facts { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: .2rem .7rem; font-size: .84rem; margin: 0; }
+  .facts dt { color: var(--muted); } .facts dd { margin: 0; color: var(--ink-2); }
+  @media (max-width: 520px) { .facts { grid-template-columns: 1fr; } .facts dt { margin-top: .35rem; } }
+
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .9rem; }
+  .flow > header { display: flex; flex-direction: column; gap: .3rem; }
+  .flow .fnum { font-family: var(--mono); font-size: .8rem; color: var(--accent-ink); }
+  .flow .claim { color: var(--ink-2); max-width: none; }
+  .flow .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .flow .cols > div, .flow > * { min-width: 0; }
+  .tbl.qset table { min-width: 460px; }
+  @media (min-width: 900px) { .flow dl.facts { grid-template-columns: 5.5rem minmax(0, 1fr) 5.5rem minmax(0, 1fr); gap: .35rem .9rem; } }
+  .flow ol li, .flow ul li { font-size: .9rem; max-width: none; }
+  .qset td:first-child { font-family: var(--mono); font-size: .78rem; white-space: nowrap; }
+  .qset td:nth-child(2) { font-family: var(--mono); font-size: .78rem; white-space: nowrap; }
+  .qset td { font-size: .82rem; }
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: .5rem; }
+  figure .frame { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: .75rem; }
+  .flow figure .frame { background: var(--bg); }
+  figure svg { display: block; max-width: 100%; height: auto; min-width: 700px; font-family: var(--sans); }
+  figcaption { font-size: .82rem; color: var(--ink-2); max-width: 86ch; }
+  .sv-box { fill: var(--surface-2); stroke: var(--line-strong); }
+  .sv-new { fill: var(--accent-soft); stroke: var(--accent); }
+  .sv-jev { fill: var(--surface); stroke: var(--accent); stroke-dasharray: 5 3; stroke-width: 1.6; }
+  .sv-human { fill: var(--warn-soft); stroke: var(--warn); }
+  .sv-txt { fill: var(--ink); font-size: 12px; }
+  .sv-sub { fill: var(--ink-2); font-size: 10.5px; }
+  .sv-lbl { fill: var(--ink-2); font-size: 10px; font-family: var(--mono); }
+  .sv-line { stroke: var(--ink-2); fill: none; stroke-width: 1.4; }
+  .sv-line.new { stroke: var(--accent); stroke-dasharray: 4 3; }
+  .sv-arrow { fill: var(--ink-2); } .sv-arrow.new { fill: var(--accent); }
+  .sv-band { fill: none; stroke: var(--line-strong); stroke-dasharray: 2 4; }
+
+  .neglist { display: grid; gap: .6rem; }
+  .negitem { display: grid; grid-template-columns: 9.5rem 1fr; gap: .8rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: .8rem 1rem; }
+  .negitem .badge { font-family: var(--mono); font-size: .72rem; color: var(--neg); background: var(--neg-soft); border-radius: 6px; padding: .15rem .45rem; height: fit-content; }
+  .negitem .badge.cond { color: var(--warn); background: var(--warn-soft); }
+  .negitem p { max-width: none; font-size: .9rem; }
+  .negitem .minus { color: var(--ink-2); }
+
+  .phases { display: grid; gap: .6rem; }
+  .phase { display: grid; grid-template-columns: 5.5rem 1fr; gap: .8rem; padding: .85rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .phase .p { font-family: var(--mono); font-size: .78rem; color: var(--accent-ink); }
+  .phase p, .phase li { max-width: none; font-size: .9rem; }
+  @media (max-width: 560px) { .phase, .verdict, .negitem { grid-template-columns: 1fr; gap: .3rem; } }
+
+  details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  details > summary { cursor: pointer; padding: .7rem 1rem; font-weight: 500; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary::after { content: "펼치기"; font-family: var(--mono); font-size: .74rem; color: var(--accent-ink); white-space: nowrap; }
+  details[open] > summary::after { content: "접기"; }
+  details > .inner { padding: 0 1rem 1rem; display: flex; flex-direction: column; gap: .8rem; }
+  details .tbl { border-radius: 8px; }
+
+  .srcs { columns: 2; column-gap: 2rem; font-size: .84rem; }
+  @media (max-width: 760px) { .srcs { columns: 1; } }
+  .srcs li { break-inside: avoid; }
+  footer { border-top: 1px solid var(--line); padding-top: 1rem; font-size: .8rem; color: var(--muted); }
+</style>
+<!--
+  upgrade-scout 리포트 셸 v2 — 템플릿 A(일반)·B(Jev 통합)의 공통 뼈대.
+  · 자리표시자 {{...}}는 메인 세션이 채운다. 채우지 않은 절은 지운다(빈 절을 남기지 않는다).
+  · 순서 규칙: TL;DR·KPI → 순위 그림 → 항목 표 → 그림 → 출처.
+  · 순위 막대는 node scripts/score-table.mjs <items> --format html 출력을 그대로 넣는다(합계는 스크립트가 계산).
+  · 흐름 그림은 viewBox 900 기준, 글자 13/11px, 상자 종류는 .sv-box(기존)·.sv-new(새 코드)·.sv-jev(Jev 판정, 점선)·.sv-human(사람).
+  · 추정 수치는 “추정”을 붙이고 잴 방법을 같은 절에 쓴다. 모델 의견(Jev·LLM)과 코드가 센 숫자는 다른 배지·열로.
+-->
+<div class="shell">
+  <nav class="toc" aria-label="목차">
+    <span class="eyebrow">목차</span>
+    <a href="#tldr"><span class="n">00</span>결론 요약</a>
+    <a href="#target"><span class="n">01</span>대상 분석</a>
+    <a href="#assume"><span class="n">02</span>가정 검증</a>
+    <a href="#refs"><span class="n">03</span>후보 리포·레퍼런스</a>
+    <a href="#jev"><span class="n">04</span>Jev 렌즈</a>
+    <a href="#plugins"><span class="n">05</span>플러그인·스킬</a>
+    <a href="#top5"><span class="n">06</span>업그레이드 5</a>
+    <a href="#nogo"><span class="n">07</span>제외</a>
+    <a href="#roadmap"><span class="n">08</span>로드맵·결정 질문</a>
+    <a href="#log"><span class="n">09</span>재확인·실행 메타·출처</a>
+  </nav>
+  <main class="content">
+    <header class="hero">
+      <span class="eyebrow">{{KIND}} · 코드 변경 없음 · {{ESTIMATE_NOTE}}</span>
+      <h1>{{HEADLINE_QUESTION}}</h1>
+      <span class="vtag">v{{VERSION}} · {{DATE}} · upgrade-scout v2.0</span>
+      <p class="lede">{{LEDE — 무엇을 어떻게 봤고, 결론 한 줄을 굵게}}</p>
+      <div class="meta"><span>대상 <b>{{TARGET @ HEAD}}</b></span><span>깊이 <b>{{DEPTH}}</b></span><span>Jev <b>{{JEV_MODE}}</b></span><span>플러그인 <b>{{PLUGIN_SCOPE}}</b></span><span>가정한 값 <b>{{ASSUMED_VARS}}</b></span></div>
+    </header>
+    <section id="tldr"><div class="sec-head"><span class="eyebrow">00 · 결론 요약</span><h2>먼저 결론</h2></div>
+      <div class="kpis">{{KPI × 6 — <div class="kpi"><span class="label">…</span><span class="value">…</span><span class="sub">…</span></div>}}</div>
+      <div class="verdicts">{{VERDICT × 5–7 — <div class="verdict"><span class="k">…</span><p>…</p></div>}}</div>
+      {{RANK_HTML — score-table.mjs --format html}}
+    </section>
+    <section id="target"><div class="sec-head"><span class="eyebrow">01 · 대상 분석</span><h2>{{…}}</h2></div>{{PIPELINE_SVG}}{{INVENTORY_TABLE}}</section>
+    <section id="assume"><div class="sec-head"><span class="eyebrow">02 · 가정 검증</span><h2>{{…}}</h2></div>{{feature-probe assume 결과 — 판정 · 근거(검색 범위) · 설계에 미친 영향}}</section>
+    <section id="refs"><div class="sec-head"><span class="eyebrow">03 · 후보 리포·레퍼런스</span><h2>{{…}}</h2></div>{{분류별 표 — 가져올 것 · 안 가져올 것 · 연결 · 적·비·리 · 시너지 · 근거 등급}}</section>
+    <section id="jev"><div class="sec-head"><span class="eyebrow">04 · Jev 렌즈</span><h2>{{…}}</h2></div>{{판단 지점 표(J1–J12 · 합계 · 판정) · 질문셋 v1 · 게이트 · 보정 계획 · sources-watch 요약}}</section>
+    <section id="plugins"><div class="sec-head"><span class="eyebrow">05 · 플러그인·스킬</span><h2>{{…}}</h2></div>{{필요 표 · 검색 로그(3계층) · 후보 판정(adopt/trial/assess/hold) · 구성 요소 · 이유}}</section>
+    <section id="top5"><div class="sec-head"><span class="eyebrow">06 · 업그레이드 5</span><h2>{{…}}</h2></div>{{flow 카드 × 5 — 그림 · 단계 · 데이터 · 루프 · 비용 · KPI · 가드레일 · 프로토타입}}</section>
+    <section id="nogo"><div class="sec-head"><span class="eyebrow">07 · 제외</span><h2>{{…}}</h2></div><div class="neglist">{{❌ 불가 · ⚠️ 조건부 항목}}</div></section>
+    <section id="roadmap"><div class="sec-head"><span class="eyebrow">08 · 로드맵 · 결정 질문</span><h2>{{…}}</h2></div><div class="phases">{{P0–P4 · 완료 기준 · 중단 조건}}</div>{{결정 질문 표}}</section>
+    <section id="log"><div class="sec-head"><span class="eyebrow">09 · 재확인 · 실행 메타 · 출처</span><h2>{{…}}</h2></div>{{ledger export --format md를 표로 · 수리 로그 · 블라인드 차 · 실행 메타(서브에이전트 수·실패·축소·토큰) · 출처 목록}}</section>
+    <footer>{{TITLE}} · v{{VERSION}} · {{DATE}} · upgrade-scout v2.0 · 대상 코드 변경 없음</footer>
+  </main>
+</div>

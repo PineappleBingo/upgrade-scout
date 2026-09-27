@@ -1,0 +1,3194 @@
+{
+ "schema": "upgrade-scout/registry@1",
+ "id": "jev",
+ "updated": "2026-09-26",
+ "pinned": {
+  "model": "jev-1.13.0",
+  "aliases": {
+   "jev-latest": "jev-1.13.0",
+   "jev-preview": "jev-1.13.0"
+  },
+  "input_usd_per_mtok": 0.042,
+  "output": "free",
+  "rpm": 1200,
+  "tokens_per_s": 250000,
+  "context": "64k total · 32k state + 가장 긴 질문",
+  "sdk_js": "0.6.0",
+  "sdk_py": "0.7.1",
+  "language": "English first; CJK handled but not equally well",
+  "mcp": "official none",
+  "agent_skill": "typesafe@typesafe-ai (marketplace typesafe-ai = typesafe-ai/skills)",
+  "checked": "2026-09-26"
+ },
+ "sources": [
+  {
+   "id": "docs-sitemap",
+   "tier": "A",
+   "method": "sitemap",
+   "url": "https://docs.typesafe.ai/sitemap.xml",
+   "cadence": "every-run",
+   "why_ko": "페이지별 lastmod — 새 모델·약점 페이지·쿡북 변경을 가장 싸게 감지"
+  },
+  {
+   "id": "docs-llms",
+   "tier": "A",
+   "method": "llms-txt",
+   "url": "https://docs.typesafe.ai/llms.txt",
+   "cadence": "every-run",
+   "why_ko": "문서 페이지 목록(09-26 기준 링크 111)"
+  },
+  {
+   "id": "docs-models",
+   "tier": "A",
+   "method": "page-hash",
+   "url": "https://docs.typesafe.ai/models.md",
+   "cadence": "every-run",
+   "why_ko": "모델·별칭·가격·한도·언어",
+   "alerts": [
+    {
+     "id": "new-model",
+     "re": "jev-(1\\.(1[4-9]|[2-9][0-9])|[2-9])\\.",
+     "note": "jev-1.13 이후 모델 문자열 등장 — 고정 버전·임계값 재보정 검토"
+    },
+    {
+     "id": "price",
+     "re": "0\\.042",
+     "expect": true,
+     "note": "입력 단가 $0.042 문구가 사라짐 — 가격 확인"
+    },
+    {
+     "id": "rate",
+     "re": "1,?200",
+     "expect": true,
+     "note": "1,200 rpm 문구가 사라짐 — 한도 확인"
+    },
+    {
+     "id": "cjk",
+     "re": "CJK",
+     "expect": true,
+     "note": "언어 지원 문구가 바뀜 — 한국어 방침 재검토"
+    }
+   ]
+  },
+  {
+   "id": "docs-jaggedness",
+   "tier": "A",
+   "method": "page-hash",
+   "url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13.md",
+   "cadence": "every-run",
+   "why_ko": "약점 목록 — 질문셋 린트 규칙의 근거"
+  },
+  {
+   "id": "docs-api",
+   "tier": "A",
+   "method": "page-hash",
+   "url": "https://docs.typesafe.ai/api.md",
+   "cadence": "every-run",
+   "why_ko": "요청·응답 모양 — jev-client 검증기와 대조",
+   "alerts": [
+    {
+     "id": "endpoint",
+     "re": "/v1/systemone",
+     "expect": true,
+     "note": "엔드포인트 문구가 사라짐"
+    },
+    {
+     "id": "choice-limit",
+     "re": "255",
+     "expect": true,
+     "note": "choice 선택지 상한 문구가 바뀜"
+    }
+   ]
+  },
+  {
+   "id": "docs-agent-skill",
+   "tier": "A",
+   "method": "page-hash",
+   "url": "https://docs.typesafe.ai/agent-skill.md",
+   "cadence": "every-run",
+   "why_ko": "공식 스킬 설치·업데이트 명령",
+   "alerts": [
+    {
+     "id": "plugin-id",
+     "re": "typesafe@typesafe-ai",
+     "expect": true,
+     "note": "플러그인 id가 바뀜 — claude-sync-kit global/settings.json 확인"
+    }
+   ]
+  },
+  {
+   "id": "npm-sdk-js",
+   "tier": "A",
+   "method": "npm",
+   "url": "https://registry.npmjs.org/@typesafe-ai/sdk",
+   "pinned": "0.6.0",
+   "cadence": "every-run",
+   "why_ko": "JS SDK 버전(0.6.0에 breaking 있었음)"
+  },
+  {
+   "id": "pypi-sdk-py",
+   "tier": "A",
+   "method": "pypi",
+   "url": "https://pypi.org/pypi/typesafe-sdk/json",
+   "pinned": "0.7.1",
+   "cadence": "every-run",
+   "why_ko": "Python SDK 버전"
+  },
+  {
+   "id": "git-typesafe-skills",
+   "tier": "A",
+   "method": "git-head",
+   "url": "https://github.com/typesafe-ai/skills",
+   "cadence": "every-run",
+   "why_ko": "공식 에이전트 스킬 — 바뀌면 전역 플러그인 업데이트"
+  },
+  {
+   "id": "git-typesafe-sdk-js",
+   "tier": "A",
+   "method": "git-head",
+   "url": "https://github.com/typesafe-ai/typesafe-sdk-js",
+   "cadence": "every-run",
+   "why_ko": "SDK 리포 HEAD"
+  },
+  {
+   "id": "catalog-kydlikebtc",
+   "tier": "B",
+   "method": "catalog-json",
+   "url": "https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/catalog.json",
+   "cadence": "weekly (목 06:00 UTC 자동 발굴)",
+   "why_ko": "기계 판독 사례 카탈로그 — 패턴·question_types·first_seen·부정 결과"
+  },
+  {
+   "id": "yibie-readme",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/yibie/awesome-jev/main/README.md",
+   "cadence": "daily-ish",
+   "why_ko": "HackerNoon 101의 출처 목록"
+  },
+  {
+   "id": "yibie-finance",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/yibie/awesome-jev/main/categories/finance-trading.md",
+   "cadence": "daily-ish",
+   "why_ko": "금융·트레이딩 분류 — TVSE와 가장 가까운 새 사례"
+  },
+  {
+   "id": "logicrw-readme",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/logicrw/awesome-jev-projects/main/README.md",
+   "cadence": "auto-sync",
+   "why_ko": "자동 동기화 목록 · 한국어 README 있음"
+  },
+  {
+   "id": "omnijev-readme",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/OmniJev/awesome-jev-gallery/main/README.md",
+   "cadence": "PR",
+   "why_ko": "독립 평가(긍정·부정) 목록"
+  },
+  {
+   "id": "heyjunpenn-readme",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/heyjunpenn/awesome-jev/main/README.md",
+   "cadence": "manual",
+   "why_ko": "교차 확인용 목록(jevbest.com)"
+  },
+  {
+   "id": "awesomejev-com",
+   "tier": "B",
+   "method": "page-hash",
+   "url": "https://awesomejev.com",
+   "cadence": "daily (별 수)",
+   "why_ko": "디렉터리 — 피드 없음, 페이지 해시만"
+  },
+  {
+   "id": "gh-topic-jev",
+   "tier": "B",
+   "method": "page-hash",
+   "url": "https://github.com/topics/jev",
+   "cadence": "auto",
+   "why_ko": "GitHub topic — 클라우드 세션에서는 403이 정상(확인 불가로 기록)"
+  },
+  {
+   "id": "hackernoon-101",
+   "tier": "C",
+   "method": "html-numbered-list",
+   "url": "https://hackernoon.com/101-real-world-examples-of-how-to-use-jev",
+   "cadence": "static snapshot (2026-09-21)",
+   "why_ko": "사례 101 — 갱신되지 않음. 링크 가용성은 link-check로 전수 확인"
+  },
+  {
+   "id": "robustness-yifan",
+   "tier": "B",
+   "method": "tsv",
+   "id_column": "url",
+   "url": "https://raw.githubusercontent.com/Yifan-Lan/awesome-jev-robustness/main/data/entries.tsv",
+   "cadence": "snapshot 갱신(09-24 기준 119건)",
+   "why_ko": "독립 강건성 감사 — 보정·선택지 순서·주입·입력 언어. 렌즈 약점 표와 언어 계수의 근거"
+  },
+  {
+   "id": "abdelstark-resources",
+   "tier": "B",
+   "method": "catalog-json",
+   "url": "https://raw.githubusercontent.com/AbdelStark/awesome-typesafe-jev/main/resources.json",
+   "cadence": "auto (last_updated 필드 · 커밋 09-26)",
+   "why_ko": "분류별 기계 판독 목록(09-23 기준 228) — 클라이언트·평가·앱"
+  },
+  {
+   "id": "anilmatcha-readme",
+   "tier": "B",
+   "method": "markdown-links",
+   "url": "https://raw.githubusercontent.com/Anil-matcha/awesome-jev-by-typesafe/main/README.md",
+   "cadence": "manual (커밋 09-23)",
+   "why_ko": "교차 확인용 목록"
+  },
+  {
+   "id": "use-cases-walid",
+   "tier": "C",
+   "method": "csv",
+   "url": "https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/repos.csv",
+   "cadence": "행마다 snapshot 열 · 커밋 09-21",
+   "why_ko": "리포 37 — CSV라 지난 실행 대비 diff가 정확"
+  },
+  {
+   "id": "use-cases-walid-more",
+   "tier": "C",
+   "method": "csv",
+   "url": "https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/more-repos.csv",
+   "cadence": "행마다 snapshot 열 · 커밋 09-21",
+   "why_ko": "추가 리포 111(한 줄 설명 포함)"
+  },
+  {
+   "id": "use-cases-walid-demos",
+   "tier": "C",
+   "method": "csv",
+   "url": "https://raw.githubusercontent.com/walidboulanouar/awesome-jev-use-cases/main/data/demos.csv",
+   "cadence": "행마다 snapshot 열 · 커밋 09-21",
+   "why_ko": "X 데모 74 — 게시물은 로그인 벽이라 존재는 미확인"
+  }
+ ],
+ "repos": [
+  {
+   "id": "hn-001",
+   "name": "Notra",
+   "url": "https://github.com/usenotra/notra",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 1,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "usenotra/notra",
+   "head": "1234d52",
+   "license": "AGPL-3.0",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-002",
+   "name": "jev-router",
+   "url": "https://github.com/gargpratyush/jev-router",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 2,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "gargpratyush/jev-router",
+   "head": "38da6b8",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 7
+  },
+  {
+   "id": "hn-003",
+   "name": "jev-router (prismhq)",
+   "url": "https://github.com/prismhq/jev-router",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 3,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "prismhq/jev-router",
+   "head": "583f0a1",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-004",
+   "name": "pi-jev-router",
+   "url": "https://github.com/mejiasd3v/pi-jev-router",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 4,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "mejiasd3v/pi-jev-router",
+   "head": "b068a9b",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-005",
+   "name": "jcm-router",
+   "url": "https://github.com/adarshmishra07/jcm-router",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 5,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "adarshmishra07/jcm-router",
+   "head": "083df7f",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 6,
+   "risk": 7
+  },
+  {
+   "id": "hn-006",
+   "name": "jev-agent-skill-router",
+   "url": "https://github.com/GodsBoy/jev-agent-skill-router",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 6,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "GodsBoy/jev-agent-skill-router",
+   "head": "e481a06",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "④",
+    "X",
+    "스킬"
+   ],
+   "fit": 8,
+   "cost": 7,
+   "risk": 9
+  },
+  {
+   "id": "hn-007",
+   "name": "typesafe-jev CV screener",
+   "url": "https://github.com/gtaras7/typesafe-jev",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 7,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "gtaras7/typesafe-jev",
+   "head": "024b0e4",
+   "license": "MIT",
+   "stack": [],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "③",
+    "④",
+    "⑤",
+    "X"
+   ],
+   "fit": 9,
+   "cost": 8,
+   "risk": 8
+  },
+  {
+   "id": "hn-008",
+   "name": "Jev email intent workflow",
+   "url": "https://github.com/GiesN/typesafe-jev-workflow",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 8,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "GiesN/typesafe-jev-workflow",
+   "head": "2510196",
+   "license": "none",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-009",
+   "name": "unclutter",
+   "url": "https://github.com/kitze/unclutter",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 9,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "kitze/unclutter",
+   "head": "9ef9bec",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "③"
+   ],
+   "fit": 6,
+   "cost": 7,
+   "risk": 7
+  },
+  {
+   "id": "hn-010",
+   "name": "typesafe-adblock",
+   "url": "https://github.com/realZachi/typesafe-adblock",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 10,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "realZachi/typesafe-adblock",
+   "head": "7e067d2",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "②"
+   ],
+   "fit": 4,
+   "cost": 8,
+   "risk": 6
+  },
+  {
+   "id": "hn-011",
+   "name": "DiffJury",
+   "url": "https://github.com/raihankhan-rk/diffjury",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 11,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "raihankhan-rk/diffjury",
+   "head": "9a29ad3",
+   "license": "none",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "X"
+   ],
+   "fit": 5,
+   "cost": 6,
+   "risk": 5
+  },
+  {
+   "id": "hn-012",
+   "name": "HA-Jev",
+   "url": "https://github.com/AboveColin/HA-Jev",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 12,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "AboveColin/HA-Jev",
+   "head": "6459c2d",
+   "license": "MIT",
+   "stack": [],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-013",
+   "name": "secondlayer",
+   "url": "https://github.com/ryanwaits/secondlayer",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 13,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "ryanwaits/secondlayer",
+   "head": "5677208",
+   "license": "MIT",
+   "stack": [
+    "node",
+    "mcp"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-014",
+   "name": "new-api-typesafe-plugin",
+   "url": "https://github.com/FFatTiger/new-api-plugin-typesafe",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 14,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "FFatTiger/new-api-plugin-typesafe",
+   "head": "8d5e60e",
+   "license": "Apache-2.0",
+   "stack": [],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 3,
+   "cost": 6,
+   "risk": 6
+  },
+  {
+   "id": "hn-015",
+   "name": "json-render",
+   "url": "https://github.com/vercel-labs/json-render",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 15,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "vercel-labs/json-render",
+   "head": "c2600d7",
+   "license": "Apache-2.0",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-016",
+   "name": "hono-jev-router",
+   "url": "https://github.com/yusukebe/hono-jev-router",
+   "cat": "routing",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 16,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "yusukebe/hono-jev-router",
+   "head": "04f6e10",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "①"
+   ],
+   "fit": 4,
+   "cost": 9,
+   "risk": 9
+  },
+  {
+   "id": "hn-017",
+   "name": "is-malicious",
+   "url": "https://github.com/luantak/is-malicious",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 17,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "luantak/is-malicious",
+   "head": "23fce0c",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "X",
+    "스킬"
+   ],
+   "fit": 8,
+   "cost": 7,
+   "risk": 6
+  },
+  {
+   "id": "hn-018",
+   "name": "jev-review",
+   "url": "https://github.com/devagrawal09/jev-review",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 18,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "devagrawal09/jev-review",
+   "head": "31f8960",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "②",
+    "③",
+    "④"
+   ],
+   "fit": 8,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-019",
+   "name": "pi-jev",
+   "url": "https://github.com/y0usaf/pi-jev",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 19,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "y0usaf/pi-jev",
+   "head": "88e5fb3",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "②"
+   ],
+   "fit": 6,
+   "cost": 7,
+   "risk": 6
+  },
+  {
+   "id": "hn-020",
+   "name": "OpenWork",
+   "url": "https://github.com/different-ai/openwork",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 20,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "different-ai/openwork",
+   "head": "5408ed4",
+   "license": "other",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-021",
+   "name": "jev-guard",
+   "url": "https://github.com/leepokai/jev-guard",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 21,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "leepokai/jev-guard",
+   "head": "489f528",
+   "license": "MIT",
+   "stack": [
+    "node",
+    "claude-plugin",
+    "claude-marketplace"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 9,
+   "cost": 8,
+   "risk": 5
+  },
+  {
+   "id": "hn-022",
+   "name": "Foreman",
+   "url": "https://github.com/thruwire/foreman",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 22,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "thruwire/foreman",
+   "head": "ba91849",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 5,
+   "risk": 6
+  },
+  {
+   "id": "hn-023",
+   "name": "opencompany",
+   "url": "https://github.com/useopencompany/opencompany",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 23,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "useopencompany/opencompany",
+   "head": "e0a6f28",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-024",
+   "name": "jev-git",
+   "url": "https://github.com/AkashPriyadarshii/jev-git",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 24,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "AkashPriyadarshii/jev-git",
+   "head": "d1b6732",
+   "license": "MIT",
+   "stack": [
+    "rust"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X"
+   ],
+   "fit": 3,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-025",
+   "name": "pi-heed",
+   "url": "https://github.com/Nyarlathoteppppp/pi-heed",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 25,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "Nyarlathoteppppp/pi-heed",
+   "head": "b7b3c56",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "②",
+    "X",
+    "스킬"
+   ],
+   "fit": 9,
+   "cost": 8,
+   "risk": 8
+  },
+  {
+   "id": "hn-026",
+   "name": "Hunch",
+   "url": "https://github.com/Kelbie/hunch",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 26,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "Kelbie/hunch",
+   "head": "c2c680e",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "③",
+    "④",
+    "X",
+    "스킬"
+   ],
+   "fit": 9,
+   "cost": 7,
+   "risk": 6
+  },
+  {
+   "id": "hn-027",
+   "name": "Abide",
+   "url": "https://github.com/coldteadotai/abide",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 27,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "coldteadotai/abide",
+   "head": "5e8de72",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "③",
+    "X",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 7,
+   "risk": 5
+  },
+  {
+   "id": "hn-028",
+   "name": "fx",
+   "url": "https://github.com/vercel-labs/fx",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 28,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "vercel-labs/fx",
+   "head": "c8988ad",
+   "license": "Apache-2.0",
+   "stack": [],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-029",
+   "name": "Sniff Test",
+   "url": "https://github.com/DanRWilloughby/snifftest",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 29,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "DanRWilloughby/snifftest",
+   "head": "240653e",
+   "license": "MIT",
+   "stack": [
+    "node",
+    "claude-plugin",
+    "claude-marketplace"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "③",
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 8,
+   "cost": 7,
+   "risk": 9
+  },
+  {
+   "id": "hn-030",
+   "name": "jev-pref",
+   "url": "https://github.com/doeixd/jev-pref",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 30,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "doeixd/jev-pref",
+   "head": "9d77ea6",
+   "license": "MIT",
+   "stack": [],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "X",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 7,
+   "risk": 6
+  },
+  {
+   "id": "hn-031",
+   "name": "jev-judgment",
+   "url": "https://github.com/HyunjunJeon/jev-judgment",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 31,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "HyunjunJeon/jev-judgment",
+   "head": "f6056e7",
+   "license": "MIT",
+   "stack": [],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "③",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-032",
+   "name": "limpet",
+   "url": "https://github.com/noplan-inc/limpet",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 32,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "noplan-inc/limpet",
+   "head": "7a841b0",
+   "license": "MIT",
+   "stack": [
+    "claude-plugin",
+    "claude-marketplace"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 9,
+   "risk": 6
+  },
+  {
+   "id": "hn-033",
+   "name": "jev-mcp (jkudish)",
+   "url": "https://github.com/jkudish/jev-mcp",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 33,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "jkudish/jev-mcp",
+   "head": "108d61e",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "②",
+    "③",
+    "④",
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 10,
+   "cost": 7,
+   "risk": 7
+  },
+  {
+   "id": "hn-034",
+   "name": "jev-mcp (blakestone-x)",
+   "url": "https://github.com/blakestone-x/jev-mcp",
+   "cat": "guardrail",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 34,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "blakestone-x/jev-mcp",
+   "head": "59289a0",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "②",
+    "④",
+    "⑤",
+    "X"
+   ],
+   "fit": 8,
+   "cost": 7,
+   "risk": 7
+  },
+  {
+   "id": "hn-035",
+   "name": "Clean Code Judge",
+   "url": "https://github.com/frostney/clean-code-review",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 35,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "frostney/clean-code-review",
+   "head": "2094e07",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "X"
+   ],
+   "fit": 7,
+   "cost": 5,
+   "risk": 6
+  },
+  {
+   "id": "hn-036",
+   "name": "citation-verifier",
+   "url": "https://github.com/MarissaFamularo/citation-verifier",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 36,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "MarissaFamularo/citation-verifier",
+   "head": "f905864",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "④",
+    "X"
+   ],
+   "fit": 9,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-037",
+   "name": "jev-bfs",
+   "url": "https://github.com/komikat/jev-bfs",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 37,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "komikat/jev-bfs",
+   "head": "d83ef11",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "②",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-038",
+   "name": "Jev Search",
+   "url": "https://github.com/superagents-lab/jev-search",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 38,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "superagents-lab/jev-search",
+   "head": "67027d0",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "④",
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 8,
+   "cost": 6,
+   "risk": 7
+  },
+  {
+   "id": "hn-039",
+   "name": "pagegrade",
+   "url": "https://github.com/kitze/pagegrade",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 39,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "kitze/pagegrade",
+   "head": "65b2750",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-040",
+   "name": "jev-scout",
+   "url": "https://github.com/AkashPriyadarshii/jev-scout",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 40,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "AkashPriyadarshii/jev-scout",
+   "head": "3adb838",
+   "license": "MIT",
+   "stack": [
+    "rust"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 6,
+   "risk": 7
+  },
+  {
+   "id": "hn-041",
+   "name": "jev-seo",
+   "url": "https://github.com/AkashPriyadarshii/jev-seo",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 41,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "AkashPriyadarshii/jev-seo",
+   "head": "af25b30",
+   "license": "MIT",
+   "stack": [
+    "rust",
+    "skill"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 4,
+   "risk": 5
+  },
+  {
+   "id": "hn-042",
+   "name": "JevSlop",
+   "url": "https://github.com/TKY-27/JevSlop",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 42,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "TKY-27/JevSlop",
+   "head": "9829750",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-043",
+   "name": "SemanticSpace",
+   "url": "https://semanticspace.dev/",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 43,
+   "status": "ok",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-044",
+   "name": "LlamaIndex Jev",
+   "url": "https://github.com/WiktorB2004/llama-index-jev",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 44,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "WiktorB2004/llama-index-jev",
+   "head": "421afda",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "⑤",
+    "X"
+   ],
+   "fit": 7,
+   "cost": 7,
+   "risk": 9
+  },
+  {
+   "id": "hn-045",
+   "name": "typeful-triage",
+   "url": "https://github.com/cephalization/jev-triage",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 45,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "cephalization/jev-triage",
+   "head": "b563a41",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-046",
+   "name": "jev-curate",
+   "url": "https://github.com/AkashPriyadarshii/jev-curate",
+   "cat": "ranking",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 46,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "AkashPriyadarshii/jev-curate",
+   "head": "55716e1",
+   "license": "MIT",
+   "stack": [
+    "python",
+    "rust"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "X"
+   ],
+   "fit": 3,
+   "cost": 4,
+   "risk": 5
+  },
+  {
+   "id": "hn-047",
+   "name": "Jev Ultrafast",
+   "url": "https://github.com/browser-use/jev-ultrafast",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 47,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "browser-use/jev-ultrafast",
+   "head": "1231850",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-048",
+   "name": "Jev Browser",
+   "url": "https://github.com/jkudish/jev-browser",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 48,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "jkudish/jev-browser",
+   "head": "7b9adab",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "①"
+   ],
+   "fit": 6,
+   "cost": 6,
+   "risk": 7
+  },
+  {
+   "id": "hn-049",
+   "name": "fastbrowse",
+   "url": "https://github.com/agent-labs-dev/fastbrowse",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 49,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "agent-labs-dev/fastbrowse",
+   "head": "bb4f067",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-050",
+   "name": "public-browser",
+   "url": "https://github.com/Silbercue/public-browser",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 50,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "Silbercue/public-browser",
+   "head": "cff6e47",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-051",
+   "name": "Stagehand + Jev",
+   "url": "https://x.com/kylejeong/status/2100622054945095934",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 51,
+   "status": "unverified",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-052",
+   "name": "pi-typesafe-jev",
+   "url": "https://github.com/legacybridge-tech/pi-typesafe-jev",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 52,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "legacybridge-tech/pi-typesafe-jev",
+   "head": "17e66fc",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 7,
+   "risk": 8
+  },
+  {
+   "id": "hn-053",
+   "name": "pi-quiet-ask",
+   "url": "https://github.com/HyunjunJeon/pi-quiet-ask",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 53,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "HyunjunJeon/pi-quiet-ask",
+   "head": "47b286e",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "②",
+    "스킬"
+   ],
+   "fit": 8,
+   "cost": 6,
+   "risk": 7
+  },
+  {
+   "id": "hn-054",
+   "name": "dsh-auto-mode",
+   "url": "https://git.allen-software.com/allenh1/dsh-auto-mode",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 54,
+   "status": "ok",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-055",
+   "name": "augustus",
+   "url": "https://github.com/24601/Augustus",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 55,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "24601/Augustus",
+   "head": "1c431e7",
+   "license": "MIT",
+   "stack": [
+    "claude-marketplace"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 9,
+   "cost": 7,
+   "risk": 9
+  },
+  {
+   "id": "hn-056",
+   "name": "yoshi",
+   "url": "https://github.com/compozy/yoshi",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 56,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "compozy/yoshi",
+   "head": "55c7197",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-057",
+   "name": "fast-jev-compaction",
+   "url": "https://github.com/tamaratran/fast-jev-compaction",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 57,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "tamaratran/fast-jev-compaction",
+   "head": "e3f262a",
+   "license": "MIT",
+   "stack": [
+    "node",
+    "claude-plugin",
+    "claude-marketplace"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "③",
+    "X"
+   ],
+   "fit": 5,
+   "cost": 8,
+   "risk": 5
+  },
+  {
+   "id": "hn-058",
+   "name": "pi-fast-jev-compaction",
+   "url": "https://github.com/joelhooks/pi-fast-jev-compaction",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 58,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "joelhooks/pi-fast-jev-compaction",
+   "head": "eb83f53",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 6,
+   "risk": 7
+  },
+  {
+   "id": "hn-059",
+   "name": "Atomic",
+   "url": "https://github.com/bastani-inc/atomic",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 59,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "bastani-inc/atomic",
+   "head": "109939f",
+   "license": "MIT",
+   "stack": [
+    "node",
+    "rust"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-060",
+   "name": "robo-harness",
+   "url": "https://github.com/grmkris/robo-harness",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 60,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "grmkris/robo-harness",
+   "head": "ac75f4b",
+   "license": "none",
+   "stack": [
+    "node",
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-061",
+   "name": "jev-superpowers",
+   "url": "https://github.com/AkashPriyadarshii/jev-superpowers",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 61,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "AkashPriyadarshii/jev-superpowers",
+   "head": "20652a8",
+   "license": "MIT",
+   "stack": [
+    "claude-plugin",
+    "claude-marketplace"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "C",
+   "flows": [
+    "스킬"
+   ],
+   "fit": 2,
+   "cost": 3,
+   "risk": 2
+  },
+  {
+   "id": "hn-062",
+   "name": "Jevbridge",
+   "url": "https://github.com/gamesonrblx/Jevbridge",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 62,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "gamesonrblx/Jevbridge",
+   "head": "d4e8f7d",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X"
+   ],
+   "fit": 3,
+   "cost": 7,
+   "risk": 4
+  },
+  {
+   "id": "hn-063",
+   "name": "Smithers",
+   "url": "https://github.com/smithersai/smithers",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 63,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "smithersai/smithers",
+   "head": "f69d91d",
+   "license": "MIT",
+   "stack": [
+    "node",
+    "rust",
+    "go"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-064",
+   "name": "skillbox",
+   "url": "https://github.com/kitze/skillbox",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 64,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "kitze/skillbox",
+   "head": "cda64ad",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 9,
+   "cost": 8,
+   "risk": 8
+  },
+  {
+   "id": "hn-065",
+   "name": "typesafe-ai/skills",
+   "url": "https://github.com/typesafe-ai/skills",
+   "cat": "agent",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 65,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "typesafe-ai/skills",
+   "head": "65a39f3",
+   "license": "MIT",
+   "stack": [
+    "claude-plugin",
+    "claude-marketplace"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "B",
+   "flows": [
+    "스킬",
+    "X"
+   ],
+   "fit": 8,
+   "cost": 10,
+   "risk": 10
+  },
+  {
+   "id": "hn-066",
+   "name": "eve",
+   "url": "https://github.com/vercel/eve",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 66,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "vercel/eve",
+   "head": "cd82f57",
+   "license": "Apache-2.0",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-067",
+   "name": "AI CLI",
+   "url": "https://github.com/vercel-labs/ai-cli",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 67,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "vercel-labs/ai-cli",
+   "head": "088d764",
+   "license": "none",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-068",
+   "name": "ai-python",
+   "url": "https://github.com/vercel-labs/ai-python",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 68,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "vercel-labs/ai-python",
+   "head": "c788059",
+   "license": "Apache-2.0",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-069",
+   "name": "Cline plugins",
+   "url": "https://github.com/cline/plugins",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 69,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "cline/plugins",
+   "head": "96bde66",
+   "license": "Apache-2.0",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-070",
+   "name": "rotom",
+   "url": "https://github.com/RyanKung/rotom",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 70,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "RyanKung/rotom",
+   "head": "aee36d3",
+   "license": "LGPL",
+   "stack": [
+    "rust"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-071",
+   "name": "safer-with-jev",
+   "url": "https://github.com/andrelandgraf/safer-with-jev",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 71,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "andrelandgraf/safer-with-jev",
+   "head": "b4fb82b",
+   "license": "none",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "X"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 6
+  },
+  {
+   "id": "hn-072",
+   "name": "jevql",
+   "url": "https://github.com/kylemclaren/jevql",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 72,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "kylemclaren/jevql",
+   "head": "274532a",
+   "license": "MIT",
+   "stack": [
+    "go"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "⑤",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 6,
+   "risk": 6
+  },
+  {
+   "id": "hn-073",
+   "name": "sqlite-jev",
+   "url": "https://github.com/mgaitan/sqlite-jev",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 73,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "mgaitan/sqlite-jev",
+   "head": "1ac946c",
+   "license": "none",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 6
+  },
+  {
+   "id": "hn-074",
+   "name": "jev() for PostgreSQL",
+   "url": "https://x.com/iam_zachi/status/2100679300756435135",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 74,
+   "status": "unverified",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-075",
+   "name": "DuckDB row classification",
+   "url": "https://x.com/hamiltonulmer/status/2100370557405667768",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 75,
+   "status": "unverified",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-076",
+   "name": "advocaat",
+   "url": "https://github.com/pithings/advocaat",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 76,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "pithings/advocaat",
+   "head": "bc46287",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 9,
+   "risk": 9
+  },
+  {
+   "id": "hn-077",
+   "name": "zio-typesafe-ai",
+   "url": "https://github.com/jamesward/zio-typesafe-ai",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 77,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "jamesward/zio-typesafe-ai",
+   "head": "8fbeac5",
+   "license": "Apache-2.0",
+   "stack": [
+    "scala"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "⑤",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 5,
+   "risk": 6
+  },
+  {
+   "id": "hn-078",
+   "name": "TypeSafe AI Swift SDK",
+   "url": "https://github.com/alterhq/typesafe-sdk-swift",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 78,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "alterhq/typesafe-sdk-swift",
+   "head": "4d41674",
+   "license": "MIT",
+   "stack": [
+    "swift"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 7,
+   "risk": 7
+  },
+  {
+   "id": "hn-079",
+   "name": "laravel-typesafe-jev",
+   "url": "https://github.com/Butochnikov/laravel-typesafe-jev",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 79,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "Butochnikov/laravel-typesafe-jev",
+   "head": "4d70f5e",
+   "license": "MIT",
+   "stack": [
+    "php"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 4,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-080",
+   "name": "jev (Elixir)",
+   "url": "https://github.com/dannote/jev",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 80,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "dannote/jev",
+   "head": "003417f",
+   "license": "MIT",
+   "stack": [
+    "elixir"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 6,
+   "risk": 7
+  },
+  {
+   "id": "hn-081",
+   "name": "jev-go",
+   "url": "https://github.com/Stumble/jev-go",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 81,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "Stumble/jev-go",
+   "head": "a475dc9",
+   "license": "MIT",
+   "stack": [
+    "go"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-082",
+   "name": "jevclient",
+   "url": "https://pypi.org/project/jevclient/",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 82,
+   "status": "ok",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-083",
+   "name": "jev-cli",
+   "url": "https://github.com/tumf/jev-cli",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 83,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "tumf/jev-cli",
+   "head": "72607dd",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 5,
+   "cost": 6,
+   "risk": 8
+  },
+  {
+   "id": "hn-084",
+   "name": "decide-mcp",
+   "url": "https://github.com/dakdevs/decide-mcp",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 84,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "dakdevs/decide-mcp",
+   "head": "c8b163d",
+   "license": "none",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "④",
+    "X",
+    "스킬"
+   ],
+   "fit": 6,
+   "cost": 7,
+   "risk": 8
+  },
+  {
+   "id": "hn-085",
+   "name": "typesafe-jev-examples",
+   "url": "https://github.com/rajivkuriakose/typesafe-jev-examples",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 85,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "rajivkuriakose/typesafe-jev-examples",
+   "head": "8249723",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "②",
+    "④",
+    "X",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 9,
+   "risk": 9
+  },
+  {
+   "id": "hn-086",
+   "name": "Jev AI",
+   "url": "https://jev-ai.pro/",
+   "cat": "infra",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 86,
+   "status": "ok",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-087",
+   "name": "jevcal",
+   "url": "https://github.com/abhixhek/jevcal",
+   "cat": "eval",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 87,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "abhixhek/jevcal",
+   "head": "ae8f314",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "⑤",
+    "X",
+    "스킬"
+   ],
+   "fit": 9,
+   "cost": 7,
+   "risk": 8
+  },
+  {
+   "id": "hn-088",
+   "name": "Jev Playground",
+   "url": "https://github.com/hegargarcia/jev-playground",
+   "cat": "eval",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 88,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "hegargarcia/jev-playground",
+   "head": "c144bb6",
+   "license": "none",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "X"
+   ],
+   "fit": 4,
+   "cost": 6,
+   "risk": 3
+  },
+  {
+   "id": "hn-089",
+   "name": "Jev vs Mistral and Gemini for event validation",
+   "url": "https://nearhere.events/blog/typesafe-jev-mistral-gemini-event-validation",
+   "cat": "eval",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 89,
+   "status": "ok",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-090",
+   "name": "Judge call vs dimension scores",
+   "url": "https://agentjournal.dev/blog/llm-judge-vs-feature-extraction/",
+   "cat": "eval",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 90,
+   "status": "ok",
+   "checked": "2026-09-26"
+  },
+  {
+   "id": "hn-091",
+   "name": "Jev Pong",
+   "url": "https://github.com/ably-labs/jev-pong",
+   "cat": "eval",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 91,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "ably-labs/jev-pong",
+   "head": "d28d6ae",
+   "license": "Apache-2.0",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-092",
+   "name": "minutes",
+   "url": "https://github.com/silverstein/minutes",
+   "cat": "eval",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 92,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "silverstein/minutes",
+   "head": "83531fa",
+   "license": "MIT",
+   "stack": [
+    "rust",
+    "claude-marketplace",
+    "mcp"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "①",
+    "⑤",
+    "X"
+   ],
+   "fit": 6,
+   "cost": 9,
+   "risk": 8
+  },
+  {
+   "id": "hn-093",
+   "name": "typesafe-mario",
+   "url": "https://github.com/fhshaik/typesafe-mario",
+   "cat": "games",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 93,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "fhshaik/typesafe-mario",
+   "head": "ca22449",
+   "license": "none",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-094",
+   "name": "jev-plays-pokemon",
+   "url": "https://github.com/milanboers/jev-plays-pokemon",
+   "cat": "games",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 94,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "milanboers/jev-plays-pokemon",
+   "head": "0b20f13",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "②",
+    "X"
+   ],
+   "fit": 4,
+   "cost": 7,
+   "risk": 6
+  },
+  {
+   "id": "hn-095",
+   "name": "tsai-sc",
+   "url": "https://github.com/phyous/tsai-sc",
+   "cat": "games",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 95,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "phyous/tsai-sc",
+   "head": "6046ecc",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-096",
+   "name": "jev-drone",
+   "url": "https://github.com/RomanSlack/jev-drone",
+   "cat": "games",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 96,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "RomanSlack/jev-drone",
+   "head": "974b473",
+   "license": "MIT",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false
+  },
+  {
+   "id": "hn-097",
+   "name": "typesafe-jev-drone-demo",
+   "url": "https://github.com/kxzk/typesafe-jev-drone-demo",
+   "cat": "games",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 97,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "kxzk/typesafe-jev-drone-demo",
+   "head": "ad63f90",
+   "license": "none",
+   "stack": [
+    "node",
+    "python"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 8,
+   "risk": 7
+  },
+  {
+   "id": "hn-098",
+   "name": "jev-trade",
+   "url": "https://github.com/aowang-ai/jev-trade",
+   "cat": "finance",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 98,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "aowang-ai/jev-trade",
+   "head": "a3f2f83",
+   "license": "MIT",
+   "stack": [
+    "node"
+   ],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X"
+   ],
+   "fit": 2,
+   "cost": 3,
+   "risk": 2
+  },
+  {
+   "id": "hn-099",
+   "name": "On-chain trading on Monad",
+   "url": "https://x.com/jarrodwatts/status/2100356151468585346",
+   "cat": "finance",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 99,
+   "status": "unverified",
+   "checked": "2026-09-26",
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "X"
+   ],
+   "fit": 2,
+   "cost": 3,
+   "risk": 2,
+   "repo_hint": "jarrodwatts/jev-trader"
+  },
+  {
+   "id": "hn-100",
+   "name": "LegalForecast-MTD",
+   "url": "https://github.com/johnhughes3/LegalForecastBench",
+   "cat": "finance",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 100,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "johnhughes3/LegalForecastBench",
+   "head": "28452fb",
+   "license": "Apache-2.0",
+   "stack": [
+    "python"
+   ],
+   "jev_calls": false,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "③",
+    "X",
+    "스킬"
+   ],
+   "fit": 7,
+   "cost": 4,
+   "risk": 8
+  },
+  {
+   "id": "hn-101",
+   "name": "mastra-jev-moderation",
+   "url": "https://github.com/CodeAlive-AI/mastra-jev-moderation",
+   "cat": "finance",
+   "cited_in": [
+    "hackernoon-101"
+   ],
+   "hn": 101,
+   "status": "ok",
+   "checked": "2026-09-26",
+   "repo": "CodeAlive-AI/mastra-jev-moderation",
+   "head": "8735ea8",
+   "license": "MIT",
+   "stack": [],
+   "jev_calls": true,
+   "reviewed": true,
+   "grade": "A",
+   "flows": [
+    "⑤",
+    "X"
+   ],
+   "fit": 6,
+   "cost": 9,
+   "risk": 7
+  },
+  {
+   "id": "user-jev-ultrafast",
+   "name": "jev-ultrafast",
+   "url": "https://github.com/PineappleBingo/jev-ultrafast",
+   "repo": "PineappleBingo/jev-ultrafast",
+   "cat": "user",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "browser-use/jev-ultrafast 포크 · fail-closed 검증기 원형"
+  },
+  {
+   "id": "user-creator-lab-reels",
+   "name": "creator-lab-reels",
+   "url": "https://github.com/PineappleBingo/creator-lab-reels",
+   "repo": "PineappleBingo/creator-lab-reels",
+   "cat": "user",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "영상 대본 choice 분류 — TVSE와 가장 가까운 사례(원본 artemnovitckii/creator-lab)"
+  },
+  {
+   "id": "user-tv-indicator-search",
+   "name": "tradingview-indicator-search-mcp-server",
+   "url": "https://github.com/PineappleBingo/tradingview-indicator-search-mcp-server",
+   "repo": "PineappleBingo/tradingview-indicator-search-mcp-server",
+   "cat": "user",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "원본 daviddme/tradingview-indicator-search-mcp-server · 플로우 ①의 선결"
+  },
+  {
+   "id": "up-creator-lab",
+   "name": "creator-lab",
+   "url": "https://github.com/artemnovitckii/creator-lab",
+   "repo": "artemnovitckii/creator-lab",
+   "cat": "reference",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "creator-lab-reels의 원본"
+  },
+  {
+   "id": "up-tv-indicator-search",
+   "name": "tradingview-indicator-search-mcp-server",
+   "url": "https://github.com/daviddme/tradingview-indicator-search-mcp-server",
+   "repo": "daviddme/tradingview-indicator-search-mcp-server",
+   "cat": "reference",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "TV 검색 MCP 원본(MIT)"
+  },
+  {
+   "id": "jev-ultrafast-naver",
+   "name": "jev-ultrafast-naver",
+   "url": "https://github.com/jkf87/jev-ultrafast-naver",
+   "repo": "jkf87/jev-ultrafast-naver",
+   "cat": "reference",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "한국어 목표로 네이버 항공권을 조작하는 변형 — 한국어 사례 단서"
+  },
+  {
+   "id": "typesafe-sdk-python",
+   "name": "typesafe-sdk-python",
+   "url": "https://github.com/typesafe-ai/typesafe-sdk-python",
+   "repo": "typesafe-ai/typesafe-sdk-python",
+   "cat": "official",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "공식 Python SDK"
+  },
+  {
+   "id": "typesafe-adapter",
+   "name": "system-one-adapter-python",
+   "url": "https://github.com/typesafe-ai/system-one-adapter-python",
+   "repo": "typesafe-ai/system-one-adapter-python",
+   "cat": "official",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "같은 인터페이스의 LLM 어댑터 — 기준선 비교용"
+  },
+  {
+   "id": "typesafe-sdk-js",
+   "name": "typesafe-sdk-js",
+   "url": "https://github.com/typesafe-ai/typesafe-sdk-js",
+   "repo": "typesafe-ai/typesafe-sdk-js",
+   "cat": "official",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "공식 JS SDK"
+  },
+  {
+   "id": "kydlikebtc-awesome-jev",
+   "name": "awesome-jev",
+   "url": "https://github.com/kydlikebtc/awesome-jev",
+   "repo": "kydlikebtc/awesome-jev",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "기계 판독 catalog.json(주간 자동 발굴)"
+  },
+  {
+   "id": "yibie-awesome-jev",
+   "name": "awesome-jev",
+   "url": "https://github.com/yibie/awesome-jev",
+   "repo": "yibie/awesome-jev",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "HackerNoon의 출처 목록"
+  },
+  {
+   "id": "logicrw-awesome",
+   "name": "awesome-jev-projects",
+   "url": "https://github.com/logicrw/awesome-jev-projects",
+   "repo": "logicrw/awesome-jev-projects",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "자동 동기화 · 한국어 README"
+  },
+  {
+   "id": "omnijev-gallery",
+   "name": "awesome-jev-gallery",
+   "url": "https://github.com/OmniJev/awesome-jev-gallery",
+   "repo": "OmniJev/awesome-jev-gallery",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "독립 평가 23건"
+  },
+  {
+   "id": "heyjunpenn-awesome",
+   "name": "awesome-jev",
+   "url": "https://github.com/heyjunpenn/awesome-jev",
+   "repo": "heyjunpenn/awesome-jev",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "jevbest.com"
+  },
+  {
+   "id": "walid-use-cases",
+   "name": "awesome-jev-use-cases",
+   "url": "https://github.com/walidboulanouar/awesome-jev-use-cases",
+   "repo": "walidboulanouar/awesome-jev-use-cases",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "CSV 3종(repos·more-repos·demos) · 커밋 09-21"
+  },
+  {
+   "id": "robustness-list",
+   "name": "awesome-jev-robustness",
+   "url": "https://github.com/Yifan-Lan/awesome-jev-robustness",
+   "repo": "Yifan-Lan/awesome-jev-robustness",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "독립 강건성 감사 목록 119건(data/entries.tsv)"
+  },
+  {
+   "id": "abdelstark-awesome",
+   "name": "awesome-typesafe-jev",
+   "url": "https://github.com/AbdelStark/awesome-typesafe-jev",
+   "repo": "AbdelStark/awesome-typesafe-jev",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "resources.json 228 · llms.txt"
+  },
+  {
+   "id": "anilmatcha-awesome",
+   "name": "awesome-jev-by-typesafe",
+   "url": "https://github.com/Anil-matcha/awesome-jev-by-typesafe",
+   "repo": "Anil-matcha/awesome-jev-by-typesafe",
+   "cat": "catalog",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "교차 확인 목록"
+  },
+  {
+   "id": "calibration-audit",
+   "name": "jev-calibration-audit",
+   "url": "https://github.com/jujumilk3/jev-calibration-audit",
+   "repo": "jujumilk3/jev-calibration-audit",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "한·영 같은 문항: 정확도 −6.5pp · ECE 0.076 vs 0.075 · 기권 선택지를 빼면 붕괴(자체)"
+  },
+  {
+   "id": "jev-evaluation",
+   "name": "jev-evaluation",
+   "url": "https://github.com/willkelly/jev-evaluation",
+   "repo": "willkelly/jev-evaluation",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "사전 등록 123,805요청 — 과제에 따라 보정 유지·붕괴(자체)"
+  },
+  {
+   "id": "jagged",
+   "name": "jagged",
+   "url": "https://github.com/zkousama/jagged",
+   "repo": "zkousama/jagged",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "한 줄 주입으로 정확도 96.5% → 26.5%(자체)"
+  },
+  {
+   "id": "orderby-bench",
+   "name": "jev-orderby-bench",
+   "url": "https://github.com/yodablocks/jev-orderby-bench",
+   "repo": "yodablocks/jev-orderby-bench",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "확률로 정렬 — 요청당 40행이면 관문 실패(자체)"
+  },
+  {
+   "id": "dice",
+   "name": "jev-does-not-play-dice",
+   "url": "https://github.com/KantaHayashiAI/jev-does-not-play-dice",
+   "repo": "KantaHayashiAI/jev-does-not-play-dice",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "choice 과신: 정확도 19%에 확률 82.9%(자체)"
+  },
+  {
+   "id": "behavior-study",
+   "name": "jev-behavior-study",
+   "url": "https://github.com/RINNECODER/jev-behavior-study",
+   "repo": "RINNECODER/jev-behavior-study",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "산술: 정답이 첫 선택지면 88%, 마지막이면 57%(자체)"
+  },
+  {
+   "id": "ece-floor",
+   "name": "jev-exploration",
+   "url": "https://github.com/SamuelSacco/jev-exploration",
+   "repo": "SamuelSacco/jev-exploration",
+   "cat": "robustness",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "공개 ECE를 표본 잡음 바닥과 비교(자체)"
+  },
+  {
+   "id": "quantdinger",
+   "name": "QuantDinger",
+   "url": "https://github.com/OpenByteInc/QuantDinger",
+   "repo": "OpenByteInc/QuantDinger",
+   "cat": "finance",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "진입만 게이트, 청산은 막지 않음"
+  },
+  {
+   "id": "smartmoney-cub",
+   "name": "SmartMoney-Cub",
+   "url": "https://github.com/myc0576/SmartMoney-Cub",
+   "repo": "myc0576/SmartMoney-Cub",
+   "cat": "finance",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "반례: 규칙 83.33% > Jev 78.43%(240건)"
+  },
+  {
+   "id": "paper-radar",
+   "name": "JEV-Paper-Radar",
+   "url": "https://github.com/Eliot5566/JEV-Paper-Radar",
+   "repo": "Eliot5566/JEV-Paper-Radar",
+   "cat": "eval",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "피드 + 관심사별 noul + 라벨 30개 보정 + 스케줄"
+  },
+  {
+   "id": "jev-align",
+   "name": "jev-align",
+   "url": "https://github.com/sutro-sh/jev-align",
+   "repo": "sutro-sh/jev-align",
+   "cat": "eval",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "사람 피드백으로 보정된 체크(GEPA)"
+  },
+  {
+   "id": "typia",
+   "name": "typia",
+   "url": "https://github.com/samchon/typia",
+   "repo": "samchon/typia",
+   "cat": "infra",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "@typia/jev — TS 타입에서 질문 생성"
+  },
+  {
+   "id": "laya",
+   "name": "laya",
+   "url": "https://github.com/NandhaKishorM/laya",
+   "repo": "NandhaKishorM/laya",
+   "cat": "alternative",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "같은 /v1/systemone 셀프호스팅(성능 수치는 자체 주장)"
+  },
+  {
+   "id": "system-one-connector",
+   "name": "system-one-connector",
+   "url": "https://github.com/itsmostafa/system-one-connector",
+   "repo": "itsmostafa/system-one-connector",
+   "cat": "infra",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "evaluate MCP 하나 — Jev·Laya·OpenRouter 교체"
+  },
+  {
+   "id": "jev-review-niaz",
+   "name": "jev-review",
+   "url": "https://github.com/NiazMorshed2007/jev-review",
+   "repo": "NiazMorshed2007/jev-review",
+   "cat": "guardrail",
+   "cited_in": [
+    "tvse-jev-2026-09-26"
+   ],
+   "status": "ok",
+   "checked": "2026-09-26",
+   "note_ko": "로컬 MCP 코드 품질 리뷰(같은 이름 다른 프로젝트)"
+  }
+ ],
+ "red_flags": [
+  {
+   "id": "typesafe-register",
+   "url": "https://github.com/Futureppo/typesafe_register",
+   "verdict": "hold",
+   "note_ko": "계정 등록 봇으로 한도 우회를 광고 — 인용·사용 금지"
+  },
+  {
+   "id": "jev-codex-router",
+   "url": "https://github.com/0xNatoshi/jev-codex-router",
+   "verdict": "hold",
+   "note_ko": "보관(archived)"
+  }
+ ],
+ "notes_ko": [
+  "github.com HTML·비세션 GitHub API는 클라우드 세션에서 403 — git ls-remote와 raw.githubusercontent.com으로 확인한다.",
+  "HackerNoon 101은 갱신되지 않는 스냅샷이다. 새 사례는 catalog-kydlikebtc와 yibie 목록의 diff로 찾는다.",
+  "리포 목록의 status·license·stack은 checked 날짜의 값이다. 인용 전 link-check로 다시 확인한다."
+ ]
+}

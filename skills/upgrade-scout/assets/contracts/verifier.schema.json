@@ -1,0 +1,48 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/verifier@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "checks"
+ ],
+ "properties": {
+  "checks": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "claim_id",
+     "cmd",
+     "verdict"
+    ],
+    "properties": {
+     "claim_id": {
+      "type": "string"
+     },
+     "cmd": {
+      "type": "string"
+     },
+     "exit": {
+      "type": "integer"
+     },
+     "excerpt": {
+      "type": "string",
+      "maxLength": 300
+     },
+     "verdict": {
+      "enum": [
+       "confirmed",
+       "refuted",
+       "partial",
+       "unverifiable"
+      ]
+     },
+     "note_ko": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ }
+}

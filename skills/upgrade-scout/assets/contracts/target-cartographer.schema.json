@@ -1,0 +1,185 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/target-cartographer@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "map"
+ ],
+ "properties": {
+  "map": {
+   "type": "object",
+   "required": [
+    "lens",
+    "architecture_ko",
+    "constraints",
+    "gaps",
+    "gates",
+    "llm_calls"
+   ],
+   "properties": {
+    "lens": {
+     "type": "string"
+    },
+    "architecture_ko": {
+     "type": "string"
+    },
+    "components": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "ref"
+      ],
+      "properties": {
+       "name": {
+        "type": "string"
+       },
+       "ref": {
+        "type": "string"
+       },
+       "role_ko": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "constraints": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "text_ko",
+       "ref",
+       "hard"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^K\\d{2,}$"
+       },
+       "text_ko": {
+        "type": "string"
+       },
+       "ref": {
+        "type": "string"
+       },
+       "hard": {
+        "type": "boolean"
+       }
+      }
+     }
+    },
+    "assets": {
+     "type": "array"
+    },
+    "gaps": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "text_ko",
+       "ref"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^GAP\\d{2,}$"
+       }
+      }
+     }
+    },
+    "touchpoints": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "actor",
+       "action",
+       "surface_ref"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^T\\d{2,}$"
+       },
+       "action": {
+        "enum": [
+         "view",
+         "edit",
+         "pick",
+         "approve",
+         "reject",
+         "download",
+         "upload",
+         "configure"
+        ]
+       }
+      }
+     }
+    },
+    "gates": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "kind",
+       "ref"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^G\\d{2,}$"
+       },
+       "kind": {
+        "enum": [
+         "schema",
+         "sanitize",
+         "normalize",
+         "state-guard",
+         "feature-flag",
+         "human-approval",
+         "retry-classify",
+         "budget",
+         "auth",
+         "rate-limit",
+         "http-guard"
+        ]
+       }
+      }
+     }
+    },
+    "llm_calls": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "ref"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^L\\d{2,}$"
+       },
+       "gates": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    },
+    "external_calls": {
+     "type": "array"
+    }
+   }
+  }
+ }
+}

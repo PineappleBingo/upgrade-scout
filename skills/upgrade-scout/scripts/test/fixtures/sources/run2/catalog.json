@@ -1,0 +1,4 @@
+{"entries":[
+ {"slug":"jev-trade","title":"jev-trade","url":"https://github.com/aowang-ai/jev-trade","kind":"project","patterns":["trading-signal"],"question_types":["choice"],"has_code":true,"first_seen":"2026-09-18","summary":"Long or short each round"},
+ {"slug":"docs-models","title":"Models","url":"https://docs.typesafe.ai/models","kind":"official-docs","official":true,"patterns":[],"question_types":[],"first_seen":"2026-09-15"}
+]}

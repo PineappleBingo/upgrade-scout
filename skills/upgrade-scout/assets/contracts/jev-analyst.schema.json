@@ -1,0 +1,186 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/jev-analyst@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "jev"
+ ],
+ "properties": {
+  "jev": {
+   "type": "object",
+   "required": [
+    "registry_as_of",
+    "points",
+    "not_fit"
+   ],
+   "properties": {
+    "registry_as_of": {
+     "type": "string"
+    },
+    "points": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "ref",
+       "decision_ko",
+       "primitive",
+       "j",
+       "question_sketch",
+       "gates"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^JP\\d{2,}$"
+       },
+       "ref": {
+        "type": "string"
+       },
+       "decision_ko": {
+        "type": "string"
+       },
+       "mechanism": {
+        "enum": [
+         "llm-typed",
+         "hidden-choice",
+         "rule",
+         "human",
+         "threshold",
+         "retrieval-gap",
+         "none"
+        ]
+       },
+       "primitive": {
+        "enum": [
+         "choice",
+         "score",
+         "noul",
+         "none"
+        ]
+       },
+       "triage": {
+        "enum": [
+         "DIRECT",
+         "NEEDS_SHAPING",
+         "NOT_FOR_JEV"
+        ]
+       },
+       "j": {
+        "type": "object",
+        "required": [
+         "J1",
+         "J2",
+         "J3",
+         "J4",
+         "J5",
+         "J6",
+         "J7",
+         "J8",
+         "J9",
+         "J10",
+         "J11",
+         "J12"
+        ],
+        "additionalProperties": {
+         "enum": [
+          0,
+          1,
+          2
+         ]
+        }
+       },
+       "pattern": {
+        "enum": [
+         "fan-out",
+         "confidence-routing",
+         "composite",
+         "intent-routing",
+         "none"
+        ]
+       },
+       "cookbooks": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "use_cases": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "required": [
+          "key",
+          "evidence_level"
+         ],
+         "properties": {
+          "evidence_level": {
+           "enum": [
+            "code-verified",
+            "code-present",
+            "docs-only",
+            "measured",
+            "negative-result"
+           ]
+          }
+         }
+        }
+       },
+       "question_sketch": {
+        "type": "object",
+        "required": [
+         "id",
+         "type",
+         "instructions_en"
+        ],
+        "properties": {
+         "type": {
+          "enum": [
+           "choice",
+           "score",
+           "noul"
+          ]
+         },
+         "instructions_en": {
+          "type": "string"
+         },
+         "criteria_en": {}
+        }
+       },
+       "gates": {
+        "type": "object"
+       },
+       "jaggedness": {
+        "type": "array"
+       },
+       "kpi_ko": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "not_fit": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "ref",
+       "why_ko",
+       "verdict"
+      ],
+      "properties": {
+       "verdict": {
+        "enum": [
+         "code",
+         "reject"
+        ]
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

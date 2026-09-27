@@ -1,0 +1,36 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/report-drafter@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "sections"
+ ],
+ "properties": {
+  "sections": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "markdown_ko",
+     "ledger_refs"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "markdown_ko": {
+      "type": "string"
+     },
+     "ledger_refs": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  }
+ }
+}

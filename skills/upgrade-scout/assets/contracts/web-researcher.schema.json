@@ -1,0 +1,73 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/web-researcher@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "research"
+ ],
+ "properties": {
+  "research": {
+   "type": "object",
+   "required": [
+    "queries",
+    "alternatives"
+   ],
+   "properties": {
+    "queries": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "q",
+       "tool"
+      ],
+      "properties": {
+       "q": {
+        "type": "string"
+       },
+       "tool": {
+        "type": "string"
+       },
+       "at": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "alternatives": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "name",
+       "url",
+       "what_ko"
+      ],
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^W\\d{2,}$"
+       },
+       "fit": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 10
+       },
+       "free_tier": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "drift_refs": {
+     "type": "array"
+    },
+    "architectures": {
+     "type": "array"
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,140 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/envelope@2",
+ "type": "object",
+ "required": [
+  "role",
+  "contract",
+  "run_id",
+  "status",
+  "claims"
+ ],
+ "properties": {
+  "role": {
+   "enum": [
+    "target-cartographer",
+    "repo-reviewer",
+    "web-researcher",
+    "jev-analyst",
+    "plugin-skill-scout",
+    "verifier",
+    "blind-scorer",
+    "report-drafter"
+   ]
+  },
+  "contract": {
+   "type": "string",
+   "pattern": "^upgrade-scout/[a-z-]+@2$"
+  },
+  "run_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "subject": {
+   "type": "string"
+  },
+  "status": {
+   "enum": [
+    "ok",
+    "partial",
+    "failed"
+   ]
+  },
+  "claims": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/claim"
+   }
+  },
+  "gaps_ko": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "tool_calls": {
+   "type": "integer",
+   "minimum": 0
+  }
+ },
+ "$defs": {
+  "claim": {
+   "type": "object",
+   "required": [
+    "id",
+    "text_ko",
+    "kind",
+    "evidence",
+    "confidence"
+   ],
+   "properties": {
+    "id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "text_ko": {
+     "type": "string",
+     "minLength": 1
+    },
+    "kind": {
+     "enum": [
+      "fact",
+      "absence",
+      "number",
+      "license",
+      "opinion"
+     ]
+    },
+    "evidence": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "enum": [
+         "file",
+         "url",
+         "cmd"
+        ]
+       },
+       "ref": {
+        "type": "string"
+       },
+       "url": {
+        "type": "string"
+       },
+       "checked": {
+        "type": "string"
+       },
+       "quote": {
+        "type": "string",
+        "maxLength": 300
+       }
+      }
+     }
+    },
+    "recheck": {
+     "type": "object",
+     "properties": {
+      "cmd": {
+       "type": "string"
+      },
+      "expect": {
+       "type": "string"
+      }
+     }
+    },
+    "confidence": {
+     "enum": [
+      "high",
+      "mid",
+      "low"
+     ]
+    }
+   }
+  }
+ }
+}

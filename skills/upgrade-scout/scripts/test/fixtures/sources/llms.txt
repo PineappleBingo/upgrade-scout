@@ -1,0 +1,6 @@
+# Example Docs
+## Primitives
+- [Choice](https://docs.example.test/primitives/choice): pick one
+- [Noul](https://docs.example.test/primitives/noul?utm_source=x): yes or no
+## Cookbooks
+- [Choice again](https://docs.example.test/primitives/choice)

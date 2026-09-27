@@ -1,0 +1,53 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "upgrade-scout/blind-scorer@2",
+ "allOf_envelope": "envelope.schema.json",
+ "type": "object",
+ "required": [
+  "scores"
+ ],
+ "properties": {
+  "scores": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "item_id",
+     "fit",
+     "cost",
+     "risk"
+    ],
+    "properties": {
+     "item_id": {
+      "type": "string"
+     },
+     "fit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+     },
+     "cost": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+     },
+     "risk": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+     },
+     "confidence": {
+      "enum": [
+       "high",
+       "mid",
+       "low"
+      ]
+     },
+     "why_ko": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ }
+}
