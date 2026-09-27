@@ -90,6 +90,17 @@ test('jev-analyst alias: v3.0 replies are accepted as capability-analyst', () =>
   assert.equal(res.data.role, 'capability-analyst');
 });
 
+test('jev-analyst alias: a genuine v3.0 payload (key `jev`, no `capability`) is migrated', () => {
+  const reply = { role: 'jev-analyst', contract: 'upgrade-scout/jev-analyst@2', run_id: 'r', status: 'ok', claims: [],
+    jev: { subject: 'TypeSafe Jev', sheet: { primitives: ['choice'], limits: [], cost: '$0.042/1M', languages: 'en best', sources: [{ url: 'https://docs.typesafe.ai', checked: '2026-09-26' }] }, points: [], not_fit: [] } };
+  const res = validateReply('jev-analyst', JSON.stringify(reply));
+  assert.equal(res.ok, true, res.errors.join('\n'));
+  assert.equal(res.data.role, 'capability-analyst');
+  assert.equal(res.data.contract, 'upgrade-scout/capability-analyst@2');
+  assert.equal('jev' in res.data, false);
+  assert.equal(res.data.capability.subject, reply.jev.subject);
+});
+
 test('capability points with axes become score items; NOT_FIT does not', () => {
   const L = merge(emptyLedger('r'), [{ role: 'capability-analyst', data: { claims: [], capability: { subject: 'Jev', sheet: {}, not_fit: [], points: [
     { id: 'CP01', ref: 'a.ts:1', decision_ko: '댓글 의도 분류', primitive: 'choice', triage: 'DIRECT', gates: {}, axes: { fit: 9, cost: 7, risk: 8 }, lang: 0.9 },
