@@ -28,3 +28,12 @@
 - 모든 G·L id는 앵커 스크립트 결과에 있거나 네가 `sed -n`으로 본 줄이어야 한다.
 - 사람 접점 3개는 UI 파일의 버튼·라우트까지 따라가 확인한다.
 - 웹을 보지 않는다. 점수를 내지 않는다.
+
+## 에이전트 아키텍처 렌즈 (입력의 `lenses`에 `agent-architecture`가 있을 때만)
+
+`map.agents`를 채운다. 기준은 `references/lenses.md` §1. 입력에 설계 문서의 원칙(`design_principles`)이 오면 그 원칙을 먼저 기준으로 삼고 `reference_principle`에 P-id를 적는다.
+
+1. `inventory[]` A01…: LLM 호출 지점 · 프롬프트 파일 · 에이전트/스테이션 레지스트리 · 작업 큐 · 상태 enum · 오케스트레이터 · 게이트 · `.claude/agents/*.md`. `owns`에 그 에이전트만 쓰는 필드.
+2. `edges[]`: 넘김(handoff) · 게이트 · 사람 승인 · 재시도 · 폴백. 넘기는 데이터에 스키마 검사가 있으면 `schema_checked: true`.
+3. `principles[]`: 원칙 키 8개 전부 — ok · partial · missing · n/a와 근거 path:line. partial·missing이면 `fix`(제목 · 설계 · 적합·비용·리스크 0–10)를 붙인다. 이미 있는 장치를 missing으로 적지 않는다 — 찾은 명령을 `claims`의 absence 주장으로.
+4. `split_merge[]`: 쪼갤 근거(재개 경계 · 소유 필드 · 모델/비용이 다름)나 합칠 근거(항상 같은 입력으로 같은 자리에서 실행)가 있는 곳만.

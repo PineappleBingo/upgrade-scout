@@ -1,7 +1,7 @@
 // upgrade-scout — Workflow 템플릿(사용자가 워크플로를 명시적으로 요청했을 때만).
 // 쓰기 전에 workflow-authoring 스킬을 로드해 API를 확인할 것. 이 파일은 그 스킬의 기본 모양(agent·parallel·pipeline·phase)만 쓴다.
 // 워크플로 스크립트는 파일을 읽을 수 없으므로 메인 세션이 args로 모든 입력을 넘긴다:
-//   args = { asOf, target, depth, capabilityRefs, pack, pluginScope, caps: { concurrency: 3 },
+//   args = { asOf, target, depth, capabilityRefs, pack, pluginScope, lenses, designPrinciples, caps: { concurrency: 3 },
 //            briefs: { <role>: "<_preamble + 역할 브리프 전문>" }, schemas: { <role>: <JSON Schema> },
 //            candidates: [{ name, path|url }], designRefs: [{ title, ref, excerpt }], inputs: { inventory, judgmentPoints, needs } }
 // 규칙: 한 웨이브 동시 3–4개(깊이 deep만 4). 버린 것은 반드시 log()로 남긴다. Date.now()·Math.random() 금지.
@@ -24,7 +24,7 @@ async function inBatches(items, fn) {
 }
 
 phase('Map');
-const map = await agent(brief('target-cartographer', { target: args.target, lens: 'all', inputs: args.inputs }), { label: 'map', phase: 'Map', schema: args.schemas['target-cartographer'] });
+const map = await agent(brief('target-cartographer', { target: args.target, lens: 'all', lenses: args.lenses || [], design_principles: args.designPrinciples || [], inputs: args.inputs }), { label: 'map', phase: 'Map', schema: args.schemas['target-cartographer'] });
 
 phase('Review');
 const maxRepos = args.depth === 'deep' ? 8 : args.depth === 'quick' ? 1 : 5;

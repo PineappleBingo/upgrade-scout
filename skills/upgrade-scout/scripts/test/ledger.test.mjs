@@ -150,3 +150,27 @@ test('design-mapper: at most three missing pieces', () => {
     mapping: { source: { ref: 'x', title: 'x', kind: 'design' }, measured_claims: false, principles: [], platform_checks: [], mapping: [], missing_pieces: pieces, conflicts: [] } };
   assert.equal(validateReply('design-mapper', JSON.stringify(reply)).ok, false);
 });
+
+test('agent-architecture lens: principle gaps with a fix become items', () => {
+  const map = { lens: 'agent-architecture', architecture_ko: 'x', constraints: [], gaps: [], gates: [], llm_calls: [],
+    agents: {
+      inventory: [{ id: 'A01', name: 'scriptwriter', kind: 'llm-call', ref: 'src/agents/scriptwriter.ts:40' }],
+      edges: [{ from: 'A01', to: 'A02', kind: 'handoff' }],
+      principles: [
+        { key: 'single-transition', verdict: 'ok', evidence_refs: ['src/agents/orchestra.ts:120'], note_ko: '한 곳' },
+        { key: 'observability', verdict: 'missing', evidence_refs: [], note_ko: '비용 기록 없음', fix: { title_ko: '에이전트별 토큰 기록', fit: 7, cost: 8, risk: 9 } },
+      ],
+      split_merge: [],
+    } };
+  const reply = { role: 'target-cartographer', contract: 'upgrade-scout/target-cartographer@2', run_id: 'r', status: 'ok', claims: [], map };
+  const res = validateReply('target-cartographer', JSON.stringify(reply));
+  assert.equal(res.ok, true, res.errors.join('\n'));
+  const L = merge(emptyLedger('r'), [{ role: 'target-cartographer', data: res.data }]);
+  assert.deepEqual(L.items.map((i) => [i.id, i.source]), [['AA-observability', 'agent-architecture']]);
+});
+
+test('agent-architecture lens: unknown principle key is a contract error', () => {
+  const map = { lens: 'x', architecture_ko: 'x', constraints: [], gaps: [], gates: [], llm_calls: [], agents: { inventory: [], edges: [], principles: [{ key: 'vibes', verdict: 'ok', evidence_refs: [], note_ko: '' }], split_merge: [] } };
+  const reply = { role: 'target-cartographer', contract: 'upgrade-scout/target-cartographer@2', run_id: 'r', status: 'ok', claims: [], map };
+  assert.equal(validateReply('target-cartographer', JSON.stringify(reply)).ok, false);
+});

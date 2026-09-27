@@ -178,6 +178,22 @@
     },
     "external_calls": {
      "type": "array"
+    },
+    "agents": {
+     "type": "object",
+     "required": ["inventory", "edges", "principles", "split_merge"],
+     "properties": {
+      "inventory": { "type": "array", "items": { "type": "object", "required": ["id", "name", "kind", "ref"], "properties": { "id": { "type": "string", "pattern": "^A\\d{2,}$" }, "name": { "type": "string" }, "kind": { "enum": ["llm-call", "prompt", "registry", "queue", "state-enum", "subagent-def", "orchestrator", "gate"] }, "ref": { "type": "string" }, "role_ko": { "type": "string" }, "model": { "type": "string" }, "owns": { "type": "array", "items": { "type": "string" } } } } },
+      "edges": { "type": "array", "items": { "type": "object", "required": ["from", "to", "kind"], "properties": { "from": { "type": "string" }, "to": { "type": "string" }, "kind": { "enum": ["handoff", "gate", "approval", "retry", "fallback"] }, "schema_checked": { "type": "boolean" } } } },
+      "principles": { "type": "array", "items": { "type": "object", "required": ["key", "verdict", "evidence_refs", "note_ko"], "properties": {
+        "key": { "enum": ["single-source", "single-transition", "handoff-contract", "generator-judge-split", "judge-not-repair", "rules-location", "resume-boundary", "observability"] },
+        "verdict": { "enum": ["ok", "partial", "missing", "n/a"] },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } },
+        "note_ko": { "type": "string" },
+        "reference_principle": { "type": "string" },
+        "fix": { "type": "object", "required": ["title_ko", "fit", "cost", "risk"], "properties": { "title_ko": { "type": "string" }, "design_ko": { "type": "string" }, "fit": { "type": "number", "minimum": 0, "maximum": 10 }, "cost": { "type": "number", "minimum": 0, "maximum": 10 }, "risk": { "type": "number", "minimum": 0, "maximum": 10 } } } } } },
+      "split_merge": { "type": "array", "items": { "type": "object", "required": ["kind", "targets", "why_ko"], "properties": { "kind": { "enum": ["split", "merge"] }, "targets": { "type": "array", "items": { "type": "string" } }, "why_ko": { "type": "string" } } } }
+     }
     }
    }
   }

@@ -98,6 +98,14 @@ export function merge(ledger, replies) {
         L.items.push({ id: p.id, label: p.title_ko, source: `design:${m.source?.title || m.source?.ref || '?'}`, fit: p.fit, cost: p.cost, risk: p.risk, grade: 'B', caps: [], summary_en: null, status: 'proposed' });
       }
     }
+    if (role === 'target-cartographer') {
+      for (const p of data.map?.agents?.principles || []) {
+        if (!['partial', 'missing'].includes(p.verdict) || !p.fix) continue;
+        const id = `AA-${p.key}`;
+        if (L.items.some((x) => x.id === id)) continue;
+        L.items.push({ id, label: p.fix.title_ko, source: 'agent-architecture', fit: p.fix.fit, cost: p.fix.cost, risk: p.fix.risk, grade: 'B', caps: [], summary_en: null, status: 'proposed' });
+      }
+    }
   }
   return L;
 }
