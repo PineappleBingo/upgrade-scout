@@ -18,5 +18,9 @@
   { "query": "gapfinder에 이미 정한 대로 unsupported 선택지 추가하는 거 구현해줘", "should_trigger": false },
   { "query": "Jev score 질문 타입이 뭐야? 문서 요약해줘", "should_trigger": false },
   { "query": "이 리포 README를 한국어로 번역해줘", "should_trigger": false },
-  { "query": "pytest가 실패하는 원인 찾아줘", "should_trigger": false }
+  { "query": "pytest가 실패하는 원인 찾아줘", "should_trigger": false },
+  { "query": "이 설계 문서 기준으로 우리 코드가 어디까지 맞는지 리뷰해줘", "should_trigger": true },
+  { "query": "review our agent architecture against this org chart and tell me what's missing", "should_trigger": true },
+  { "query": "이 설계 문서 맞춤법 좀 봐줘", "should_trigger": false },
+  { "query": "에이전트 하나 새로 만들어줘. 이메일 분류하는 걸로", "should_trigger": false }
 ]

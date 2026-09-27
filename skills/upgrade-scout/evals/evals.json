@@ -19,7 +19,7 @@
     {
       "id": 2,
       "prompt": "TV-Strategy-Extractor에서 LLM이 라벨이나 선택지만 돌려주는 자리 중에 Jev(TypeSafe 타입 판단 모델)로 바꿀 만한 판단 지점을 찾아서 점수 매겨줘.",
-      "expected_output": "JEV_MODE=lens. judgment-points로 판단 지점을 찾고 jev-analyst가 J1–J12(0–2)를 매기며 score-table --mode jev가 합계·판정(high·mid·low·reject·code)을 낸다. 지점마다 DIRECT/NEEDS_SHAPING/NOT_FOR_JEV 분류, 영어 질문셋 초안(jev-client lint 통과), 게이트, 보정 계획이 있다. 라이브 호출은 없다.",
+      "expected_output": "JEV_MODE=lens. judgment-points로 판단 지점을 찾고 capability-analyst(Jev 팩)가 J1–J12(0–2)를 매기며 score-table --mode jev가 합계·판정(high·mid·low·reject·code)을 낸다. 지점마다 DIRECT/NEEDS_SHAPING/NOT_FOR_JEV 분류, 영어 질문셋 초안(jev-client lint 통과), 게이트, 보정 계획이 있다. 라이브 호출은 없다.",
       "expectations": [
         "judgment-points.mjs를 대상에 실행했고, 결과에 src/lib/build.ts의 갭 질문 선택지 지점과 src/lib/report.ts의 규칙 판단 필드가 포함됐다(b4a5a5f 기준 build.ts:31·32·82·153–156, report.ts:73·86)",
         "각 지점의 J1–J12 점수가 0–2 정수이고, 합계·판정은 score-table.mjs --mode jev가 냈다(J1=0이면 reject, J3=0이면 code)",
@@ -78,6 +78,50 @@
         "보조 채점 state에 우리 점수(fit·cost·risk·synergy)가 들어가지 않았다",
         "키를 채팅에 붙여 넣으라고 요청하지 않았고, 환경 비밀 변수로 넣으라고 안내했다",
         "시너지 합계·순위가 Jev 보조 점수 때문에 바뀌지 않았다"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "이 플레이북(docs/delegation-playbook.md)을 기준으로 우리 코드베이스를 리뷰해줘. 있는 것 · 부분 · 없는 것과 빠진 조각을 정리해서.",
+      "expected_output": "REFERENCES를 설계 문서로 판별(refs.mjs)하고 design-mapper가 원칙 → 있음/부분/없음(file:line) → 빠진 조각 ≤3 → 하드 룰 충돌을 낸다. 없음 판정은 재확인 명령과 함께. 빠진 조각이 시너지 점수표에 들어간다.",
+      "expectations": [
+        "refs.mjs classify를 실행했고 레퍼런스 유형이 design이었다",
+        "원칙마다 present·partial·absent와 file:line 또는 검색 명령이 있다",
+        "빠진 조각은 3개 이하이고 score-table로 합계를 냈다",
+        "플랫폼 전제는 공식 문서 URL과 확인일로 확인했다",
+        "대상 저장소는 바뀌지 않았다"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "우리 에이전트 구조를 점검해줘. 상태 전이, 핸드오프, 게이트, 관측성 쪽으로.",
+      "expected_output": "LENSES=agent-architecture. cartographer의 map.agents(인벤토리 · 간선 · 원칙 8 판정 · 쪼개기/합치기)로 조직도와 원칙 갭 표를 만들고, partial·missing 원칙의 개선안이 점수표에 들어간다.",
+      "expectations": [
+        "원칙 키 8개 전부에 ok·partial·missing·n/a 판정과 근거가 있다",
+        "조직도 그림과 에이전트 표가 리포트에 있다",
+        "partial·missing 원칙의 fix가 AA-<키> 항목으로 점수표에 있다",
+        "Jev 팩을 읽지 않았다"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "PineappleBingo/creator-lab-reels 리포랑 https://docs.typesafe.ai/ 문서, 그리고 우리 docs/architecture.md를 같이 보고 뭘 개선할지 한 리포트로.",
+      "expected_output": "레퍼런스 세 개를 repo · capability(Jev 팩) · design으로 판별하고 각 처리기(repo-reviewer · capability-analyst + Jev 부록 · design-mapper)의 항목을 한 점수표로 합친다.",
+      "expectations": [
+        "refs.mjs 결과에 packs=[jev]와 세 유형이 있다",
+        "리포트에 레퍼런스 유형별 장이 셋 있다",
+        "세 처리기의 항목이 같은 score-table 결과에 섞여 있다(source 칩으로 구분)",
+        "Jev J-점수는 시너지 합계 밖 옆 열이다"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "이 서비스의 판단 로직(추천 점수, 라우팅)을 더 좋게 만들 방법을 비슷한 오픈소스 리포에서 찾아줘.",
+      "expected_output": "Jev와 무관한 요청. refs.mjs의 packs가 비어 있고 packs/jev 파일을 읽지 않으며, 일반 리포 리뷰와 웹 조사로 답한다.",
+      "expectations": [
+        "refs.mjs 결과의 packs가 []였다",
+        "packs/jev 아래 파일을 읽거나 인용하지 않았다",
+        "리포트에 Jev · J-루브릭 이야기가 없다"
       ]
     }
   ]
