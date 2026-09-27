@@ -41,12 +41,16 @@ export function loadPack(dir) {
   };
 }
 
-export function listPacks(skillDir) {
+/** 읽지 못한 팩은 건너뛴다(코어는 팩 없이도 완결). 무엇이 왜 빠졌는지는 onError(dir, error)로 받는다. */
+export function listPacks(skillDir, { onError } = {}) {
   const root = path.join(skillDir, 'packs');
   if (!fs.existsSync(root)) return [];
   return fs.readdirSync(root, { withFileTypes: true })
     .filter((e) => e.isDirectory() && fs.existsSync(path.join(root, e.name, 'pack.md')))
-    .map((e) => loadPack(path.join(root, e.name)))
+    .flatMap((e) => {
+      const dir = path.join(root, e.name);
+      try { return [loadPack(dir)]; } catch (err) { onError?.(dir, err); return []; }
+    })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 

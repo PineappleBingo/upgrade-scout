@@ -211,7 +211,7 @@ export async function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true
   }
 
   // 6) 팩 구조 + 레지스트리 id ↔ 문서 (코어: assets/registry/*.json ↔ references/sources.md, 팩: packs/<p>/<registry> ↔ packs/<p>/<sources_doc>)
-  const packs = listPacks(skillDir);
+  const packs = listPacks(skillDir, { onError: (d, e) => err('pack', `packs/${path.basename(d)}/pack.md: 읽을 수 없다 — ${e.message}`) });
   stats.packs = packs.map((p) => p.name);
   const registryPairs = files.filter((f) => /^assets\/registry\/[^/]+\.json$/.test(f)).map((f) => [f, 'references/sources.md']);
   for (const p of packs) {

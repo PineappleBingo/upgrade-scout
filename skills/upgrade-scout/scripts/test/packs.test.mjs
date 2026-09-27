@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import './_offline.mjs';
+import { spawnSync } from 'node:child_process';
+import { SKILL_DIR, fixture } from './_offline.mjs';
 import { listPacks, loadPack, matchPacks } from '../lib/packs.mjs';
+import { selfcheck } from '../selfcheck.mjs';
 
 function tmpSkill(packMd) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'packs-'));
@@ -61,4 +63,25 @@ test('unrelated focus: judging and scoring words do not load a pack', () => {
 
 test('no packs folder → empty list', () => {
   assert.deepEqual(listPacks(tmpSkill(null)), []);
+});
+
+test('a broken pack.md is skipped and reported; the core keeps working (refs classify, radar --pack <good>, selfcheck)', async () => {
+  const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'packs-broken-')), 'upgrade-scout');
+  fs.cpSync(SKILL_DIR, dir, { recursive: true });
+  fs.mkdirSync(path.join(dir, 'packs', 'broken'));
+  fs.writeFileSync(path.join(dir, 'packs', 'broken', 'pack.md'), '# no frontmatter here');
+  const seen = [];
+  assert.deepEqual(listPacks(dir, { onError: (d, e) => seen.push([path.basename(d), e.message]) }).map((p) => p.name), ['jev']);
+  assert.equal(seen.length, 1);
+  assert.equal(seen[0][0], 'broken');
+  assert.match(seen[0][1], /frontmatter/);
+  const run = (script, args) => spawnSync(process.execPath, [path.join(dir, 'scripts', script), ...args], { encoding: 'utf8', env: { ...process.env, UPGRADE_SCOUT_OFFLINE: '1' } });
+  const refs = run('refs.mjs', ['classify', 'https://github.com/o/r']);
+  assert.equal(refs.status, 0, refs.stderr);
+  assert.deepEqual(JSON.parse(refs.stdout).packs, []);
+  const radar = run('radar.mjs', ['--pack', 'jev', '--index', fixture('radar'), '--no-live', '--format', 'json']);
+  assert.equal(radar.status, 0, radar.stderr);
+  const res = await selfcheck(dir, { nodeCheck: false });
+  assert.ok(res.errors.some((e) => e.check === 'pack' && e.message.includes('packs/broken/pack.md')), JSON.stringify(res.errors));
+  fs.rmSync(path.dirname(dir), { recursive: true, force: true });
 });
