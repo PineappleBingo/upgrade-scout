@@ -127,7 +127,7 @@ export function merge(ledger, replies) {
 /** 항목이 주장과 이어지는 열쇠(주장의 subject와 같은 값). */
 const subjectOf = (i) => i.subject ?? i.source;
 
-/** 재확인할 주장 K개 —없음·숫자·라이선스 주장, 상위 항목·충돌에 딸린 주장, 낮은 확신 순. */
+/** 재확인할 주장 K개 — 없음·숫자·라이선스 주장, 상위 항목·충돌에 딸린 주장, 낮은 확신 순. */
 export function pick(ledger, k = 15) {
   const top = new Set([...ledger.items].sort((a, b) => (b.fit * 0.4 + b.cost * 0.3 + b.risk * 0.3) - (a.fit * 0.4 + a.cost * 0.3 + a.risk * 0.3)).slice(0, 5).map(subjectOf));
   const conflicted = new Set(ledger.conflicts.map((c) => { const it = ledger.items.find((i) => i.id === c.item); return it ? subjectOf(it) : c.item; }));
