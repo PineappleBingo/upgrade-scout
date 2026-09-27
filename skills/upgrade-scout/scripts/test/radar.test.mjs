@@ -98,3 +98,23 @@ test('CLI: unreachable local index → exit NETWORK(4), status unavailable', () 
   const out = JSON.parse(r.stdout);
   assert.equal(out.status, 'unavailable');
 });
+
+test('schema: an item url must be a plain GitHub repo URL (index data never reaches git as an option)', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'radar-url-'));
+  fs.copyFileSync(path.join(DIR, 'meta.json'), path.join(tmp, 'meta.json'));
+  const items = JSON.parse(fs.readFileSync(path.join(DIR, 'index.json'), 'utf8'));
+  for (const bad of ['--upload-pack=touch /tmp/pwned', 'https://evil.example/a/b', 'https://github.com/a/b/../../x y']) {
+    items[0].url = bad;
+    fs.writeFileSync(path.join(tmp, 'index.json'), JSON.stringify(items));
+    const r = await loadIndex(tmp);
+    assert.equal(r.status, 'invalid', bad);
+    assert.ok(r.errors.some((e) => e.includes('url')), JSON.stringify(r.errors));
+  }
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+test('CLI: the clone command separates the URL with --', () => {
+  const r = runCli(['--index', DIR, '--keywords', 'comment', '--no-live', '--clone', '1', '--dest', path.join(os.tmpdir(), 'radar-never'), '--no-write', '--format', 'json']);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(JSON.parse(r.stdout).clones[0].cmd, /git clone --depth 1 -- https:\/\/github\.com\/a\/comment-router /);
+});

@@ -12,7 +12,7 @@
 
 | 필드 | 형 | 뜻 |
 |---|---|---|
-| `full_name` · `url` | 문자열 | `owner/repo` · GitHub URL |
+| `full_name` · `url` | 문자열 | `owner/repo` · GitHub 리포 URL(`https://github.com/<owner>/<repo>`만 — 다른 값은 스키마에서 invalid) |
 | `description` | 문자열 | 리포 설명 원문 |
 | `readme_excerpt` | 문자열 또는 null (선택) | README 첫 문단 원문 발췌(≤300자) |
 | `summary_ko` | `{what, decision, point}` 또는 null | 한국어 3줄 요약(무엇 · 판단하는 것 · 포인트). 아직이면 null |

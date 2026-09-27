@@ -7,7 +7,7 @@
     "counts": { "type": "object", "required": ["total"], "properties": { "total": { "type": "integer", "minimum": 0 } } },
     "sources": { "type": "array" }, "queue": { "type": "object" } } },
   "item": { "type": "object", "required": ["full_name", "url", "category", "stars", "forks", "pushed_at", "first_seen", "sources", "verified", "flags", "score"], "properties": {
-    "full_name": { "type": "string", "pattern": "^[\\w.-]+/[\\w.-]+$" }, "url": { "type": "string" },
+    "full_name": { "type": "string", "pattern": "^[\\w.-]+/[\\w.-]+$" }, "url": { "type": "string", "pattern": "^https://github\\.com/[\\w.-]+/[\\w.-]+/?$" },
     "description": { "type": ["string", "null"] },
     "readme_excerpt": { "type": ["string", "null"], "maxLength": 300 },
     "summary_ko": { "anyOf": [{ "type": "null" }, { "type": "object", "required": ["what", "decision", "point"], "properties": {

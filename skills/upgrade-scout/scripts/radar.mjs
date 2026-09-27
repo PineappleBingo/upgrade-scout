@@ -114,7 +114,7 @@ if (isMain(import.meta.url)) {
     if (!dest) fail('--clone에는 --dest가 필요합니다');
     res.clones = top.slice(0, n).map((i) => {
       const to = path.join(dest, i.full_name.replace('/', '__'));
-      const cmd = ['git', 'clone', '--depth', '1', i.url, to];
+      const cmd = ['git', 'clone', '--depth', '1', '--', i.url, to];
       if (flags['no-write']) return { repo: i.full_name, path: to, cmd: cmd.join(' '), done: false };
       const r = spawnSync(cmd[0], cmd.slice(1), { encoding: 'utf8' });
       return { repo: i.full_name, path: to, done: r.status === 0, error: r.status === 0 ? null : (r.stderr || '').trim().split('\n').pop() };
