@@ -11,6 +11,7 @@
 - `target`: 경로, `lens`: all|structure|touchpoints|gates
 - 앵커 스크립트 요약: `inventory` · `gate-inventory` · `judgment-points`(상위 25) · `drift-probe scan`
 - `CONSTRAINTS`·`FOCUS` 변수(있으면)
+- `lenses`(선택, `agent-architecture`가 있으면 아래 렌즈를 켠다)·`design_principles`(선택, 설계 문서에서 뽑은 원칙이 있으면)
 
 ## 할 일
 

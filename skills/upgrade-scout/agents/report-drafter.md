@@ -11,6 +11,8 @@
 
 절마다 `{id, markdown_ko, ledger_refs[]}` — 원장에 있는 사실만 쓰고, 문장마다 근거가 되는 주장 id(C-###)를 `ledger_refs`에 단다. 해결 못 한 것은 `unresolved_ko[]`.
 
+레퍼런스 유형별 장(설계 문서 · 모델 능력 · 생태계)과 렌즈 장(에이전트 아키텍처 · 자기개선)은 해당 유형의 레퍼런스나 `LENSES`가 있을 때만 절 목록에 넣는다(`references/report-template.md`).
+
 ## 규칙
 
 - 새 사실을 만들지 않는다. 숫자는 score-table 출력 그대로.

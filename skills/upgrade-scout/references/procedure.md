@@ -7,7 +7,7 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 `$W/run.json`(no-write면 대화 속 코드 블록)에 단계 상태를 적는다. 맥락이 압축되면 이것부터 다시 읽는다.
 
 ```json
-{ "run_id": "2026-09-26-tvse-jev", "target": "/path", "vars": { "DEPTH": "standard", "JEV_MODE": "auto", "PLUGIN_SCOPE": "light" },
+{ "run_id": "2026-09-26-tvse-jev", "target": "/path", "vars": { "DEPTH": "standard", "REFERENCES": [], "LENSES": [], "packs": { "jev": { "mode": "auto" } } },
   "write_profile": "no-write|write-scratch", "baseline_porcelain": "", "steps": { "1": "done", "5": "running" },
   "subagents": [{ "role": "repo-reviewer", "subject": "hunch", "status": "ok|partial|failed", "tool_calls": 31 }],
   "dropped": [{ "what": "후보 3개", "why": "깊이 상한" }], "budget": { "tokens_est": 0 } }
@@ -41,28 +41,29 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 옵션 분기 감사: 대상의 모드·포맷·언어·계정 옵션을 뽑고, 옵션마다 영향을 받아야 할 경로(프롬프트 변수·폴백 문구·렌더·외부 전달)를 grep해 옵션 × 경로 표를 만든다. 갈리지 않는 칸이 버그 후보다(RepoReel: 새 포맷을 넣었는데 여섯 곳이 옛 포맷에 고정)
 - 후처리 범위: 윤문·요약·번역 단계가 코드 블록·복사용 문구·고정 문구까지 고치는지 확인한다
 
-## 5. Jev 지식 갱신
+## 5. 팩 지식 갱신
 
-- 명령: `$S/sources-watch.mjs --registry jev --state-dir <상태> [--update]` (no-write면 `--update` 금지)
+- 명령: `$S/sources-watch.mjs --registry <팩> --state-dir <상태> [--update]` (no-write면 `--update` 금지)
 - 산출: 소스별 상태(ok·baseline·unavailable·parse-suspect), 새·바뀜·사라짐, 경보(모델·가격·한도·언어·API)
 - 규칙: unavailable은 “변화 없음”이 아니다. parse-suspect는 사람에게 알린다
-- 생략: JEV_MODE=off. quick은 렌즈가 켜졌을 때만
+- 생략: 켜진 팩이 없으면. quick은 팩이 켜졌을 때만
 
-## 6. Jev 렌즈 (JEV_MODE ≠ off)
+## 6. 모델 능력 분석 (모델 능력 레퍼런스 또는 켜진 팩)
 
-- 먼저 읽기: `packs/jev/lens.md`, `references/rubric.md`
-- 명령: `node "$SKILL_DIR/packs/jev/scripts/jev-client.mjs" lint <질문셋 초안>` · `dry-run`
+- 먼저 읽기: `references/rubric.md`, 팩이 켜졌으면 그 팩의 렌즈(`packs/jev/lens.md`)와 부록(`packs/jev/analyst-addendum.md`)
+- 명령: 팩 스크립트 lint·dry-run(예: `node "$SKILL_DIR/packs/jev/scripts/jev-client.mjs" lint <질문셋 초안>` · `dry-run`)
 - 누가: capability-analyst(Plan)
-- 산출: JP 표(J1–J12 → `$S/score-table.mjs jp-items.json --mode jev`), 판정, 영어 질문셋 v1, 게이트, 보정 계획, not_fit
-- 종료: 모든 JP에 `ref`, 합계·판정은 스크립트 값
+- 산출: 능력 시트 · 판단 지점 표(팩 기준표가 있으면 그 축 → `$S/score-table.mjs jp-items.json --mode <팩>`), 판정, 질문셋 초안, 게이트, 보정 계획, not_fit
+- 종료: 모든 지점에 `ref`, 합계·판정은 스크립트 값
 
-## 7. 후보 리포 리뷰
+## 7. 레퍼런스 리뷰
 
-- 준비: 메인이 `$W/repos/`에 얕게 클론(`git clone --depth 1 --filter=blob:limit=300k`). no-write면 웹으로(근거 B)
-- 생태계 레퍼런스·팩 레이더가 있으면: `$S/radar.mjs --pack <팩> --keywords <FOCUS 키워드> --top 10 --format md`로 신선도·즉석 보충·상위 N을 먼저 받고, 그 리포도 여기서 함께 클론·리뷰한다(`references/radar-format.md`)
+- 준비(리포): 메인이 `$W/repos/`에 얕게 클론(`git clone --depth 1 --filter=blob:limit=300k`). no-write면 웹으로(근거 B)
+- 설계 문서: 메인이 원문을 받아(`curl -s` · 아티팩트는 Artifact read) 발췌를 design-mapper 입력으로. 답 검사 `$S/ledger.mjs validate design-mapper reply.txt`.
+- 생태계: `$S/radar.mjs --pack <팩> --keywords … --top 10 --clone 3 --dest "$SCOUT_WORK/repos"`(no-write면 `--no-write`로 명령만) → 클론 경로를 repo-reviewer 입력으로.
 - 명령: `$S/feature-probe.mjs matrix --repos a=/p,b=/q --keywords k.json`
-- 누가: repo-reviewer × 리포, 동시 ≤3
-- 산출: RR 항목(구현 vs 주장, 적합·비용·리스크, 난이도, 런타임 비용, 마이너스)
+- 누가: repo-reviewer × 리포(동시 ≤3) · design-mapper × 설계 문서
+- 산출: RR 항목(구현 vs 주장, 적합·비용·리스크, 난이도, 런타임 비용, 마이너스) · 설계 문서는 mapping 항목(원칙별 있음/부분/없음, `references/lenses.md` §1)
 - 확인: 리포마다 `impl_refs` 2개를 `sed -n`으로, 라이선스는 항상 다시
 
 ## 8. 플러그인·스킬 탐색 (PLUGIN_SCOPE)
@@ -82,9 +83,9 @@ SKILL.md §4 표의 상세판. 각 단계는 **입력 → 명령 → 누가 → 
 - 명령: `$S/ledger.mjs merge … ` → `pick --k <K>` → 메인이 K/2 직접 실행 + verifier가 나머지 → `record …` → `blind` → blind-scorer → `attach-blind`
 - 규칙: `references/orchestration.md`의 재확인 프로토콜. 추가 라운드는 한 번까지, 남은 것은 “미확인”
 
-## 11. Jev 보조 채점 (JEV_MODE = lens+scorer, 선택)
+## 11. 보조 채점(선택, 팩 mode = lens+scorer)
 
-- 명령: `$S/ledger.mjs jev-requests ledger.json --questions $SKILL_DIR/packs/jev/qsets/scorer-questions.v1.json > reqs.json` → `node "$SKILL_DIR/packs/jev/scripts/jev-client.mjs" dry-run reqs.json`(요청 수·토큰·비용을 사용자에게 보여 준다) → 동의 + 키가 있으면 `run --live --max-requests … --max-input-tokens … --max-usd …` → `ledger attach-jev`
+- 명령: `$S/ledger.mjs jev-requests ledger.json --questions $SKILL_DIR/packs/jev/qsets/scorer-questions.v1.json > reqs.json` → `node "$SKILL_DIR/packs/jev/scripts/jev-client.mjs" dry-run reqs.json`(요청 수·토큰·비용을 사용자에게 보여 준다) → 동의 + 팩의 키가 있으면 `run --live --max-requests … --max-input-tokens … --max-usd …` → `ledger attach-jev`
 - 키가 없으면: 열에 “—(미실행: 키 없음)”, 0이 아니다
 - 규칙: 합계를 바꾸지 않는다. 차가 크면 재확인 대기열로 한 번만
 - 후보 사전 선별(후보가 8개를 넘을 때, 선택): 같은 질문셋에 README 발췌(영어 ≤700자)를 넣어 **순서만** 정한다. 탈락 후보도 표에 남기고, 리뷰를 대신하지 않는다
