@@ -1,10 +1,10 @@
 # 리포트 템플릿
 
-본 산출물은 **한국어 HTML Artifact**다. 쓰기 전에 artifact-design(또는 Artifact quickstart의 페이지 가이드), 순위 그림 전에 dataviz, 흐름 그림 전에 artifact-diagramming을 로드한다(세션에 있는 것만). 셸은 `assets/report.html`.
+본 산출물은 **HTML Artifact**다 — 산문은 사용자가 요청한 언어, 기본 한국어. 쓰기 전에 artifact-design(또는 Artifact quickstart의 페이지 가이드), 순위 그림 전에 dataviz, 흐름 그림 전에 artifact-diagramming을 로드한다(세션에 있는 것만). 셸은 `assets/report.html`.
 
 ## 템플릿 A — 일반 업그레이드
 
-1. 머리: 대상 @ HEAD · 깊이 · JEV_MODE · PLUGIN_SCOPE · **가정한 값**
+1. 머리: 대상 @ HEAD · 깊이 · REFERENCES(유형별 수) · LENSES · 켜진 팩(mode) · **가정한 값**(옛 변수 이름을 받았으면 옮긴 내역도)
 2. 00 결론: KPI 6 · 판정 카드 5–7 · 시너지 순위 그림(`score-table --format html`)
 3. 01 대상 분석: 파이프라인 그림 + 인벤토리 표(근거 열) + 레퍼런스 판별 결과 표(유형 · 켜질 팩 · ask, `refs.mjs classify` 결과)
 4. 02 가정 검증: present/partial/absent + 검색 범위
@@ -12,10 +12,10 @@
 6. 04 렌즈 장(`LENSES`에 있을 때만) — 에이전트 아키텍처: 조직도 · 에이전트 표 · 원칙 갭 표 · 쪼개기/합치기 / 자기개선: 체크리스트 표
 7. 05 플러그인·스킬: 필요 · 검색 로그 · 판정
 8. 06 업그레이드 5: 카드마다 그림 · 단계 · 데이터 · 루프 · 비용 · KPI · 가드레일 · 프로토타입
-9. 07 UI/UX(UI_SCOPE)
+9. 07 UI/UX(`LENSES`에 ui가 있을 때)
 10. 08 제외: ❌ · ⚠️
 11. 09 로드맵 · 결정 질문 · 병렬 가능한 P0 표시
-12. 10 재확인 로그 · 수리 로그 · 블라인드 차 · Jev 지식 갱신 · 실행 메타(에이전트 수·실패·축소·버린 것) · 다음 실행 메모 · 출처 · 재리서치 프롬프트
+12. 10 재확인 로그 · 수리 로그 · 블라인드 차 · 팩 지식 갱신(켜진 팩이 있을 때) · 실행 메타(에이전트 수·실패·축소·버린 것) · 다음 실행 메모 · 출처 · 재리서치 프롬프트
 
 ## 템플릿 B — Jev 통합
 

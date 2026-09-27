@@ -31,7 +31,7 @@ LENSES: agent-architecture
 
 ## 요구
 
-Node.js ≥20 · git. 선택: `TYPESAFE_API_KEY`(Jev 팩 라이브 호출), gh CLI. 두 조수 에이전트 대신 스킬 안의 브리프로 Explore · Plan 에이전트를 부르므로 추가 설치가 없습니다. 브리프는 "읽기 전용"을 지시로 지킵니다(Bash가 있어 강제는 아님).
+Node.js ≥20 · git. 선택: `TYPESAFE_API_KEY`(Jev 팩 라이브 호출), gh CLI. 따로 설치할 에이전트는 없습니다 — 스킬 안에 든 서브에이전트 브리프로 Claude Code 기본 Explore · Plan 에이전트를 부릅니다. 브리프는 "읽기 전용"을 지시로 지킵니다(Bash가 있어 강제는 아님).
 
 ## 검사
 

@@ -1,6 +1,6 @@
 # Upgrade Scout
 
-A Claude Code plugin that reviews your codebase against **references** (repos, design docs, model/API docs, ecosystem catalogs) and produces a Korean HTML report with evidence, scores, a roadmap, and open decision questions on what to bring in and what to skip. It never touches the target code. [한국어](README.md)
+A Claude Code plugin that reviews your codebase against **references** (repos, design docs, model/API docs, ecosystem catalogs) and produces an HTML report (in the language of your request, Korean by default) with evidence, scores, a roadmap, and open decision questions on what to bring in and what to skip. It never touches the target code. [한국어](README.md)
 
 ## Install
 
@@ -33,7 +33,7 @@ The skill body is written in Korean, but the report itself follows whatever lang
 
 ## Requirements
 
-Node.js ≥20 · git. Optional: `TYPESAFE_API_KEY` (for live Jev pack calls), gh CLI. Instead of two dedicated helper agents, it calls the Explore/Plan agents with briefs bundled inside the skill, so there's nothing extra to install. Briefs instruct agents to stay "read-only" (not enforced, since Bash is still available).
+Node.js ≥20 · git. Optional: `TYPESAFE_API_KEY` (for live Jev pack calls), gh CLI. There are no extra agents to install: the skill runs Claude Code's built-in Explore/Plan agents with the sub-agent briefs bundled inside it. Briefs instruct agents to stay "read-only" (not enforced, since Bash is still available).
 
 ## Checks
 
