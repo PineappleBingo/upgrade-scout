@@ -5,15 +5,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseArgs, isMain, emit, fail, EXIT, mdTable, helpRequested } from './lib/cli.mjs';
 import { ROLE_KEY } from './ledger.mjs';
-import { lintRequest } from './jev-client.mjs';
+import { listPacks, PACK_REQUIRED } from './lib/packs.mjs';
 
 const HELP = `selfcheck.mjs [--skill-dir <경로>] [--strict] [--format json|md]
 검사: frontmatter(skill-creator quick_validate 규칙 + 키트 관례) · SKILL.md 하나뿐 · 줄 수 ·
-문서 속 경로가 실제로 있는지 · 고아 파일 · 레지스트리 id가 jev-sources.md에 있는지 ·
-에이전트 브리프 ↔ 계약 스키마 ↔ ledger ROLE_KEY · Jev 질문셋 린트(라이브 기준) ·
+문서 속 경로가 실제로 있는지 · 고아 파일 · 팩 구조 · 레지스트리 id가 문서(references/sources.md · 팩 sources)에 있는지 ·
+에이전트 브리프 ↔ 계약 스키마 ↔ ledger ROLE_KEY · 팩 질문셋 린트(라이브 기준) ·
 JSON 파싱 · node --check · 스크립트마다 --help · evals 스키마 · 픽스처 크기·이름.`;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -24,7 +24,7 @@ export const ALLOWED_KEYS = new Set(['name', 'description', 'license', 'allowed-
 export const KIT_KEYS = new Set(['name', 'description']); // claude-sync-kit 스킬 관례
 const EXCLUDED_ANY_DEPTH = new Set(['__pycache__', 'node_modules', '.git']);
 const EXCLUDED_AT_ROOT = new Set(['evals']);
-const TOP_DIRS = ['references', 'agents', 'assets', 'scripts', 'evals'];
+const TOP_DIRS = ['references', 'agents', 'assets', 'scripts', 'evals', 'packs'];
 const MAX_LINES = 500;
 const WARN_LINES = 350;
 const MAX_FIXTURE_BYTES = 200 * 1024;
@@ -121,7 +121,7 @@ export function referencedPaths(markdown) {
 
 /* ─── 검사 본체 ───────────────────────────────────────── */
 
-export function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true } = {}) {
+export async function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true } = {}) {
   const errors = [];
   const warnings = [];
   const err = (check, message) => errors.push({ check, message });
@@ -184,7 +184,7 @@ export function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true } = {
   else if (lineCount > WARN_LINES) warn('length', `SKILL.md ${lineCount}줄 > ${WARN_LINES}`);
 
   // 4) 문서 속 경로가 실제로 있는지 + 고아 파일
-  const docs = files.filter((f) => f === 'SKILL.md' || /^(agents|references)\/[^/]+\.md$/.test(f));
+  const docs = files.filter((f) => f === 'SKILL.md' || /^(agents|references)\/[^/]+\.md$/.test(f) || /^packs\/[^/]+\/[^/]+\.md$/.test(f));
   const mentioned = new Set();
   let refCount = 0;
   for (const d of docs) {
@@ -210,12 +210,23 @@ export function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true } = {
     try { json[f] = JSON.parse(read(f)); } catch (e) { err('json', `${f}: ${e.message}`); }
   }
 
-  // 6) 레지스트리 id ↔ jev-sources.md
-  const sourcesDoc = exists('references/jev-sources.md') ? read('references/jev-sources.md') : '';
+  // 6) 팩 구조 + 레지스트리 id ↔ 문서 (코어: assets/registry/*.json ↔ references/sources.md, 팩: packs/<p>/<registry> ↔ packs/<p>/<sources_doc>)
+  const packs = listPacks(skillDir);
+  stats.packs = packs.map((p) => p.name);
+  const registryPairs = files.filter((f) => /^assets\/registry\/[^/]+\.json$/.test(f)).map((f) => [f, exists('references/sources.md') ? 'references/sources.md' : 'references/jev-sources.md']);
+  for (const p of packs) {
+    const rel = (x) => `packs/${path.basename(p.dir)}/${x}`;
+    for (const k of PACK_REQUIRED) if (!p.raw[k]) err('pack', `${rel('pack.md')}: 필수 키 ${k}가 없다`);
+    if (!p.triggerUrls.length && !p.triggerKeywords.length) err('pack', `${rel('pack.md')}: triggers.urls·keywords가 비어 있다`);
+    if (p.name !== path.basename(p.dir)) err('pack', `${rel('pack.md')}: name "${p.name}" ≠ 폴더 "${path.basename(p.dir)}"`);
+    for (const x of [p.lens, p.addendum, p.registry, p.sourcesDoc, p.qsetDir, p.qsetLint, p.criteria, p.contractExt].filter(Boolean)) if (!exists(rel(x))) err('pack', `${rel('pack.md')}: ${rel(x)}가 없다`);
+    if (p.registry) registryPairs.push([rel(p.registry), p.sourcesDoc ? rel(p.sourcesDoc) : rel('pack.md')]);
+  }
   let sourceIds = 0;
-  for (const f of files.filter((f) => /^assets\/registry\/[^/]+\.json$/.test(f))) {
+  for (const [f, docRel] of registryPairs) {
     const reg = json[f];
     if (!reg) continue;
+    const doc = exists(docRel) ? read(docRel) : '';
     if (!Array.isArray(reg.sources)) { err('registry', `${f}: sources 배열이 없다`); continue; }
     const seen = new Set();
     for (const s of reg.sources) {
@@ -223,7 +234,7 @@ export function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true } = {
       if (!s.id) { err('registry', `${f}: id 없는 소스`); continue; }
       if (seen.has(s.id)) err('registry', `${f}: id ${s.id} 중복`);
       seen.add(s.id);
-      if (!sourcesDoc.includes(s.id)) err('registry', `${f}: 소스 ${s.id}가 references/jev-sources.md에 없다`);
+      if (!doc.includes(s.id)) err('registry', `${f}: 소스 ${s.id}가 ${docRel}에 없다`);
     }
   }
   stats.registrySources = sourceIds;
@@ -247,24 +258,32 @@ export function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true } = {
   for (const role of schemas) if (!briefs.includes(role)) err('agents', `assets/contracts/${role}.schema.json에 맞는 agents/${role}.md가 없다`);
   for (const role of Object.keys(ROLE_KEY)) if (!briefs.includes(role)) err('agents', `ROLE_KEY의 ${role}에 브리프가 없다`);
 
-  // 8) Jev 질문셋 — 라이브 기준 린트, 모델 버전 고정
+  // 8) 팩 질문셋 — 팩이 알려 준 린터(qset_lint 모듈의 lintRequest)로 라이브 기준 린트, 모델 버전 고정
   let qsets = 0;
-  for (const f of files.filter((f) => /^assets\/jev\/[^/]+\.json$/.test(f))) {
-    const q = json[f];
-    if (!q) continue;
-    if (!q.model || /latest|preview/.test(q.model)) err('jev-qset', `${f}: 모델을 버전으로 고정해야 한다(받은 값 ${q.model ?? '없음'})`);
-    const groups = [];
-    const collect = (o) => {
-      if (!o || typeof o !== 'object') return;
-      if (o.questions && typeof o.questions === 'object' && !Array.isArray(o.questions)) groups.push(o.questions);
-      for (const v of Object.values(o)) if (v !== o.questions) collect(v);
-    };
-    collect(q);
-    if (!groups.length) err('jev-qset', `${f}: questions가 없다`);
-    for (const questions of groups) {
-      qsets++;
-      const res = lintRequest({ id: f, model: q.model, state: 'selfcheck placeholder state in plain English', questions }, { live: true });
-      for (const i of res.issues.filter((i) => i.level === 'error')) err('jev-qset', `${f}${i.qid ? ` · ${i.qid}` : ''}: ${i.code} ${i.msg}`);
+  for (const p of packs.filter((p) => p.qsetDir)) {
+    const base = `packs/${path.basename(p.dir)}`;
+    let lintRequest = null;
+    if (p.qsetLint && exists(`${base}/${p.qsetLint}`)) {
+      try { ({ lintRequest } = await import(pathToFileURL(abs(`${base}/${p.qsetLint}`)).href)); } catch (e) { err('pack', `${base}/${p.qsetLint}: 불러올 수 없다 — ${e.message}`); }
+    }
+    for (const f of files.filter((f) => f.startsWith(`${base}/${p.qsetDir}/`) && f.endsWith('.json'))) {
+      const q = json[f];
+      if (!q) continue;
+      if (!q.model || /latest|preview/.test(q.model)) err('qset', `${f}: 모델을 버전으로 고정해야 한다(받은 값 ${q.model ?? '없음'})`);
+      const groups = [];
+      const collect = (o) => {
+        if (!o || typeof o !== 'object') return;
+        if (o.questions && typeof o.questions === 'object' && !Array.isArray(o.questions)) groups.push(o.questions);
+        for (const v of Object.values(o)) if (v !== o.questions) collect(v);
+      };
+      collect(q);
+      if (!groups.length) err('qset', `${f}: questions가 없다`);
+      for (const questions of groups) {
+        qsets++;
+        if (!lintRequest) continue;
+        const res = lintRequest({ id: f, model: q.model, state: 'selfcheck placeholder state in plain English', questions }, { live: true });
+        for (const i of res.issues.filter((i) => i.level === 'error')) err('qset', `${f}${i.qid ? ` · ${i.qid}` : ''}: ${i.code} ${i.msg}`);
+      }
     }
   }
   stats.questionGroups = qsets;
@@ -278,7 +297,7 @@ export function selfcheck(skillDir = DEFAULT_SKILL_DIR, { nodeCheck = true } = {
     }
     stats.syntaxChecked = code.length;
     // SKILL.md가 “모든 스크립트에 --help가 있다”고 약속한다.
-    for (const f of files.filter((f) => /^scripts\/[^/]+\.mjs$/.test(f))) {
+    for (const f of files.filter((f) => /^scripts\/[^/]+\.mjs$/.test(f) || /^packs\/[^/]+\/scripts\/[^/]+\.mjs$/.test(f))) {
       const r = spawnSync(process.execPath, [abs(f), '--help'], { encoding: 'utf8', env: { ...process.env, UPGRADE_SCOUT_OFFLINE: '1' }, timeout: 10_000 });
       if (r.status !== 0 || !r.stdout.trim()) err('help', `${f} --help: 종료 코드 ${r.status}${r.stdout.trim() ? '' : ' · 출력 없음'}`);
     }
@@ -339,7 +358,7 @@ if (isMain(import.meta.url)) {
   if (helpRequested(flags)) { emit(HELP, 'text'); process.exit(EXIT.OK); }
   const dir = flags['skill-dir'] ? path.resolve(String(flags['skill-dir'])) : DEFAULT_SKILL_DIR;
   if (!fs.existsSync(dir)) fail(`폴더가 없습니다: ${dir}`);
-  const res = selfcheck(dir, { nodeCheck: !flags['no-node-check'] });
+  const res = await selfcheck(dir, { nodeCheck: !flags['no-node-check'] });
   const strict = !!flags.strict;
   if ((flags.format || 'json') === 'md') emit(toMd(res, strict), 'text');
   else emit({ ...res, strict, pass: res.ok && !(strict && res.warnings.length) });

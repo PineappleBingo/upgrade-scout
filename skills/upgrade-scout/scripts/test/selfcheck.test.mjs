@@ -7,8 +7,8 @@ import './_offline.mjs';
 import { SKILL_DIR } from './_offline.mjs';
 import { selfcheck, parseFrontmatter, referencedPaths } from '../selfcheck.mjs';
 
-test('this skill passes its own selfcheck without warnings', () => {
-  const res = selfcheck(SKILL_DIR);
+test('this skill passes its own selfcheck without warnings', async () => {
+  const res = await selfcheck(SKILL_DIR);
   assert.deepEqual(res.errors, []);
   assert.deepEqual(res.warnings, []);
   assert.equal(res.stats.roles, 8);
@@ -32,7 +32,7 @@ test('referenced paths skip templates and expand $S/', () => {
   assert.deepEqual(referencedPaths(md).sort(), ['references/c.md', 'scripts/a.mjs', 'scripts/b.mjs']);
 });
 
-test('broken skill: every rule reports', () => {
+test('broken skill: every rule reports', async () => {
   const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'selfcheck-')), 'demo-skill');
   const w = (rel, text) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), text); };
   w('SKILL.md', '---\nname: Demo_Skill\ndescription: 태그 <b> 포함\nextra: 1\n---\n본문 `references/missing.md` `agents/solo.md`\n');
@@ -42,7 +42,7 @@ test('broken skill: every rule reports', () => {
   w('assets/registry/r.json', '{"sources":[{"id":"not-documented"}]}');
   w('scripts/test/fixtures/big.txt', 'x'.repeat(210 * 1024));
   w('evals/evals.json', '{"skill_name":"other","evals":[{"id":"1","prompt":"p","expected_output":"e","expectations":[]}]}');
-  const res = selfcheck(dir, { nodeCheck: false });
+  const res = await selfcheck(dir, { nodeCheck: false });
   const checks = new Set(res.errors.map((e) => e.check));
   for (const c of ['single-skill-md', 'frontmatter', 'paths', 'orphans', 'registry', 'agents', 'fixture-size', 'evals']) assert.ok(checks.has(c), `${c} 누락: ${JSON.stringify(res.errors)}`);
   assert.equal(res.ok, false);
@@ -52,5 +52,19 @@ test('broken skill: every rule reports', () => {
   assert.match(text, /허용되지 않는 키 extra/);
   assert.match(text, /assets\/stray\.txt/);
   assert.match(text, /not-documented/);
+  fs.rmSync(path.dirname(dir), { recursive: true, force: true });
+});
+
+test('pack structure: required keys, name = folder, listed files exist, registry ids documented', async () => {
+  const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'selfcheck-pack-')), 'demo-skill');
+  const w = (rel, text) => { fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); fs.writeFileSync(path.join(dir, rel), text); };
+  w('SKILL.md', '---\nname: demo-skill\ndescription: 데모\n---\n`packs/bad/pack.md`\n');
+  w('packs/bad/pack.md', '---\nname: other\nversion: 1\nchecked: 2026-09-26\ntriggers:\n  urls: x.ai\n  keywords: x\nprovides:\n  registry: registry.json\n  sources: sources.md\n---\n`packs/bad/registry.json` `packs/bad/sources.md`\n');
+  w('packs/bad/registry.json', '{"sources":[{"id":"undocumented-src"}]}');
+  w('packs/bad/sources.md', '# 소스\n');
+  const res = await selfcheck(dir, { nodeCheck: false });
+  const text = res.errors.map((e) => `${e.check} ${e.message}`).join('\n');
+  assert.match(text, /pack .*name "other" ≠ 폴더 "bad"/);
+  assert.match(text, /registry .*undocumented-src/);
   fs.rmSync(path.dirname(dir), { recursive: true, force: true });
 });
