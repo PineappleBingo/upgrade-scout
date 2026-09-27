@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { SKILL_DIR } from './_offline.mjs';
 import { classifyRef, classifyAll, normalizeVars } from '../refs.mjs';
 
@@ -60,4 +61,43 @@ test('works without packs: unrelated request loads nothing', () => {
   assert.deepEqual(r.packs, []);
   const r2 = classifyAll(['https://github.com/o/r'], { skillDir: SKILL_DIR, focus: '판단 로직 점수화' });
   assert.deepEqual(r2.packs, [], 'jev pack must not load for generic judging words');
+});
+
+const REFS = path.join(SKILL_DIR, 'scripts', 'refs.mjs');
+const cli = (...args) => spawnSync(process.execPath, [REFS, ...args], { encoding: 'utf8' });
+
+test('CLI: a FOCUS-only request (no refs) classifies and can switch a pack on', () => {
+  const r = cli('classify', '--focus', 'Jev 붙일 데');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const out = JSON.parse(r.stdout);
+  assert.deepEqual(out.refs, []);
+  assert.deepEqual(out.packs.map((p) => p.name), ['jev']);
+  assert.equal(cli('classify').status, 2, 'nothing at all is still a usage error');
+});
+
+test('pack mode: off suppresses a trigger match; an explicit non-off mode activates without a trigger', () => {
+  assert.deepEqual(classifyAll([], { skillDir: SKILL_DIR, focus: 'Jev 붙일 곳', modes: { jev: 'off' } }).packs, []);
+  assert.deepEqual(classifyAll(['https://docs.typesafe.ai/api'], { skillDir: SKILL_DIR, modes: { jev: 'off' } }).packs, []);
+  assert.deepEqual(classifyAll(['https://github.com/o/r'], { skillDir: SKILL_DIR, modes: { jev: 'lens' } }).packs, [{ name: 'jev', why: 'mode:lens' }]);
+  assert.deepEqual(classifyAll(['https://github.com/o/r'], { skillDir: SKILL_DIR, modes: { nope: 'lens' } }).packs, [], 'unknown pack names are ignored');
+  const off = JSON.parse(cli('classify', '--focus', 'Jev 붙일 곳', '--pack-mode', 'jev=off').stdout);
+  assert.deepEqual(off.packs, []);
+  const on = JSON.parse(cli('classify', 'https://github.com/o/r', '--pack-mode', 'jev=lens+scorer').stdout);
+  assert.deepEqual(on.packs, [{ name: 'jev', why: 'mode:lens+scorer' }]);
+});
+
+test('jev triggers: common English words and look-alike repos do not load it; explicit names do', () => {
+  const packsOf = (refs, focus = '') => classifyAll(refs, { skillDir: SKILL_DIR, focus }).packs.map((p) => p.name);
+  assert.deepEqual(packsOf([], 'make the API client typesafe'), []);
+  assert.deepEqual(packsOf(['ivanhofer/typesafe-i18n']), []);
+  assert.deepEqual(packsOf(['https://github.com/ivanhofer/typesafe-i18n']), []);
+  assert.deepEqual(packsOf([], 'system one thinking vs system two'), []);
+  for (const focus of ['Jev 붙일 곳', 'TypeSafe Jev', 'TypeSafe System One 문서', '@typesafe-ai/sdk 쓰는 곳', 'SystemOne 판단']) assert.deepEqual(packsOf([], focus), ['jev'], focus);
+});
+
+test('refs --help documents vars and --pack-mode', () => {
+  const r = cli('--help');
+  assert.equal(r.status, 0);
+  assert.match(r.stdout, /vars/);
+  assert.match(r.stdout, /--pack-mode/);
 });

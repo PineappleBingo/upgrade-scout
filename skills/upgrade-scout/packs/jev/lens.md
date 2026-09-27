@@ -81,3 +81,16 @@ HackerNoon 101 섹션 → 판단 지점 종류: 분류·라우팅 → 의도 분
 ## 8. 비용 계산
 
 입력 $0.042/100만 토큰, 출력 무료(2026-09 기준, sources-watch가 경보). `packs/jev/scripts/jev-client.mjs cost --tokens N`. 비용은 대개 결정 요인이 아니다 — 정확도·유지보수가 결정한다.
+
+## 9. 라이브 호출 · 데이터 규칙
+
+코어 하드 룰 9–11(SKILL.md §7)에 Jev 팩이 더하는 것 — 더 엄격하게만, 코어를 완화하지 않는다.
+
+- Jev는 채점 엔진 밖의 **자문 레이어**이고 기본 OFF다. 생성·셈·날짜·수 비교는 Jev에 주지 않는다.
+- 보조 채점(scorer)은 **절대 자동으로 켜지 않는다** — 팩 mode `lens+scorer`(명시 요청) + 키 + 세션 안 동의.
+- state는 짧은 **영어 버킷**. 주소·비밀·원시 숫자·우리 점수(fit·cost·risk·synergy 등)를 넣지 않는다 — `jev-client lint`가 잡는다.
+- 응답은 fail-closed로 검증한다(선택지 키·확률 합·argmax·score 기대값). 틀린 응답·전송 실패는 판정이 아니고 원장에 행을 남기지 않는다(거부 ≠ 없음).
+- confidence는 분포의 집중도이지 정확도가 아니다. noul 0.4–0.6은 판단 없음. 임계값은 사람 라벨 30개 이상과 held-out으로 정하고, 정한 뒤에는 모델 버전을 고정한다.
+- 라이브 호출 = `TYPESAFE_API_KEY` + 세션 안 명시 동의 + `--live` + 요청·토큰·달러 상한 + dry-run을 먼저 보여 줌(`jev-client dry-run` → `run --live`). 키는 출력하지 않는다.
+- Jev 점수·J-점수는 시너지 합계에 섞지 않는다. 대상이 “모델 의견과 셈을 섞지 말 것” 같은 규칙을 가지면 인용한다.
+- API 사용법·디버깅은 공식 `typesafe` 스킬(`typesafe@typesafe-ai`)에 맡긴다.

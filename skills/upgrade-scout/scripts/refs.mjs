@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // refs — 레퍼런스 유형 판별(리포 · 설계 문서 · 모델 능력 · 생태계)과 팩 트리거 대조. 네트워크 없음, 쓰기 없음.
-//   node refs.mjs classify [--focus "…"] [--skill-dir d] <ref…>
+//   node refs.mjs classify [--focus "…"] [--pack-mode <팩>=<mode> …] [--skill-dir d] [<ref…>]
+//   node refs.mjs vars '<변수 JSON>'
 // 확신이 없는 판별은 ask에 모아 메인이 사용자에게 한 번에 묻는다.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,9 +9,11 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs, isMain, emit, fail, EXIT, helpRequested } from './lib/cli.mjs';
 import { listPacks, matchPacks } from './lib/packs.mjs';
 
-const HELP = `refs.mjs classify [--focus "…"] [--skill-dir d] <ref…>
+const HELP = `refs.mjs classify [--focus "…"] [--pack-mode <팩>=<mode> …] [--skill-dir d] [<ref…>]   (ref가 없으면 --focus만으로)
+refs.mjs vars '<변수 JSON>'   v3.0·v2.0 변수(CANDIDATES · UI_SCOPE · PLUGIN_SCOPE · JEV_MODE)를 v3.1 이름으로 옮기고 notes에 적는다
 유형: repo(GitHub 리포 · owner/repo · 로컬 git 폴더) · design(마크다운 · 문서 · 아티팩트) · capability(문서/API 사이트, 팩 도메인) ·
-ecosystem(GitHub 토픽 · awesome 목록 · 레이더 인덱스) · unknown. confident=false는 ask 목록으로.`;
+ecosystem(GitHub 토픽 · awesome 목록 · 레이더 인덱스) · unknown. confident=false는 ask 목록으로.
+--pack-mode(반복 가능, vars의 packs.<팩>.mode): off는 트리거가 맞아도 팩을 끄고, off가 아닌 값은 트리거 없이도 켠다(SKILL.md §6).`;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SKILL_DIR = path.resolve(HERE, '..');
@@ -46,9 +49,11 @@ export function classifyRef(ref, { cwd = process.cwd() } = {}) {
   return out(r, 'design', false, 'web page — confirm the kind');
 }
 
-export function classifyAll(refs, { focus = '', skillDir = DEFAULT_SKILL_DIR, cwd = process.cwd() } = {}) {
+export function classifyAll(refs, { focus = '', skillDir = DEFAULT_SKILL_DIR, cwd = process.cwd(), modes = {} } = {}) {
   const packs = listPacks(skillDir);
-  const matched = matchPacks(packs, { refs, focus });
+  // 팩 mode(SKILL.md §6): off는 트리거가 맞아도 끄고, off가 아닌 명시 mode는 트리거 없이도 켠다.
+  const matched = matchPacks(packs, { refs, focus }).filter((m) => modes[m.name] !== 'off');
+  for (const p of packs) if (modes[p.name] && modes[p.name] !== 'off' && !matched.some((m) => m.name === p.name)) matched.push({ name: p.name, why: `mode:${modes[p.name]}` });
   const hostsByPack = new Map(packs.filter((p) => matched.some((m) => m.name === p.name)).map((p) => [p.name, p.triggerUrls]));
   const classified = refs.map((ref) => {
     const c = classifyRef(ref, { cwd });
@@ -95,7 +100,7 @@ export function normalizeVars(v = {}) {
 }
 
 if (isMain(import.meta.url)) {
-  const { _, flags } = parseArgs(process.argv.slice(2));
+  const { _, flags } = parseArgs(process.argv.slice(2), { multi: ['pack-mode'] });
   if (helpRequested(flags)) { process.stdout.write(HELP + '\n'); process.exit(EXIT.OK); }
   const [cmd, ...refs] = _;
   if (cmd === 'vars' && refs[0]) {
@@ -104,8 +109,10 @@ if (isMain(import.meta.url)) {
     emit(normalizeVars(v));
     process.exit(EXIT.OK);
   }
-  if (cmd !== 'classify' || !refs.length) { process.stdout.write(HELP + '\n'); process.exit(EXIT.USAGE); }
+  if (cmd !== 'classify' || (!refs.length && !flags.focus)) { process.stdout.write(HELP + '\n'); process.exit(EXIT.USAGE); }
   const skillDir = flags['skill-dir'] ? path.resolve(String(flags['skill-dir'])) : DEFAULT_SKILL_DIR;
   if (!fs.existsSync(skillDir)) fail(`폴더가 없습니다: ${skillDir}`);
-  emit(classifyAll(refs, { focus: flags.focus ? String(flags.focus) : '', skillDir }));
+  const pairs = (flags['pack-mode'] || []).map((s) => /^([\w-]+)=(\S+)$/.exec(String(s)));
+  if (pairs.some((m) => !m)) fail('--pack-mode는 <팩>=<mode> 모양이어야 합니다');
+  emit(classifyAll(refs, { focus: flags.focus ? String(flags.focus) : '', skillDir, modes: Object.fromEntries(pairs.map((m) => [m[1], m[2]])) }));
 }

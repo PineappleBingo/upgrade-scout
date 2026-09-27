@@ -5,7 +5,7 @@ checked: 2026-09-26
 env: TYPESAFE_API_KEY
 triggers:
   urls: docs.typesafe.ai, typesafe.ai, api.typesafe.ai
-  keywords: jev, typesafe, systemone, system one
+  keywords: jev, systemone, typesafe jev, typesafe system one, typesafe-ai, typesafe.ai
 provides:
   lens: lens.md
   addendum: analyst-addendum.md
@@ -24,7 +24,7 @@ radar:
 
 # Jev 팩 (TypeSafe System One)
 
-레퍼런스에 TypeSafe 문서(`docs.typesafe.ai` 등)가 있거나 요청·FOCUS에 `jev`·`typesafe`·`systemone`이 단어로 나올 때만 켜진다(`refs.mjs classify`가 판정). 켜지면 모델 능력 처리기(절차 6)와 보조 채점(절차 11)에 아래를 더한다.
+레퍼런스에 TypeSafe 문서(`docs.typesafe.ai` 등)가 있거나 요청·FOCUS에 `jev` · `systemone` · `typesafe jev` · `typesafe system one` · `typesafe-ai` · `typesafe.ai`가 단어로 나올 때만 켜진다(`refs.mjs classify`가 판정). 그냥 `typesafe`(“타입 안전”)나 `system one`은 흔한 영어라 트리거가 아니다. 켜지면 모델 능력 처리기(절차 6)와 보조 채점(절차 11)에 아래를 더한다.
 
 | 파일 | 쓰는 곳 |
 |---|---|
@@ -36,4 +36,4 @@ radar:
 | `packs/jev/scripts/jev-client.mjs` | lint · dry-run · run(라이브) · replay · validate · health · cost |
 | `packs/jev/contract-ext.json` | capability 답의 `pack_scores.j` 검사(원장 validate) |
 
-옵션 `mode`: `auto`(기본) · `off` · `lens` · `lens+scorer`. 호환 별칭으로 최상위 `JEV_MODE`와 v2.0 값(`analyze` = lens, `accelerate` = lens+scorer)을 받는다. 라이브 호출 조건은 `packs/jev/lens.md` §6.
+옵션 `mode`: `auto`(기본) · `off` · `lens` · `lens+scorer` — 뜻과 적용(`refs.mjs classify --pack-mode jev=<mode>`)은 SKILL.md §6. 호환 별칭으로 최상위 `JEV_MODE`와 v2.0 값(`analyze` = lens, `accelerate` = lens+scorer)을 받는다(`refs.mjs vars`). 라이브 호출 · 데이터 규칙은 `packs/jev/lens.md` §9(코어 하드 룰 9–11에 더함).
